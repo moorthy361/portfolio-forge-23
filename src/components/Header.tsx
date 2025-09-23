@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, User, LogIn } from "lucide-react";
 
@@ -29,9 +30,11 @@ const Header = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-foreground hover:text-primary">
-              <LogIn className="w-4 h-4 mr-2" />
-              Login
+            <Button variant="ghost" className="text-foreground hover:text-primary" asChild>
+              <Link to="/auth">
+                <LogIn className="w-4 h-4 mr-2" />
+                Login
+              </Link>
             </Button>
             <Button className="btn-hero">
               <User className="w-4 h-4 mr-2" />
@@ -79,9 +82,11 @@ const Header = () => {
               </a>
               <div className="pt-4 pb-3 border-t border-border">
                 <div className="flex items-center px-3 space-y-2 flex-col">
-                  <Button variant="ghost" className="w-full justify-start text-foreground">
-                    <LogIn className="w-4 h-4 mr-2" />
-                    Login
+                  <Button variant="ghost" className="w-full justify-start text-foreground" asChild>
+                    <Link to="/auth">
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Login
+                    </Link>
                   </Button>
                   <Button className="w-full btn-hero">
                     <User className="w-4 h-4 mr-2" />
