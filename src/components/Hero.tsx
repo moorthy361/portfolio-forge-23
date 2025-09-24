@@ -58,7 +58,7 @@ const Hero = () => {
 
           {/* Features Preview */}
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="card-glass p-6 text-center">
+            <div className="p-6 text-center rounded-xl border border-white/20" style={{background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)'}}>
               <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Sparkles className="w-6 h-6 text-primary-light" />
               </div>
@@ -66,7 +66,7 @@ const Hero = () => {
               <p className="text-white/80 text-sm">Fill in your details and get a beautiful portfolio instantly</p>
             </div>
             
-            <div className="card-glass p-6 text-center">
+            <div className="p-6 text-center rounded-xl border border-white/20" style={{background: 'linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%)'}}>
               <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-secondary-light font-bold">📱</span>
               </div>
@@ -74,7 +74,7 @@ const Hero = () => {
               <p className="text-white/80 text-sm">Responsive design that looks perfect on all devices</p>
             </div>
             
-            <div className="card-glass p-6 text-center">
+            <div className="p-6 text-center rounded-xl border border-white/20" style={{background: 'linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%)'}}>
               <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-accent-light font-bold">⚡</span>
               </div>
