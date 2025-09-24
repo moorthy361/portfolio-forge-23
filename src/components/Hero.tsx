@@ -59,24 +59,24 @@ const Hero = () => {
           {/* Features Preview */}
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="card-glass p-6 text-center">
-              <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-6 h-6 text-accent-light" />
+              <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-6 h-6 text-primary-light" />
               </div>
               <h3 className="text-white font-semibold mb-2">Auto-Generated</h3>
               <p className="text-white/80 text-sm">Fill in your details and get a beautiful portfolio instantly</p>
             </div>
             
             <div className="card-glass p-6 text-center">
-              <div className="w-12 h-12 bg-primary-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <span className="text-primary-light font-bold">📱</span>
+              <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <span className="text-secondary-light font-bold">📱</span>
               </div>
               <h3 className="text-white font-semibold mb-2">Mobile-First</h3>
               <p className="text-white/80 text-sm">Responsive design that looks perfect on all devices</p>
             </div>
             
             <div className="card-glass p-6 text-center">
-              <div className="w-12 h-12 bg-success/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <span className="text-success font-bold">⚡</span>
+              <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <span className="text-accent-light font-bold">⚡</span>
               </div>
               <h3 className="text-white font-semibold mb-2">PDF Export</h3>
               <p className="text-white/80 text-sm">Download your portfolio as a professional PDF</p>
