@@ -62,24 +62,24 @@ const Hero = () => {
               <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Sparkles className="w-6 h-6 text-primary-light" />
               </div>
-              <h3 className="text-white font-semibold mb-2">Auto-Generated</h3>
-              <p className="text-white/80 text-sm">Fill in your details and get a beautiful portfolio instantly</p>
+              <h3 className="font-semibold mb-2" style={{color: '#1a237e'}}>Auto-Generated</h3>
+              <p className="text-sm" style={{color: '#424242'}}>Fill in your details and get a beautiful portfolio instantly</p>
             </div>
             
             <div className="p-6 text-center rounded-xl border border-white/20" style={{background: 'linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%)'}}>
               <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-secondary-light font-bold">📱</span>
               </div>
-              <h3 className="text-white font-semibold mb-2">Mobile-First</h3>
-              <p className="text-white/80 text-sm">Responsive design that looks perfect on all devices</p>
+              <h3 className="font-semibold mb-2" style={{color: '#1a237e'}}>Mobile-First</h3>
+              <p className="text-sm" style={{color: '#424242'}}>Responsive design that looks perfect on all devices</p>
             </div>
             
             <div className="p-6 text-center rounded-xl border border-white/20" style={{background: 'linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%)'}}>
               <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-accent-light font-bold">⚡</span>
               </div>
-              <h3 className="text-white font-semibold mb-2">PDF Export</h3>
-              <p className="text-white/80 text-sm">Download your portfolio as a professional PDF</p>
+              <h3 className="font-semibold mb-2" style={{color: '#1a237e'}}>PDF Export</h3>
+              <p className="text-sm" style={{color: '#424242'}}>Download your portfolio as a professional PDF</p>
             </div>
           </div>
         </div>
