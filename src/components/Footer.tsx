@@ -20,8 +20,10 @@ const Footer = () => {
               <Button variant="secondary" size="sm">
                 Start Creating
               </Button>
-              <Button variant="outline" size="sm" className="border-primary-foreground/20 text-accent-light hover:bg-primary-foreground hover:text-primary">
-                View Examples
+              <Button variant="outline" size="sm" className="border-primary-foreground/20 text-accent-light hover:bg-primary-foreground hover:text-primary" asChild>
+                <a href="#examples">
+                  View Examples
+                </a>
               </Button>
             </div>
           </div>
