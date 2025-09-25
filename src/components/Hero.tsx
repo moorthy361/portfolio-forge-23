@@ -44,10 +44,12 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="btn-hero text-lg px-8 py-4">
-              <User className="w-5 h-5 mr-2" />
-              Start Creating
-              <ArrowRight className="w-5 h-5 ml-2" />
+            <Button size="lg" className="btn-hero text-lg px-8 py-4" asChild>
+              <a href="/create-portfolio">
+                <User className="w-5 h-5 mr-2" />
+                Create Your Portfolio
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </a>
             </Button>
             
             <Button size="lg" variant="outline" className="btn-outline-hero text-lg px-8 py-4 text-accent-light border-white hover:bg-white hover:text-primary" asChild>
