@@ -74,26 +74,25 @@ const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2 text-foreground hover:text-primary">
-                    <Avatar className="w-8 h-8">
+                  <Button variant="ghost" size="icon" className="rounded-full p-0 w-10 h-10">
+                    <Avatar className="w-10 h-10">
                       <AvatarFallback className="bg-primary text-primary-foreground text-sm">
                         {getUserInitials(user.email)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden lg:block">{user.email}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem asChild>
-                    <Link to="/history">
-                      <History className="w-4 h-4 mr-2" />
-                      View History
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
                     <Link to="/dashboard">
                       <Settings className="w-4 h-4 mr-2" />
                       Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/history">
+                      <History className="w-4 h-4 mr-2" />
+                      History
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
