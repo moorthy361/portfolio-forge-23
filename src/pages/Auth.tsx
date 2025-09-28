@@ -20,7 +20,14 @@ const Auth = () => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate("/");
+        // Check if there's a redirect destination
+        const redirectTo = sessionStorage.getItem('redirectAfterAuth');
+        if (redirectTo) {
+          sessionStorage.removeItem('redirectAfterAuth');
+          navigate(redirectTo);
+        } else {
+          navigate("/");
+        }
       }
     };
     checkUser();
@@ -85,7 +92,15 @@ const Auth = () => {
           title: "Login Successful!",
           description: "Welcome back!",
         });
-        navigate("/");
+        
+        // Check if there's a redirect destination
+        const redirectTo = sessionStorage.getItem('redirectAfterAuth');
+        if (redirectTo) {
+          sessionStorage.removeItem('redirectAfterAuth');
+          navigate(redirectTo);
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       toast({

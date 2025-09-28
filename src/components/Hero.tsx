@@ -1,8 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, Sparkles, User } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-portfolio.jpg";
 
 const Hero = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleCreatePortfolio = () => {
+    if (user) {
+      // User is logged in, go directly to portfolio creation
+      navigate('/create-portfolio');
+    } else {
+      // User not logged in, redirect to auth with intended destination
+      sessionStorage.setItem('redirectAfterAuth', '/create-portfolio');
+      navigate('/auth');
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
@@ -44,12 +60,15 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="btn-hero text-lg px-8 py-4" asChild>
-              <a href="/create-portfolio">
-                <User className="w-5 h-5 mr-2" />
-                Create Your Portfolio
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </a>
+            <Button 
+              size="lg" 
+              className="btn-hero text-lg px-8 py-4" 
+              onClick={handleCreatePortfolio}
+              disabled={loading}
+            >
+              <User className="w-5 h-5 mr-2" />
+              {loading ? "Loading..." : "Create Your Portfolio"}
+              <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             
             <Button size="lg" variant="outline" className="btn-outline-hero text-lg px-8 py-4 text-accent-light border-white hover:bg-white hover:text-primary" asChild>
