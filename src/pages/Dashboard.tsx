@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { User } from "@supabase/supabase-js";
+import { Home } from "lucide-react";
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -67,7 +68,13 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gradient">Portfolio Dashboard</h1>
+          <div className="flex items-center gap-4">
+            <Button variant="outline" onClick={() => navigate("/")} className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Back to Home
+            </Button>
+            <h1 className="text-2xl font-bold text-gradient">Portfolio Dashboard</h1>
+          </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
               Welcome, {user?.email}
