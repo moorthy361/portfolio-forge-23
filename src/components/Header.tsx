@@ -64,9 +64,6 @@ const Header = () => {
             <a href="#examples" className="text-foreground hover:text-primary transition-colors">
               Examples
             </a>
-            <a href="#pricing" className="text-foreground hover:text-primary transition-colors">
-              Pricing
-            </a>
           </nav>
 
           {/* Desktop Actions */}
@@ -148,13 +145,6 @@ const Header = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Examples
-              </a>
-              <a
-                href="#pricing"
-                className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Pricing
               </a>
               <div className="pt-4 pb-3 border-t border-border">
                 <div className="flex items-center px-3 space-y-2 flex-col">
