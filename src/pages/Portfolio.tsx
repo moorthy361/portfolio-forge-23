@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 
 interface PortfolioData {
+  username?: string;
   fullName: string;
   profilePhoto: File | null;
   bio: string;
@@ -32,17 +33,40 @@ interface PortfolioData {
     github: string;
     website: string;
   };
+  createdAt?: string;
 }
 
 const Portfolio = () => {
   const navigate = useNavigate();
+  const { username } = useParams();
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string>('');
+  const [isOwnPortfolio, setIsOwnPortfolio] = useState(false);
 
   useEffect(() => {
-    const storedData = localStorage.getItem('portfolioData');
-    if (storedData) {
-      const data = JSON.parse(storedData);
+    let data = null;
+    
+    if (username) {
+      // Load specific portfolio by username
+      const portfolios = JSON.parse(localStorage.getItem('portfolios') || '{}');
+      data = portfolios[username];
+      
+      // Check if this is the current user's portfolio
+      const currentPortfolio = localStorage.getItem('portfolioData');
+      if (currentPortfolio) {
+        const currentData = JSON.parse(currentPortfolio);
+        setIsOwnPortfolio(currentData.username === username);
+      }
+    } else {
+      // Load current user's portfolio
+      const storedData = localStorage.getItem('portfolioData');
+      if (storedData) {
+        data = JSON.parse(storedData);
+        setIsOwnPortfolio(true);
+      }
+    }
+
+    if (data) {
       setPortfolioData(data);
       
       // Convert profile photo to URL if it exists
@@ -53,11 +77,11 @@ const Portfolio = () => {
         // Cleanup URL when component unmounts
         return () => URL.revokeObjectURL(url);
       }
-    } else {
-      // If no portfolio data, redirect to create page
+    } else if (!username) {
+      // Only redirect if no username provided and no data found
       navigate('/create-portfolio');
     }
-  }, [navigate]);
+  }, [navigate, username]);
 
   const handleEdit = () => {
     navigate('/create-portfolio');
@@ -72,8 +96,18 @@ const Portfolio = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Loading your portfolio...</h2>
-          <p className="text-muted-foreground">If this takes too long, please create a new portfolio.</p>
+          <h2 className="text-2xl font-bold mb-4">
+            {username ? "Portfolio not found" : "Loading your portfolio..."}
+          </h2>
+          <p className="text-muted-foreground">
+            {username 
+              ? "This portfolio doesn't exist or has been removed." 
+              : "If this takes too long, please create a new portfolio."
+            }
+          </p>
+          <Button onClick={() => navigate('/')} className="mt-4">
+            Back to Home
+          </Button>
         </div>
       </div>
     );
@@ -84,14 +118,30 @@ const Portfolio = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Action buttons */}
         <div className="flex justify-center gap-4 mb-8">
-          <Button onClick={handleEdit} variant="outline">
-            <Edit className="h-4 w-4 mr-2" />
-            Edit Portfolio
-          </Button>
-          <Button onClick={handleDownload} variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Download PDF
-          </Button>
+          {isOwnPortfolio && (
+            <>
+              <Button onClick={handleEdit} variant="outline">
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Portfolio
+              </Button>
+              <Button onClick={handleDownload} variant="outline">
+                <Download className="h-4 w-4 mr-2" />
+                Download PDF
+              </Button>
+            </>
+          )}
+          {username && (
+            <Button 
+              onClick={() => {
+                const portfolioUrl = `${window.location.origin}/portfolio/${username}`;
+                navigator.clipboard.writeText(portfolioUrl);
+                // You could add a toast notification here
+              }} 
+              variant="outline"
+            >
+              Copy Share Link
+            </Button>
+          )}
           <Button onClick={() => navigate('/')}>
             Back to Home
           </Button>

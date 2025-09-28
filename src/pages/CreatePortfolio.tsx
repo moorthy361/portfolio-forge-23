@@ -131,6 +131,19 @@ const CreatePortfolio = () => {
     setFormData({ ...formData, achievements: updatedAchievements });
   };
 
+  const generateUsername = (fullName: string): string => {
+    // Generate a clean username from full name
+    const baseUsername = fullName
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')
+      .replace(/\s+/g, '-')
+      .substring(0, 20);
+    
+    // Add timestamp to ensure uniqueness
+    const timestamp = Date.now().toString().slice(-6);
+    return `${baseUsername}-${timestamp}`;
+  };
+
   const handleSubmit = () => {
     // Validate required fields
     if (!formData.fullName || !formData.bio || !formData.contact.email) {
@@ -142,16 +155,36 @@ const CreatePortfolio = () => {
       return;
     }
 
-    // Store form data in localStorage for the portfolio page
-    localStorage.setItem('portfolioData', JSON.stringify(formData));
+    const username = generateUsername(formData.fullName);
+    
+    const portfolioData = {
+      username,
+      fullName: formData.fullName,
+      profilePhoto: formData.profilePhoto,
+      bio: formData.bio,
+      education: formData.education,
+      skills: formData.skills,
+      projects: formData.projects,
+      achievements: formData.achievements,
+      contact: formData.contact,
+      createdAt: new Date().toISOString()
+    };
+
+    // Store the portfolio data with unique identifier
+    const existingPortfolios = JSON.parse(localStorage.getItem('portfolios') || '{}');
+    existingPortfolios[username] = portfolioData;
+    localStorage.setItem('portfolios', JSON.stringify(existingPortfolios));
+    
+    // Also store current user's portfolio for quick access
+    localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
     
     toast({
       title: "Portfolio created successfully!",
-      description: "Redirecting to your new portfolio...",
+      description: `Your portfolio is now available at /portfolio/${username}`,
     });
 
-    // Navigate to the generated portfolio
-    navigate('/portfolio');
+    // Navigate to the unique portfolio URL
+    navigate(`/portfolio/${username}`);
   };
 
   const renderStep = () => {
