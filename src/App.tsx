@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import History from "./pages/History";
 import CreatePortfolio from "./pages/CreatePortfolio";
 import Portfolio from "./pages/Portfolio";
+import PortfolioSetup from "./pages/PortfolioSetup";
+import MyPortfolio from "./pages/MyPortfolio";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/create-portfolio" element={<CreatePortfolio />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/portfolio/:username" element={<Portfolio />} />
+            <Route path="/portfolio-setup" element={<PortfolioSetup />} />
+            <Route path="/my-portfolio" element={<MyPortfolio />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

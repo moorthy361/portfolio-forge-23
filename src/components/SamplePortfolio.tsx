@@ -16,7 +16,11 @@ import {
 } from "lucide-react";
 import sampleProfile from "@/assets/sample-profile.jpg";
 
-const SamplePortfolio = () => {
+interface SamplePortfolioProps {
+  handleGetStarted: () => void;
+}
+
+const SamplePortfolio = ({ handleGetStarted }: SamplePortfolioProps) => {
   const skills = [
     "JavaScript", "React", "Node.js", "Python", "TypeScript", 
     "AWS", "Docker", "MongoDB", "PostgreSQL", "Git"
@@ -235,7 +239,11 @@ const SamplePortfolio = () => {
             <p className="text-muted-foreground mb-6">
               Join thousands of professionals who have already created their stunning portfolios
             </p>
-            <Button size="lg" className="btn-hero">
+            <Button 
+              size="lg" 
+              className="btn-hero"
+              onClick={handleGetStarted}
+            >
               Start Building Your Portfolio
             </Button>
           </div>

@@ -4,17 +4,21 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-portfolio.jpg";
 
-const Hero = () => {
+interface HeroProps {
+  handleGetStarted: () => void;
+}
+
+const Hero = ({ handleGetStarted }: HeroProps) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleCreatePortfolio = () => {
     if (user) {
-      // User is logged in, go directly to portfolio creation
-      navigate('/create-portfolio');
+      // User is logged in, go directly to portfolio setup
+      navigate('/portfolio-setup');
     } else {
       // User not logged in, redirect to auth with intended destination
-      sessionStorage.setItem('redirectAfterAuth', '/create-portfolio');
+      sessionStorage.setItem('redirectAfterAuth', '/portfolio-setup');
       navigate('/auth');
     }
   };
@@ -63,7 +67,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="btn-hero text-lg px-8 py-4" 
-              onClick={handleCreatePortfolio}
+              onClick={handleGetStarted}
               disabled={loading}
             >
               <User className="w-5 h-5 mr-2" />
