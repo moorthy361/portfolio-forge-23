@@ -69,8 +69,8 @@ const Portfolio = () => {
     if (data) {
       setPortfolioData(data);
       
-      // Convert profile photo to URL if it exists
-      if (data.profilePhoto) {
+      // Convert profile photo to URL if it exists and is a valid File/Blob
+      if (data.profilePhoto && data.profilePhoto instanceof File) {
         const url = URL.createObjectURL(data.profilePhoto);
         setProfileImageUrl(url);
         
