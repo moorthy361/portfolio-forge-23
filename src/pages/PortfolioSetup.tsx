@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { X, Plus } from "lucide-react";
 
 interface ProfileData {
+  title: string;
   full_name: string;
   profession: string;
   bio: string;
@@ -51,6 +52,7 @@ const PortfolioSetup = () => {
   const { toast } = useToast();
   
   const [profile, setProfile] = useState<ProfileData>({
+    title: "",
     full_name: "",
     profession: "",
     bio: "",
@@ -103,25 +105,8 @@ const PortfolioSetup = () => {
 
   const loadExistingData = async () => {
     try {
-      // Load profile
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user?.id)
-        .single();
-
-      if (profileData) {
-        setProfile({
-          full_name: profileData.full_name || "",
-          profession: profileData.profession || "",
-          bio: profileData.bio || "",
-          location: profileData.location || "",
-          phone: profileData.phone || "",
-          linkedin_url: profileData.linkedin_url || "",
-          github_url: profileData.github_url || "",
-          website_url: profileData.website_url || "",
-        });
-      }
+      // For now, we'll start with a fresh portfolio creation
+      // Users can load existing portfolios from a management page later
 
       // Load skills
       const { data: skillsData } = await supabase
@@ -246,19 +231,22 @@ const PortfolioSetup = () => {
     
     setIsSubmitting(true);
     try {
-      // Save profile
-      const { error: profileError } = await supabase
+      // Create new portfolio (insert instead of upsert to allow multiple portfolios)
+      const { data: newProfile, error: profileError } = await supabase
         .from("profiles")
-        .upsert({
+        .insert({
           user_id: user.id,
           ...profile,
           email: user.email,
-        });
+        })
+        .select()
+        .single();
 
       if (profileError) throw profileError;
+      
+      const profileId = newProfile.id;
 
-      // Delete existing skills and add new ones
-      await supabase.from("skills").delete().eq("user_id", user.id);
+      // Add skills for this portfolio
       if (skills.length > 0) {
         const { error: skillsError } = await supabase
           .from("skills")
@@ -267,8 +255,7 @@ const PortfolioSetup = () => {
         if (skillsError) throw skillsError;
       }
 
-      // Delete existing projects and add new ones
-      await supabase.from("projects").delete().eq("user_id", user.id);
+      // Add projects for this portfolio
       if (projects.length > 0) {
         const { error: projectsError } = await supabase
           .from("projects")
@@ -277,8 +264,7 @@ const PortfolioSetup = () => {
         if (projectsError) throw projectsError;
       }
 
-      // Delete existing education and add new ones
-      await supabase.from("education").delete().eq("user_id", user.id);
+      // Add education for this portfolio
       if (education.length > 0) {
         const { error: educationError } = await supabase
           .from("education")
@@ -287,8 +273,7 @@ const PortfolioSetup = () => {
         if (educationError) throw educationError;
       }
 
-      // Delete existing achievements and add new ones
-      await supabase.from("achievements").delete().eq("user_id", user.id);
+      // Add achievements for this portfolio
       if (achievements.length > 0) {
         const { error: achievementsError } = await supabase
           .from("achievements")
@@ -298,11 +283,12 @@ const PortfolioSetup = () => {
       }
 
       toast({
-        title: "Portfolio Saved!",
-        description: "Your portfolio has been successfully created.",
+        title: "Portfolio Created!",
+        description: "Your new portfolio has been successfully created.",
       });
 
-      navigate("/my-portfolio");
+      // Navigate to the newly created portfolio
+      navigate(`/portfolio/${profileId}`);
     } catch (error: any) {
       console.error("Error saving portfolio:", error);
       toast({
@@ -374,6 +360,17 @@ const PortfolioSetup = () => {
               {/* Personal Information */}
               {currentSection === 0 && (
                 <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="title">Portfolio Title *</Label>
+                    <Input
+                      id="title"
+                      value={profile.title}
+                      onChange={(e) => setProfile({ ...profile, title: e.target.value })}
+                      placeholder="e.g., Web Development Portfolio"
+                      required
+                    />
+                  </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="full_name">Full Name *</Label>

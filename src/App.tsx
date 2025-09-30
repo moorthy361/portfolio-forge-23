@@ -33,6 +33,7 @@ const App = () => (
             <Route path="/portfolio/:username" element={<Portfolio />} />
             <Route path="/portfolio-setup" element={<PortfolioSetup />} />
             <Route path="/my-portfolio" element={<MyPortfolio />} />
+            <Route path="/portfolio-view/:id" element={<MyPortfolio />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

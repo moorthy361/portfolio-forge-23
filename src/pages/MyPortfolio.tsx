@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,6 +60,7 @@ interface Achievement {
 const MyPortfolio = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   
   const [profile, setProfile] = useState<Profile | null>(null);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -81,12 +82,27 @@ const MyPortfolio = () => {
 
   const loadPortfolioData = async () => {
     try {
-      // Load profile
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user?.id)
-        .single();
+      let profileData;
+      
+      // If viewing a specific portfolio by ID
+      if (id) {
+        const { data } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", id)
+          .maybeSingle();
+        profileData = data;
+      } else {
+        // Load the most recent profile for this user
+        const { data } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", user?.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        profileData = data;
+      }
 
       if (!profileData) {
         navigate("/portfolio-setup");
@@ -94,12 +110,15 @@ const MyPortfolio = () => {
       }
 
       setProfile(profileData);
+      
+      // Use the profile's user_id for loading related data
+      const portfolioUserId = profileData.user_id;
 
       // Load skills
       const { data: skillsData } = await supabase
         .from("skills")
         .select("*")
-        .eq("user_id", user?.id);
+        .eq("user_id", portfolioUserId);
 
       if (skillsData) {
         setSkills(skillsData);
@@ -109,7 +128,7 @@ const MyPortfolio = () => {
       const { data: projectsData } = await supabase
         .from("projects")
         .select("*")
-        .eq("user_id", user?.id);
+        .eq("user_id", portfolioUserId);
 
       if (projectsData) {
         setProjects(projectsData);
@@ -119,7 +138,7 @@ const MyPortfolio = () => {
       const { data: educationData } = await supabase
         .from("education")
         .select("*")
-        .eq("user_id", user?.id);
+        .eq("user_id", portfolioUserId);
 
       if (educationData) {
         setEducation(educationData);
@@ -129,7 +148,7 @@ const MyPortfolio = () => {
       const { data: achievementsData } = await supabase
         .from("achievements")
         .select("*")
-        .eq("user_id", user?.id);
+        .eq("user_id", portfolioUserId);
 
       if (achievementsData) {
         setAchievements(achievementsData);
