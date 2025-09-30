@@ -12,7 +12,6 @@ import { useToast } from "@/hooks/use-toast";
 import { X, Plus, Home } from "lucide-react";
 
 interface ProfileData {
-  title: string;
   full_name: string;
   profession: string;
   bio: string;
@@ -52,7 +51,6 @@ const PortfolioSetup = () => {
   const { toast } = useToast();
   
   const [profile, setProfile] = useState<ProfileData>({
-    title: "",
     full_name: "",
     profession: "",
     bio: "",
@@ -237,6 +235,7 @@ const PortfolioSetup = () => {
         .insert({
           user_id: user.id,
           ...profile,
+          title: "My Portfolio",
           email: user.email,
         })
         .select()
@@ -370,16 +369,6 @@ const PortfolioSetup = () => {
               {/* Personal Information */}
               {currentSection === 0 && (
                 <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Portfolio Title *</Label>
-                    <Input
-                      id="title"
-                      value={profile.title}
-                      onChange={(e) => setProfile({ ...profile, title: e.target.value })}
-                      placeholder="e.g., Web Development Portfolio"
-                      required
-                    />
-                  </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
