@@ -288,7 +288,7 @@ const PortfolioSetup = () => {
       });
 
       // Navigate to the newly created portfolio
-      navigate(`/portfolio/${profileId}`);
+      navigate(`/portfolio-view/${profileId}`);
     } catch (error: any) {
       console.error("Error saving portfolio:", error);
       toast({
