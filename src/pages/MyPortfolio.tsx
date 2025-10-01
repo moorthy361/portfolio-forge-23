@@ -32,6 +32,7 @@ interface Profile {
   linkedin_url: string;
   github_url: string;
   website_url: string;
+  profile_image_url: string;
 }
 
 interface Skill {
@@ -271,7 +272,16 @@ const MyPortfolio = () => {
               </div>
               
               <div className="grid md:grid-cols-2 gap-8 items-start">
-                <div>
+                <div className="space-y-6">
+                  {profile.profile_image_url && (
+                    <div className="flex justify-center md:justify-start">
+                      <img
+                        src={profile.profile_image_url}
+                        alt={profile.full_name}
+                        className="w-48 h-48 rounded-lg object-cover shadow-lg"
+                      />
+                    </div>
+                  )}
                   <p className="text-lg text-muted-foreground leading-relaxed">
                     {profile.bio}
                   </p>

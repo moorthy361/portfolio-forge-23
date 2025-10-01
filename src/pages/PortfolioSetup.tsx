@@ -61,6 +61,9 @@ const PortfolioSetup = () => {
     website_url: "",
   });
   
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<string>("");
+  
   const [skills, setSkills] = useState<Skill[]>([]);
   const [newSkill, setNewSkill] = useState("");
   
@@ -145,6 +148,22 @@ const PortfolioSetup = () => {
       if (achievementsData) {
         setAchievements(achievementsData);
       }
+      
+      // Load profile to get existing profile image
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", user?.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (profileData) {
+        setProfile(profileData);
+        if (profileData.profile_image_url) {
+          setProfileImagePreview(profileData.profile_image_url);
+        }
+      }
     } catch (error) {
       console.error("Error loading existing data:", error);
     }
@@ -224,17 +243,59 @@ const PortfolioSetup = () => {
     setAchievements(achievements.filter((_, i) => i !== index));
   };
 
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const savePortfolio = async () => {
     if (!user) return;
     
     setIsSubmitting(true);
     try {
+      let profileImageUrl = "";
+
+      // Upload profile image if one was selected
+      if (profileImage) {
+        const fileExt = profileImage.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('profile-images')
+          .upload(fileName, profileImage, { upsert: true });
+
+        if (uploadError) {
+          console.error("Error uploading image:", uploadError);
+          toast({
+            title: "Error",
+            description: "Failed to upload profile image",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+          return;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('profile-images')
+          .getPublicUrl(fileName);
+
+        profileImageUrl = publicUrl;
+      }
+      
       // Create new portfolio (insert instead of upsert to allow multiple portfolios)
       const { data: newProfile, error: profileError } = await supabase
         .from("profiles")
         .insert({
           user_id: user.id,
           ...profile,
+          profile_image_url: profileImageUrl,
           title: "My Portfolio",
           email: user.email,
         })
@@ -369,6 +430,25 @@ const PortfolioSetup = () => {
               {/* Personal Information */}
               {currentSection === 0 && (
                 <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="profileImage">Profile Photo</Label>
+                    <div className="flex items-center gap-4 mt-2">
+                      {profileImagePreview && (
+                        <img
+                          src={profileImagePreview}
+                          alt="Profile preview"
+                          className="w-20 h-20 rounded-full object-cover"
+                        />
+                      )}
+                      <Input
+                        id="profileImage"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfileImageChange}
+                        className="flex-1"
+                      />
+                    </div>
+                  </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
