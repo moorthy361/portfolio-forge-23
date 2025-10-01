@@ -92,11 +92,7 @@ const Features = () => {
 
         {/* Stats Section */}
         <div className="mt-20 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-2xl p-8 md:p-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            <div className="animate-fade-in">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">10K+</div>
-              <div className="text-muted-foreground">Portfolios Created</div>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div className="animate-fade-in">
               <div className="text-3xl md:text-4xl font-bold text-secondary mb-2">95%</div>
               <div className="text-muted-foreground">User Satisfaction</div>
