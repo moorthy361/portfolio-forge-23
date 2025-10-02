@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogIn, LogOut, History, Settings } from "lucide-react";
+import { Menu, X, User, LogIn, LogOut, History } from "lucide-react";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -81,12 +81,6 @@ const Header = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem asChild>
-                    <Link to="/dashboard">
-                      <Settings className="w-4 h-4 mr-2" />
-                      Dashboard
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
                     <Link to="/history">
                       <History className="w-4 h-4 mr-2" />
                       History
@@ -164,12 +158,6 @@ const Header = () => {
                         <Link to="/history" onClick={() => setIsMenuOpen(false)}>
                           <History className="w-4 h-4 mr-2" />
                           View History
-                        </Link>
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start text-foreground" asChild>
-                        <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
-                          <Settings className="w-4 h-4 mr-2" />
-                          Dashboard
                         </Link>
                       </Button>
                       <Button 
