@@ -289,49 +289,24 @@ const PortfolioSetup = () => {
         profileImageUrl = publicUrl;
       }
       
-      // Check if profile already exists for this user
-      const { data: existingProfile } = await supabase
+      // Upsert profile (insert or update if user_id already exists)
+      const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+        .upsert({
+          user_id: user.id,
+          ...profile,
+          profile_image_url: profileImageUrl,
+          title: "My Portfolio",
+          email: user.email,
+        }, {
+          onConflict: 'user_id'
+        })
+        .select()
+        .single();
 
-      let profileId: string;
-
-      if (existingProfile) {
-        // Update existing profile
-        const { data: updatedProfile, error: profileError } = await supabase
-          .from("profiles")
-          .update({
-            ...profile,
-            profile_image_url: profileImageUrl,
-            title: "My Portfolio",
-            email: user.email,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("user_id", user.id)
-          .select()
-          .single();
-
-        if (profileError) throw profileError;
-        profileId = updatedProfile.id;
-      } else {
-        // Insert new profile
-        const { data: newProfile, error: profileError } = await supabase
-          .from("profiles")
-          .insert({
-            user_id: user.id,
-            ...profile,
-            profile_image_url: profileImageUrl,
-            title: "My Portfolio",
-            email: user.email,
-          })
-          .select()
-          .single();
-
-        if (profileError) throw profileError;
-        profileId = newProfile.id;
-      }
+      if (profileError) throw profileError;
+      
+      const profileId = profileData.id;
 
       // Add skills for this portfolio
       if (skills.length > 0) {
