@@ -220,17 +220,15 @@ const PortfolioSetup = () => {
         profileImageUrl = publicUrl;
       }
       
-      // Upsert profile (insert or update if user_id already exists)
+      // Insert new profile (always create a new portfolio for this user)
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .upsert({
+        .insert({
           user_id: user.id,
           ...profile,
           profile_image_url: profileImageUrl,
           title: "My Portfolio",
           email: user.email,
-        }, {
-          onConflict: 'user_id'
         })
         .select()
         .single();
