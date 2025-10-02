@@ -96,78 +96,9 @@ const PortfolioSetup = () => {
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
-      return;
-    }
-
-    if (user) {
-      loadExistingData();
     }
   }, [user, loading, navigate]);
 
-  const loadExistingData = async () => {
-    try {
-      // For now, we'll start with a fresh portfolio creation
-      // Users can load existing portfolios from a management page later
-
-      // Load skills
-      const { data: skillsData } = await supabase
-        .from("skills")
-        .select("*")
-        .eq("user_id", user?.id);
-
-      if (skillsData) {
-        setSkills(skillsData);
-      }
-
-      // Load projects
-      const { data: projectsData } = await supabase
-        .from("projects")
-        .select("*")
-        .eq("user_id", user?.id);
-
-      if (projectsData) {
-        setProjects(projectsData);
-      }
-
-      // Load education
-      const { data: educationData } = await supabase
-        .from("education")
-        .select("*")
-        .eq("user_id", user?.id);
-
-      if (educationData) {
-        setEducation(educationData);
-      }
-
-      // Load achievements
-      const { data: achievementsData } = await supabase
-        .from("achievements")
-        .select("*")
-        .eq("user_id", user?.id);
-
-      if (achievementsData) {
-        setAchievements(achievementsData);
-      }
-      
-      // Load profile to get existing profile image
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user?.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (profileData) {
-        setProfile(profileData);
-        if (profileData.profile_image_url) {
-          setProfileImagePreview(profileData.profile_image_url);
-        }
-      }
-    } catch (error) {
-      console.error("Error loading existing data:", error);
-    }
-  };
 
   const addSkill = () => {
     if (newSkill.trim()) {
