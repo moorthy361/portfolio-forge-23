@@ -18,8 +18,6 @@ interface ProfileData {
   location: string;
   phone: string;
   linkedin_url: string;
-  github_url: string;
-  website_url: string;
 }
 
 interface Skill {
@@ -57,8 +55,6 @@ const PortfolioSetup = () => {
     location: "",
     phone: "",
     linkedin_url: "",
-    github_url: "",
-    website_url: "",
   });
   
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -437,34 +433,14 @@ const PortfolioSetup = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <Label htmlFor="linkedin_url">LinkedIn URL</Label>
-                      <Input
-                        id="linkedin_url"
-                        value={profile.linkedin_url}
-                        onChange={(e) => setProfile({ ...profile, linkedin_url: e.target.value })}
-                        placeholder="https://linkedin.com/in/..."
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="github_url">GitHub URL</Label>
-                      <Input
-                        id="github_url"
-                        value={profile.github_url}
-                        onChange={(e) => setProfile({ ...profile, github_url: e.target.value })}
-                        placeholder="https://github.com/..."
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="website_url">Website URL</Label>
-                      <Input
-                        id="website_url"
-                        value={profile.website_url}
-                        onChange={(e) => setProfile({ ...profile, website_url: e.target.value })}
-                        placeholder="https://yourwebsite.com"
-                      />
-                    </div>
+                  <div>
+                    <Label htmlFor="linkedin_url">LinkedIn URL</Label>
+                    <Input
+                      id="linkedin_url"
+                      value={profile.linkedin_url}
+                      onChange={(e) => setProfile({ ...profile, linkedin_url: e.target.value })}
+                      placeholder="https://linkedin.com/in/..."
+                    />
                   </div>
                 </div>
               )}
