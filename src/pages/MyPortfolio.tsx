@@ -207,11 +207,12 @@ const MyPortfolio = () => {
               </h1>
               <div className="hidden md:flex space-x-6">
                 <a href="#home" className="text-foreground hover:text-primary transition-colors">Home</a>
-                <a href="#about" className="text-foreground hover:text-primary transition-colors">About</a>
-                <a href="#projects" className="text-foreground hover:text-primary transition-colors">Projects</a>
-                <a href="#skills" className="text-foreground hover:text-primary transition-colors">Skills</a>
-                <a href="#education" className="text-foreground hover:text-primary transition-colors">Education</a>
-                <a href="#contact" className="text-foreground hover:text-primary transition-colors">Contact</a>
+                {profile.bio && <a href="#about" className="text-foreground hover:text-primary transition-colors">About</a>}
+                {projects.length > 0 && <a href="#projects" className="text-foreground hover:text-primary transition-colors">Projects</a>}
+                {skills.length > 0 && <a href="#skills" className="text-foreground hover:text-primary transition-colors">Skills</a>}
+                {education.length > 0 && <a href="#education" className="text-foreground hover:text-primary transition-colors">Education</a>}
+                {achievements.length > 0 && <a href="#achievements" className="text-foreground hover:text-primary transition-colors">Achievements</a>}
+                {profile.email && <a href="#contact" className="text-foreground hover:text-primary transition-colors">Contact</a>}
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -263,91 +264,98 @@ const MyPortfolio = () => {
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-20">
-          <Card className="card-elevated max-w-6xl mx-auto">
-            <CardContent className="p-8 md:p-12">
-              <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold mb-4">About Me</h2>
-                <div className="w-24 h-1 bg-primary mx-auto mb-8"></div>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-8 items-start">
-                <div className="space-y-6">
-                  {profile.profile_image_url && (
-                    <div className="flex justify-center md:justify-start">
+        {profile.bio && (
+          <section id="about" className="py-20">
+            <Card className="card-elevated max-w-6xl mx-auto">
+              <CardContent className="p-8 md:p-12">
+                <div className="text-center mb-12">
+                  <h2 className="text-4xl font-bold mb-4">About Me</h2>
+                  <div className="w-24 h-1 bg-primary mx-auto mb-8"></div>
+                </div>
+                
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                  {/* Left side - Profile image and email */}
+                  <div className="flex flex-col items-center md:items-start space-y-4">
+                    {profile.profile_image_url && (
                       <img
                         src={profile.profile_image_url}
                         alt={profile.full_name}
                         className="w-48 h-48 rounded-lg object-cover shadow-lg"
                       />
-                    </div>
-                  )}
-                  <p className="text-lg text-muted-foreground leading-relaxed">
-                    {profile.bio}
-                  </p>
-                </div>
-                
-                <div className="space-y-4">
-                  {profile.location && (
-                    <div className="flex items-center gap-3">
-                      <MapPin className="h-5 w-5 text-primary" />
-                      <span>{profile.location}</span>
-                    </div>
-                  )}
-                  {profile.email && (
-                    <div className="flex items-center gap-3">
-                      <Mail className="h-5 w-5 text-primary" />
-                      <a href={`mailto:${profile.email}`} className="hover:text-primary transition-colors">
-                        {profile.email}
-                      </a>
-                    </div>
-                  )}
-                  {profile.phone && (
-                    <div className="flex items-center gap-3">
-                      <Phone className="h-5 w-5 text-primary" />
-                      <a href={`tel:${profile.phone}`} className="hover:text-primary transition-colors">
-                        {profile.phone}
-                      </a>
-                    </div>
-                  )}
-                  
-                  <div className="flex gap-4 pt-4">
-                    {profile.linkedin_url && (
-                      <a 
-                        href={profile.linkedin_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
-                      >
-                        <Linkedin className="h-5 w-5 text-primary" />
-                      </a>
                     )}
-                    {profile.github_url && (
-                      <a 
-                        href={profile.github_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
-                      >
-                        <Github className="h-5 w-5 text-primary" />
-                      </a>
-                    )}
-                    {profile.website_url && (
-                      <a 
-                        href={profile.website_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
-                      >
-                        <Globe className="h-5 w-5 text-primary" />
-                      </a>
+                    {profile.email && (
+                      <div className="flex items-center gap-3">
+                        <Mail className="h-5 w-5 text-primary" />
+                        <a href={`mailto:${profile.email}`} className="hover:text-primary transition-colors">
+                          {profile.email}
+                        </a>
+                      </div>
                     )}
                   </div>
+                  
+                  {/* Right side - Bio and other contact details */}
+                  <div className="flex-1 space-y-6">
+                    <p className="text-lg text-muted-foreground leading-relaxed">
+                      {profile.bio}
+                    </p>
+                    
+                    <div className="space-y-4">
+                      {profile.location && (
+                        <div className="flex items-center gap-3">
+                          <MapPin className="h-5 w-5 text-primary" />
+                          <span>{profile.location}</span>
+                        </div>
+                      )}
+                      {profile.phone && (
+                        <div className="flex items-center gap-3">
+                          <Phone className="h-5 w-5 text-primary" />
+                          <a href={`tel:${profile.phone}`} className="hover:text-primary transition-colors">
+                            {profile.phone}
+                          </a>
+                        </div>
+                      )}
+                      
+                      {(profile.linkedin_url || profile.github_url || profile.website_url) && (
+                        <div className="flex gap-4 pt-4">
+                          {profile.linkedin_url && (
+                            <a 
+                              href={profile.linkedin_url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
+                            >
+                              <Linkedin className="h-5 w-5 text-primary" />
+                            </a>
+                          )}
+                          {profile.github_url && (
+                            <a 
+                              href={profile.github_url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
+                            >
+                              <Github className="h-5 w-5 text-primary" />
+                            </a>
+                          )}
+                          {profile.website_url && (
+                            <a 
+                              href={profile.website_url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
+                            >
+                              <Globe className="h-5 w-5 text-primary" />
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+              </CardContent>
+            </Card>
+          </section>
+        )}
 
         {/* Projects Section */}
         {projects.length > 0 && (
