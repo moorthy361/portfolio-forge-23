@@ -5,7 +5,35 @@ export interface HistoryEntry {
   path: string;
   title: string;
   timestamp: Date;
+  isPortfolio?: boolean;
 }
+
+export const addPortfolioToHistory = (portfolioId: string, userName: string) => {
+  const HISTORY_KEY = 'portfolio_browsing_history';
+  const MAX_HISTORY_ENTRIES = 50;
+
+  try {
+    const savedHistory = localStorage.getItem(HISTORY_KEY);
+    const existingHistory = savedHistory 
+      ? JSON.parse(savedHistory).map((entry: any) => ({
+          ...entry,
+          timestamp: new Date(entry.timestamp)
+        }))
+      : [];
+
+    const newEntry: HistoryEntry = {
+      path: `/portfolio-view/${portfolioId}`,
+      title: `Portfolio for ${userName}`,
+      timestamp: new Date(),
+      isPortfolio: true
+    };
+
+    const updatedHistory = [newEntry, ...existingHistory].slice(0, MAX_HISTORY_ENTRIES);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(updatedHistory));
+  } catch (error) {
+    console.error('Failed to add portfolio to history:', error);
+  }
+};
 
 const HISTORY_KEY = 'portfolio_browsing_history';
 const MAX_HISTORY_ENTRIES = 50;

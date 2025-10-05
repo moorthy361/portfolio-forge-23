@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { addPortfolioToHistory } from "@/hooks/useBrowsingHistory";
 import { X, Plus, Home } from "lucide-react";
 
 interface ProfileData {
@@ -268,6 +269,9 @@ const PortfolioSetup = () => {
         
         if (achievementsError) throw achievementsError;
       }
+
+      // Add to browsing history
+      addPortfolioToHistory(profileId, profile.full_name);
 
       toast({
         title: "Portfolio Created!",

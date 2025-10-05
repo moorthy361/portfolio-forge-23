@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, Trash2, ArrowLeft } from 'lucide-react';
+import { Clock, Trash2, ArrowLeft, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBrowsingHistory } from '@/hooks/useBrowsingHistory';
@@ -113,17 +113,31 @@ const History = () => {
 
               <div className="space-y-3">
                 {history.map((entry, index) => (
-                  <Card key={`${entry.path}-${entry.timestamp.getTime()}`} className="card-elevated hover:shadow-md transition-shadow">
+                  <Card key={`${entry.path}-${entry.timestamp.getTime()}`} className={`card-elevated hover:shadow-md transition-all ${entry.isPortfolio ? 'border-primary/20 bg-primary/5' : ''}`}>
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <Link 
-                            to={entry.path}
-                            className="block hover:text-primary transition-colors"
-                          >
-                            <h3 className="font-medium text-foreground">{entry.title}</h3>
-                            <p className="text-sm text-muted-foreground">{entry.path}</p>
-                          </Link>
+                        <div className="flex-1 flex items-start gap-3">
+                          {entry.isPortfolio && (
+                            <div className="mt-1">
+                              <Briefcase className="w-5 h-5 text-primary" />
+                            </div>
+                          )}
+                          <div className="flex-1">
+                            <Link 
+                              to={entry.path}
+                              className="block group"
+                            >
+                              <h3 className="font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
+                                {entry.title}
+                                {entry.isPortfolio && (
+                                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                    Portfolio
+                                  </span>
+                                )}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">{entry.path}</p>
+                            </Link>
+                          </div>
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-medium text-foreground">
