@@ -49,6 +49,41 @@ const CreatePortfolio = () => {
 
   const [newSkill, setNewSkill] = useState('');
 
+  // Full state reset on component mount
+  React.useEffect(() => {
+    // Clear all localStorage related to portfolio editing
+    localStorage.removeItem('portfolioData');
+    localStorage.removeItem('currentPortfolio');
+    localStorage.removeItem('portfolioDraft');
+    localStorage.removeItem('portfolioForm');
+    
+    // Clear all sessionStorage related to portfolio
+    sessionStorage.removeItem('portfolioData');
+    sessionStorage.removeItem('currentPortfolio');
+    sessionStorage.removeItem('portfolioDraft');
+    sessionStorage.removeItem('portfolioForm');
+    
+    // Reset form to empty state
+    setFormData({
+      fullName: '',
+      profilePhoto: null,
+      bio: '',
+      education: [{ degree: '', institution: '', year: '' }],
+      skills: [],
+      projects: [{ title: '', description: '', link: '' }],
+      achievements: [''],
+      contact: {
+        email: '',
+        phone: '',
+        linkedin: '',
+        github: '',
+        website: '',
+      },
+    });
+    setNewSkill('');
+    setCurrentStep(1);
+  }, []);
+
   const totalSteps = 6;
 
   const handleNext = () => {

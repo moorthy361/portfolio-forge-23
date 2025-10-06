@@ -94,8 +94,20 @@ const PortfolioSetup = () => {
   const [createdPortfolioId, setCreatedPortfolioId] = useState<string>("");
   const [createdPortfolioName, setCreatedPortfolioName] = useState<string>("");
 
-  // Clear all form data when component mounts to ensure fresh start
+  // Full state reset on component mount - clear everything
   useEffect(() => {
+    // Clear all localStorage related to portfolio editing
+    localStorage.removeItem('portfolioData');
+    localStorage.removeItem('currentPortfolio');
+    localStorage.removeItem('portfolioDraft');
+    localStorage.removeItem('portfolioForm');
+    
+    // Clear all sessionStorage related to portfolio
+    sessionStorage.removeItem('portfolioData');
+    sessionStorage.removeItem('currentPortfolio');
+    sessionStorage.removeItem('portfolioDraft');
+    sessionStorage.removeItem('portfolioForm');
+    
     // Reset all state to initial empty values
     setProfile({
       full_name: "",
@@ -131,6 +143,9 @@ const PortfolioSetup = () => {
     });
     setCurrentSection(0);
     setIsSubmitting(false);
+    setShowShareModal(false);
+    setCreatedPortfolioId("");
+    setCreatedPortfolioName("");
   }, []);
 
   useEffect(() => {
