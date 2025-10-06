@@ -21,8 +21,10 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Profile {
+  user_id: string;
   full_name: string;
   profession: string;
   bio: string;
@@ -62,6 +64,7 @@ const MyPortfolio = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { toast } = useToast();
   
   const [profile, setProfile] = useState<Profile | null>(null);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -71,6 +74,13 @@ const MyPortfolio = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // If viewing by ID, allow public access without auth check
+    if (id) {
+      loadPortfolioData();
+      return;
+    }
+    
+    // If accessing without ID, require authentication
     if (!loading && !user) {
       navigate("/auth");
       return;
@@ -79,7 +89,7 @@ const MyPortfolio = () => {
     if (user) {
       loadPortfolioData();
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, id]);
 
   const loadPortfolioData = async () => {
     try {
@@ -216,14 +226,35 @@ const MyPortfolio = () => {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <Button onClick={handleEdit} variant="ghost" size="sm">
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              <Button onClick={handleDownload} variant="ghost" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Download
-              </Button>
+              {id && (
+                <Button 
+                  onClick={() => {
+                    const portfolioUrl = `${window.location.origin}/portfolio-view/${id}`;
+                    navigator.clipboard.writeText(portfolioUrl);
+                    toast({
+                      title: 'Link Copied!',
+                      description: 'Portfolio link copied to clipboard'
+                    });
+                  }} 
+                  variant="outline" 
+                  size="sm"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Share
+                </Button>
+              )}
+              {user && profile && user.id === profile.user_id && (
+                <>
+                  <Button onClick={handleEdit} variant="ghost" size="sm">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
+                  <Button onClick={handleDownload} variant="ghost" size="sm">
+                    <Download className="h-4 w-4 mr-2" />
+                    Download
+                  </Button>
+                </>
+              )}
               <Button onClick={() => navigate("/")} variant="default" size="sm">
                 <Home className="h-4 w-4 mr-2" />
                 Home

@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { addPortfolioToHistory } from "@/hooks/useBrowsingHistory";
+import SharePortfolioModal from "@/components/SharePortfolioModal";
 import { X, Plus, Home } from "lucide-react";
 
 interface ProfileData {
@@ -89,6 +90,9 @@ const PortfolioSetup = () => {
   
   const [currentSection, setCurrentSection] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [createdPortfolioId, setCreatedPortfolioId] = useState<string>("");
+  const [createdPortfolioName, setCreatedPortfolioName] = useState<string>("");
 
   // Clear all form data when component mounts to ensure fresh start
   useEffect(() => {
@@ -317,8 +321,10 @@ const PortfolioSetup = () => {
         description: "Your new portfolio has been successfully created.",
       });
 
-      // Navigate to the newly created portfolio
-      navigate(`/portfolio-view/${profileId}`);
+      // Show share modal instead of immediate navigation
+      setCreatedPortfolioId(profileId);
+      setCreatedPortfolioName(profile.full_name);
+      setShowShareModal(true);
     } catch (error: any) {
       console.error("Error saving portfolio:", error);
       toast({
@@ -766,6 +772,17 @@ const PortfolioSetup = () => {
           </div>
         </div>
       </div>
+      
+      {/* Share Modal */}
+      <SharePortfolioModal
+        isOpen={showShareModal}
+        onClose={() => {
+          setShowShareModal(false);
+          navigate(`/portfolio-view/${createdPortfolioId}`);
+        }}
+        portfolioId={createdPortfolioId}
+        portfolioName={createdPortfolioName}
+      />
     </div>
   );
 };
