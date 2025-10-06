@@ -90,6 +90,45 @@ const PortfolioSetup = () => {
   const [currentSection, setCurrentSection] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Clear all form data when component mounts to ensure fresh start
+  useEffect(() => {
+    // Reset all state to initial empty values
+    setProfile({
+      full_name: "",
+      profession: "",
+      bio: "",
+      location: "",
+      phone: "",
+      linkedin_url: "",
+    });
+    setProfileImage(null);
+    setProfileImagePreview("");
+    setSkills([]);
+    setNewSkill("");
+    setProjects([]);
+    setNewProject({
+      title: "",
+      description: "",
+      tech_stack: [],
+      project_url: "",
+    });
+    setNewTech("");
+    setEducation([]);
+    setNewEducation({
+      degree: "",
+      institution: "",
+      year: "",
+      gpa: "",
+    });
+    setAchievements([]);
+    setNewAchievement({
+      title: "",
+      description: "",
+    });
+    setCurrentSection(0);
+    setIsSubmitting(false);
+  }, []);
+
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
