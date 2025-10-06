@@ -55,6 +55,9 @@ const History = () => {
     return <div>Loading...</div>;
   }
 
+  // Filter to show only portfolio entries
+  const portfolioHistory = history.filter(entry => entry.isPortfolio);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -70,14 +73,17 @@ const History = () => {
                 </Link>
               </Button>
               <div>
-                <h1 className="text-3xl font-bold text-foreground">Browsing History</h1>
+                <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+                  <Briefcase className="w-8 h-8 text-primary" />
+                  My Portfolios
+                </h1>
                 <p className="text-muted-foreground mt-2">
-                  Track your navigation through the portfolio builder
+                  View and access all your created portfolios
                 </p>
               </div>
             </div>
             
-            {history.length > 0 && (
+            {portfolioHistory.length > 0 && (
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -85,21 +91,21 @@ const History = () => {
                 className="text-destructive hover:text-destructive"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
-                Clear History
+                Clear All
               </Button>
             )}
           </div>
 
-          {history.length === 0 ? (
+          {portfolioHistory.length === 0 ? (
             <Card className="card-elevated">
               <CardContent className="flex flex-col items-center justify-center py-12">
-                <Clock className="w-12 h-12 text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold text-foreground mb-2">No History Yet</h3>
+                <Briefcase className="w-12 h-12 text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold text-foreground mb-2">No Portfolios Yet</h3>
                 <p className="text-muted-foreground text-center max-w-md">
-                  Start exploring the portfolio builder to see your browsing history here.
+                  Create your first portfolio to see it listed here.
                 </p>
                 <Button className="mt-4" asChild>
-                  <Link to="/">Explore Now</Link>
+                  <Link to="/portfolio-setup">Create Portfolio</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -107,45 +113,33 @@ const History = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                  {history.length} page{history.length !== 1 ? 's' : ''} visited
+                  {portfolioHistory.length} portfolio{portfolioHistory.length !== 1 ? 's' : ''} created
                 </p>
               </div>
 
-              <div className="space-y-3">
-                {history.map((entry, index) => (
-                  <Card key={`${entry.path}-${entry.timestamp.getTime()}`} className={`card-elevated hover:shadow-md transition-all ${entry.isPortfolio ? 'border-primary/20 bg-primary/5' : ''}`}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 flex items-start gap-3">
-                          {entry.isPortfolio && (
-                            <div className="mt-1">
-                              <Briefcase className="w-5 h-5 text-primary" />
-                            </div>
-                          )}
-                          <div className="flex-1">
-                            <Link 
-                              to={entry.path}
-                              className="block group"
-                            >
-                              <h3 className="font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
-                                {entry.title}
-                                {entry.isPortfolio && (
-                                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                                    Portfolio
-                                  </span>
-                                )}
-                              </h3>
-                              <p className="text-sm text-muted-foreground">{entry.path}</p>
-                            </Link>
+              <div className="grid gap-4">
+                {portfolioHistory.map((entry) => (
+                  <Card key={`${entry.path}-${entry.timestamp.getTime()}`} className="card-elevated hover:shadow-lg transition-all border-primary/20">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex-1 flex items-start gap-4">
+                          <div className="mt-1 p-2 bg-primary/10 rounded-lg">
+                            <Briefcase className="w-6 h-6 text-primary" />
                           </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-foreground">
-                            {formatRelativeTime(entry.timestamp)}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {formatDate(entry.timestamp)}
-                          </p>
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-foreground mb-1">
+                              {entry.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              Created {formatRelativeTime(entry.timestamp)} • {formatDate(entry.timestamp)}
+                            </p>
+                            <Button asChild size="sm" className="gap-2">
+                              <Link to={entry.path}>
+                                View Portfolio
+                                <ArrowLeft className="w-4 h-4 rotate-180" />
+                              </Link>
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </CardContent>
