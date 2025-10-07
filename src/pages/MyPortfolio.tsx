@@ -259,7 +259,7 @@ const MyPortfolio = () => {
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight">
                 Hi, I'm{" "}
                 <span className="text-gradient">
-                  {profile.full_name.split(" ")[0]}
+                  {profile.full_name}
                 </span>
               </h1>
               <p className="text-2xl md:text-4xl font-bold text-primary mb-6 animate-slide-up">
