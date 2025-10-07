@@ -265,9 +265,6 @@ const MyPortfolio = () => {
               <p className="text-2xl md:text-4xl font-bold text-primary mb-6 animate-slide-up">
                 {profile.profession}
               </p>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                {profile.bio}
-              </p>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
