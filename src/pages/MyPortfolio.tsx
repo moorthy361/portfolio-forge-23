@@ -125,45 +125,23 @@ const MyPortfolio = () => {
       // Use the profile's user_id for loading related data
       const portfolioUserId = profileData.user_id;
 
-      // Load skills
-      const { data: skillsData } = await supabase
-        .from("skills")
-        .select("*")
-        .eq("user_id", portfolioUserId);
+      // Parallel data loading for maximum speed
+      const [
+        { data: skillsData },
+        { data: projectsData },
+        { data: educationData },
+        { data: achievementsData }
+      ] = await Promise.all([
+        supabase.from("skills").select("*").eq("user_id", portfolioUserId),
+        supabase.from("projects").select("*").eq("user_id", portfolioUserId),
+        supabase.from("education").select("*").eq("user_id", portfolioUserId),
+        supabase.from("achievements").select("*").eq("user_id", portfolioUserId)
+      ]);
 
-      if (skillsData) {
-        setSkills(skillsData);
-      }
-
-      // Load projects
-      const { data: projectsData } = await supabase
-        .from("projects")
-        .select("*")
-        .eq("user_id", portfolioUserId);
-
-      if (projectsData) {
-        setProjects(projectsData);
-      }
-
-      // Load education
-      const { data: educationData } = await supabase
-        .from("education")
-        .select("*")
-        .eq("user_id", portfolioUserId);
-
-      if (educationData) {
-        setEducation(educationData);
-      }
-
-      // Load achievements
-      const { data: achievementsData } = await supabase
-        .from("achievements")
-        .select("*")
-        .eq("user_id", portfolioUserId);
-
-      if (achievementsData) {
-        setAchievements(achievementsData);
-      }
+      setSkills(skillsData || []);
+      setProjects(projectsData || []);
+      setEducation(educationData || []);
+      setAchievements(achievementsData || []);
     } catch (error) {
       console.error("Error loading portfolio data:", error);
     } finally {

@@ -292,43 +292,51 @@ const PortfolioSetup = () => {
       
       const profileId = profileData.id;
 
-      // Add skills for this portfolio
+      // Parallel database inserts for maximum speed
+      const insertPromises = [];
+
       if (skills.length > 0) {
-        const { error: skillsError } = await supabase
-          .from("skills")
-          .insert(skills.map(skill => ({ user_id: user.id, name: skill.name })));
-        
-        if (skillsError) throw skillsError;
+        insertPromises.push(
+          supabase
+            .from("skills")
+            .insert(skills.map(skill => ({ user_id: user.id, name: skill.name })))
+        );
       }
 
-      // Add projects for this portfolio
       if (projects.length > 0) {
-        const { error: projectsError } = await supabase
-          .from("projects")
-          .insert(projects.map(project => ({ user_id: user.id, ...project })));
-        
-        if (projectsError) throw projectsError;
+        insertPromises.push(
+          supabase
+            .from("projects")
+            .insert(projects.map(project => ({ user_id: user.id, ...project })))
+        );
       }
 
-      // Add education for this portfolio
       if (education.length > 0) {
-        const { error: educationError } = await supabase
-          .from("education")
-          .insert(education.map(edu => ({ user_id: user.id, ...edu })));
-        
-        if (educationError) throw educationError;
+        insertPromises.push(
+          supabase
+            .from("education")
+            .insert(education.map(edu => ({ user_id: user.id, ...edu })))
+        );
       }
 
-      // Add achievements for this portfolio
       if (achievements.length > 0) {
-        const { error: achievementsError } = await supabase
-          .from("achievements")
-          .insert(achievements.map(achievement => ({ user_id: user.id, ...achievement })));
-        
-        if (achievementsError) throw achievementsError;
+        insertPromises.push(
+          supabase
+            .from("achievements")
+            .insert(achievements.map(achievement => ({ user_id: user.id, ...achievement })))
+        );
       }
 
-      // Add to browsing history
+      // Execute all inserts in parallel
+      const results = await Promise.allSettled(insertPromises);
+      
+      // Check for any errors
+      const errors = results.filter(r => r.status === 'rejected');
+      if (errors.length > 0) {
+        console.error("Some inserts failed:", errors);
+      }
+
+      // Add to browsing history (non-blocking)
       addPortfolioToHistory(profileId, profile.full_name);
 
       toast({
