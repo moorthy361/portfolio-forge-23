@@ -22,6 +22,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { themeStyles, type ThemeId } from "@/lib/themes";
 
 interface Profile {
   user_id: string;
@@ -72,6 +73,7 @@ const MyPortfolio = () => {
   const [education, setEducation] = useState<Education[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [theme, setTheme] = useState("classic");
 
   useEffect(() => {
     // If viewing by ID, allow public access without auth check
@@ -121,6 +123,7 @@ const MyPortfolio = () => {
       }
 
       setProfile(profileData);
+      setTheme((profileData as any).theme || "classic");
       
       // Use the profile's user_id for loading related data
       const portfolioUserId = profileData.user_id;
@@ -157,6 +160,8 @@ const MyPortfolio = () => {
     window.print();
   };
 
+  const currentTheme = themeStyles[theme as ThemeId] || themeStyles.classic;
+
   if (loading || isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -184,7 +189,7 @@ const MyPortfolio = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10">
+    <div className={`min-h-screen ${currentTheme.bg} ${currentTheme.text}`}>
       {/* Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-background/90 border-b shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -258,11 +263,11 @@ const MyPortfolio = () => {
               )}
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight">
                 Hi, I'm{" "}
-                <span className="text-gradient">
+                <span className={currentTheme.primary}>
                   {profile.full_name}
                 </span>
               </h1>
-              <p className="text-2xl md:text-4xl font-bold text-primary mb-6 animate-slide-up">
+              <p className={`text-2xl md:text-4xl font-bold ${currentTheme.secondary} mb-6 animate-slide-up`}>
                 {profile.profession}
               </p>
             </div>

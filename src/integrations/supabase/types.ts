@@ -81,6 +81,7 @@ export type Database = {
           phone: string | null
           profession: string | null
           profile_image_url: string | null
+          theme: string | null
           title: string | null
           updated_at: string
           user_id: string
@@ -98,6 +99,7 @@ export type Database = {
           phone?: string | null
           profession?: string | null
           profile_image_url?: string | null
+          theme?: string | null
           title?: string | null
           updated_at?: string
           user_id: string
@@ -115,6 +117,7 @@ export type Database = {
           phone?: string | null
           profession?: string | null
           profile_image_url?: string | null
+          theme?: string | null
           title?: string | null
           updated_at?: string
           user_id?: string

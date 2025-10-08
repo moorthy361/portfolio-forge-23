@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { addPortfolioToHistory } from "@/hooks/useBrowsingHistory";
 import SharePortfolioModal from "@/components/SharePortfolioModal";
+import { ThemeSelection } from "@/components/ThemeSelection";
 import { X, Plus, Home } from "lucide-react";
 
 interface ProfileData {
@@ -89,6 +90,7 @@ const PortfolioSetup = () => {
   });
   
   const [currentSection, setCurrentSection] = useState(0);
+  const [selectedTheme, setSelectedTheme] = useState("classic");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [createdPortfolioId, setCreatedPortfolioId] = useState<string>("");
@@ -284,6 +286,7 @@ const PortfolioSetup = () => {
           profile_image_url: profileImageUrl,
           title: "My Portfolio",
           email: user.email,
+          theme: selectedTheme,
         })
         .select()
         .single();
@@ -365,7 +368,8 @@ const PortfolioSetup = () => {
     "Skills",
     "Projects", 
     "Education",
-    "Achievements"
+    "Achievements",
+    "Theme Selection"
   ];
 
   if (loading) {
@@ -766,6 +770,17 @@ const PortfolioSetup = () => {
                   ))}
                 </div>
               )}
+
+              {/* Theme Selection Section */}
+              {currentSection === 5 && (
+                <div className="animate-fade-in">
+                  <ThemeSelection
+                    selectedTheme={selectedTheme}
+                    onThemeSelect={setSelectedTheme}
+                    onContinue={savePortfolio}
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -779,17 +794,9 @@ const PortfolioSetup = () => {
               Previous
             </Button>
             
-            {currentSection < sections.length - 1 ? (
+            {currentSection < sections.length - 1 && (
               <Button onClick={() => setCurrentSection(currentSection + 1)}>
                 Next
-              </Button>
-            ) : (
-              <Button 
-                onClick={savePortfolio} 
-                disabled={isSubmitting || !profile.full_name || !profile.profession || !profile.bio}
-                className="btn-hero"
-              >
-                {isSubmitting ? "Creating Portfolio..." : "Create Portfolio"}
               </Button>
             )}
           </div>
