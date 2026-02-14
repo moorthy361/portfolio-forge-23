@@ -14,7 +14,174 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      achievements: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          title?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      education: {
+        Row: {
+          created_at: string
+          degree: string
+          gpa: string | null
+          id: string
+          institution: string
+          user_id: string
+          year: string | null
+        }
+        Insert: {
+          created_at?: string
+          degree?: string
+          gpa?: string | null
+          id?: string
+          institution?: string
+          user_id: string
+          year?: string | null
+        }
+        Update: {
+          created_at?: string
+          degree?: string
+          gpa?: string | null
+          id?: string
+          institution?: string
+          user_id?: string
+          year?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_fresher: boolean | null
+          job_role: string | null
+          linkedin_url: string | null
+          location: string | null
+          phone: string | null
+          profession: string | null
+          profile_image_url: string | null
+          resume_url: string | null
+          template_type: string | null
+          theme: string | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_fresher?: boolean | null
+          job_role?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          phone?: string | null
+          profession?: string | null
+          profile_image_url?: string | null
+          resume_url?: string | null
+          template_type?: string | null
+          theme?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_fresher?: boolean | null
+          job_role?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          phone?: string | null
+          profession?: string | null
+          profile_image_url?: string | null
+          resume_url?: string | null
+          template_type?: string | null
+          theme?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          project_url: string | null
+          tech_stack: string[] | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          project_url?: string | null
+          tech_stack?: string[] | null
+          title?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          project_url?: string | null
+          tech_stack?: string[] | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      skills: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

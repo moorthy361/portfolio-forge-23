@@ -12,7 +12,10 @@ import { useToast } from "@/hooks/use-toast";
 import { addPortfolioToHistory } from "@/hooks/useBrowsingHistory";
 import SharePortfolioModal from "@/components/SharePortfolioModal";
 import { ThemeSelection } from "@/components/ThemeSelection";
-import { X, Plus, Home } from "lucide-react";
+import { JobRoleSelection } from "@/components/JobRoleSelection";
+import { ResumeUpload, ParsedResumeData } from "@/components/ResumeUpload";
+import { roleThemeMap, suggestThemeFromSkills, RoleThemeRecommendation } from "@/lib/roleThemeMapping";
+import { X, Plus, Home, Check } from "lucide-react";
 
 interface ProfileData {
   full_name: string;
@@ -68,86 +71,38 @@ const PortfolioSetup = () => {
   
   const [projects, setProjects] = useState<Project[]>([]);
   const [newProject, setNewProject] = useState<Project>({
-    title: "",
-    description: "",
-    tech_stack: [],
-    project_url: "",
+    title: "", description: "", tech_stack: [], project_url: "",
   });
   const [newTech, setNewTech] = useState("");
   
   const [education, setEducation] = useState<Education[]>([]);
   const [newEducation, setNewEducation] = useState<Education>({
-    degree: "",
-    institution: "",
-    year: "",
-    gpa: "",
+    degree: "", institution: "", year: "", gpa: "",
   });
   
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [newAchievement, setNewAchievement] = useState<Achievement>({
-    title: "",
-    description: "",
+    title: "", description: "",
   });
   
   const [currentSection, setCurrentSection] = useState(0);
   const [selectedTheme, setSelectedTheme] = useState("classic");
+  const [selectedRole, setSelectedRole] = useState("");
+  const [isFresher, setIsFresher] = useState(false);
+  const [resumeUrl, setResumeUrl] = useState("");
+  const [recommendedThemes, setRecommendedThemes] = useState<RoleThemeRecommendation[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [createdPortfolioId, setCreatedPortfolioId] = useState<string>("");
   const [createdPortfolioName, setCreatedPortfolioName] = useState<string>("");
 
-  // Full state reset on component mount - clear everything
   useEffect(() => {
-    // Clear all localStorage related to portfolio editing
     localStorage.removeItem('portfolioData');
     localStorage.removeItem('currentPortfolio');
-    localStorage.removeItem('portfolioDraft');
-    localStorage.removeItem('portfolioForm');
-    
-    // Clear all sessionStorage related to portfolio
     sessionStorage.removeItem('portfolioData');
-    sessionStorage.removeItem('currentPortfolio');
-    sessionStorage.removeItem('portfolioDraft');
-    sessionStorage.removeItem('portfolioForm');
-    
-    // Reset all state to initial empty values
-    setProfile({
-      full_name: "",
-      profession: "",
-      bio: "",
-      location: "",
-      phone: "",
-      linkedin_url: "",
-    });
-    setProfileImage(null);
-    setProfileImagePreview("");
-    setSkills([]);
-    setNewSkill("");
-    setProjects([]);
-    setNewProject({
-      title: "",
-      description: "",
-      tech_stack: [],
-      project_url: "",
-    });
-    setNewTech("");
-    setEducation([]);
-    setNewEducation({
-      degree: "",
-      institution: "",
-      year: "",
-      gpa: "",
-    });
-    setAchievements([]);
-    setNewAchievement({
-      title: "",
-      description: "",
-    });
     setCurrentSection(0);
     setIsSubmitting(false);
     setShowShareModal(false);
-    setCreatedPortfolioId("");
-    setCreatedPortfolioName("");
   }, []);
 
   useEffect(() => {
@@ -156,128 +111,78 @@ const PortfolioSetup = () => {
     }
   }, [user, loading, navigate]);
 
-
-  const addSkill = () => {
-    if (newSkill.trim()) {
-      setSkills([...skills, { name: newSkill.trim() }]);
-      setNewSkill("");
+  // Update fresher status and theme recommendations when role changes
+  useEffect(() => {
+    const fresher = selectedRole === "fresher";
+    setIsFresher(fresher);
+    if (selectedRole && roleThemeMap[selectedRole]) {
+      setRecommendedThemes(roleThemeMap[selectedRole]);
+      // Auto-select first recommended theme
+      setSelectedTheme(roleThemeMap[selectedRole][0].themeId);
     }
-  };
+  }, [selectedRole]);
 
-  const removeSkill = (index: number) => {
-    setSkills(skills.filter((_, i) => i !== index));
-  };
-
-  const addTechToProject = () => {
-    if (newTech.trim()) {
-      setNewProject({
-        ...newProject,
-        tech_stack: [...newProject.tech_stack, newTech.trim()]
-      });
-      setNewTech("");
-    }
-  };
-
-  const removeTechFromProject = (index: number) => {
-    setNewProject({
-      ...newProject,
-      tech_stack: newProject.tech_stack.filter((_, i) => i !== index)
+  const handleResumeParsed = (data: ParsedResumeData) => {
+    setProfile({
+      full_name: data.full_name || "",
+      profession: data.profession || "",
+      bio: data.bio || "",
+      location: data.location || "",
+      phone: data.phone || "",
+      linkedin_url: data.linkedin_url || "",
     });
-  };
-
-  const addProject = () => {
-    if (newProject.title.trim()) {
-      setProjects([...projects, newProject]);
-      setNewProject({
-        title: "",
-        description: "",
-        tech_stack: [],
-        project_url: "",
-      });
+    setSkills(data.skills?.map(s => ({ name: s })) || []);
+    setEducation(data.education || []);
+    setProjects(data.projects || []);
+    if (data.experience?.length > 0) {
+      setAchievements(data.experience.map(e => ({ title: e.title, description: e.description })));
     }
-  };
-
-  const removeProject = (index: number) => {
-    setProjects(projects.filter((_, i) => i !== index));
-  };
-
-  const addEducation = () => {
-    if (newEducation.degree.trim() && newEducation.institution.trim()) {
-      setEducation([...education, newEducation]);
-      setNewEducation({
-        degree: "",
-        institution: "",
-        year: "",
-        gpa: "",
-      });
+    // Smart theme suggestion from skills
+    if (data.skills?.length > 0) {
+      const suggested = suggestThemeFromSkills(data.skills);
+      setRecommendedThemes(suggested);
+      setSelectedTheme(suggested[0].themeId);
     }
+    // Move to personal info step for review
+    setCurrentSection(2);
+    toast({ title: "Resume Data Loaded", description: "Review and edit your details below." });
   };
 
-  const removeEducation = (index: number) => {
-    setEducation(education.filter((_, i) => i !== index));
-  };
-
-  const addAchievement = () => {
-    if (newAchievement.title.trim()) {
-      setAchievements([...achievements, newAchievement]);
-      setNewAchievement({
-        title: "",
-        description: "",
-      });
-    }
-  };
-
-  const removeAchievement = (index: number) => {
-    setAchievements(achievements.filter((_, i) => i !== index));
-  };
+  const addSkill = () => { if (newSkill.trim()) { setSkills([...skills, { name: newSkill.trim() }]); setNewSkill(""); } };
+  const removeSkill = (i: number) => setSkills(skills.filter((_, idx) => idx !== i));
+  const addTechToProject = () => { if (newTech.trim()) { setNewProject({ ...newProject, tech_stack: [...newProject.tech_stack, newTech.trim()] }); setNewTech(""); } };
+  const removeTechFromProject = (i: number) => setNewProject({ ...newProject, tech_stack: newProject.tech_stack.filter((_, idx) => idx !== i) });
+  const addProject = () => { if (newProject.title.trim()) { setProjects([...projects, newProject]); setNewProject({ title: "", description: "", tech_stack: [], project_url: "" }); } };
+  const removeProject = (i: number) => setProjects(projects.filter((_, idx) => idx !== i));
+  const addEducation = () => { if (newEducation.degree.trim() && newEducation.institution.trim()) { setEducation([...education, newEducation]); setNewEducation({ degree: "", institution: "", year: "", gpa: "" }); } };
+  const removeEducation = (i: number) => setEducation(education.filter((_, idx) => idx !== i));
+  const addAchievement = () => { if (newAchievement.title.trim()) { setAchievements([...achievements, newAchievement]); setNewAchievement({ title: "", description: "" }); } };
+  const removeAchievement = (i: number) => setAchievements(achievements.filter((_, idx) => idx !== i));
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setProfileImage(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImagePreview(reader.result as string);
-      };
+      reader.onloadend = () => setProfileImagePreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
   const savePortfolio = async () => {
     if (!user) return;
-    
     setIsSubmitting(true);
     try {
       let profileImageUrl = "";
-
-      // Upload profile image if one was selected
       if (profileImage) {
         const fileExt = profileImage.name.split('.').pop();
         const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('profile-images')
-          .upload(fileName, profileImage, { upsert: true });
-
-        if (uploadError) {
-          console.error("Error uploading image:", uploadError);
-          toast({
-            title: "Error",
-            description: "Failed to upload profile image",
-            variant: "destructive",
-          });
-          setIsSubmitting(false);
-          return;
-        }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('profile-images')
-          .getPublicUrl(fileName);
-
+        const { error: uploadError } = await supabase.storage.from('profile-images').upload(fileName, profileImage, { upsert: true });
+        if (uploadError) { toast({ title: "Error", description: "Failed to upload profile image", variant: "destructive" }); setIsSubmitting(false); return; }
+        const { data: { publicUrl } } = supabase.storage.from('profile-images').getPublicUrl(fileName);
         profileImageUrl = publicUrl;
       }
-      
-      // Insert new profile (always create a new portfolio for this user)
+
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .insert({
@@ -287,97 +192,46 @@ const PortfolioSetup = () => {
           title: "My Portfolio",
           email: user.email,
           theme: selectedTheme,
+          job_role: selectedRole,
+          is_fresher: isFresher,
+          resume_url: resumeUrl,
+          template_type: selectedTheme,
         })
         .select()
         .single();
 
       if (profileError) throw profileError;
-      
       const profileId = profileData.id;
 
-      // Parallel database inserts for maximum speed
       const insertPromises = [];
+      if (skills.length > 0) insertPromises.push(supabase.from("skills").insert(skills.map(s => ({ user_id: user.id, name: s.name }))));
+      if (projects.length > 0) insertPromises.push(supabase.from("projects").insert(projects.map(p => ({ user_id: user.id, ...p }))));
+      if (education.length > 0) insertPromises.push(supabase.from("education").insert(education.map(e => ({ user_id: user.id, ...e }))));
+      if (achievements.length > 0) insertPromises.push(supabase.from("achievements").insert(achievements.map(a => ({ user_id: user.id, ...a }))));
+      await Promise.allSettled(insertPromises);
 
-      if (skills.length > 0) {
-        insertPromises.push(
-          supabase
-            .from("skills")
-            .insert(skills.map(skill => ({ user_id: user.id, name: skill.name })))
-        );
-      }
-
-      if (projects.length > 0) {
-        insertPromises.push(
-          supabase
-            .from("projects")
-            .insert(projects.map(project => ({ user_id: user.id, ...project })))
-        );
-      }
-
-      if (education.length > 0) {
-        insertPromises.push(
-          supabase
-            .from("education")
-            .insert(education.map(edu => ({ user_id: user.id, ...edu })))
-        );
-      }
-
-      if (achievements.length > 0) {
-        insertPromises.push(
-          supabase
-            .from("achievements")
-            .insert(achievements.map(achievement => ({ user_id: user.id, ...achievement })))
-        );
-      }
-
-      // Execute all inserts in parallel
-      const results = await Promise.allSettled(insertPromises);
-      
-      // Check for any errors
-      const errors = results.filter(r => r.status === 'rejected');
-      if (errors.length > 0) {
-        console.error("Some inserts failed:", errors);
-      }
-
-      // Add to browsing history (non-blocking)
       addPortfolioToHistory(profileId, profile.full_name);
-
-      toast({
-        title: "Portfolio Created!",
-        description: "Your new portfolio has been successfully created.",
-      });
-
-      // Show share modal instead of immediate navigation
+      toast({ title: "Portfolio Created!", description: "Your new portfolio has been successfully created." });
       setCreatedPortfolioId(profileId);
       setCreatedPortfolioName(profile.full_name);
       setShowShareModal(true);
     } catch (error: any) {
       console.error("Error saving portfolio:", error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to save portfolio",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: error.message || "Failed to save portfolio", variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const sections = [
-    "Personal Information",
-    "Skills",
-    "Projects", 
-    "Education",
-    "Achievements",
-    "Theme Selection"
-  ];
+  // Dynamic sections based on fresher status
+  const sections = isFresher
+    ? ["Job Role", "Resume Upload", "Personal Information", "Skills", "Projects", "Education", "Theme Selection"]
+    : ["Job Role", "Resume Upload", "Personal Information", "Skills", "Projects", "Education", "Achievements", "Theme Selection"];
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Loading...</h2>
-        </div>
+        <h2 className="text-2xl font-bold">Loading...</h2>
       </div>
     );
   }
@@ -389,37 +243,40 @@ const PortfolioSetup = () => {
           <div className="flex justify-between items-center mb-8">
             <div className="text-center flex-1">
               <h1 className="text-4xl font-bold mb-4">Create Your Portfolio</h1>
-              <p className="text-muted-foreground">
-                Fill in your details to generate a stunning portfolio
-              </p>
+              <p className="text-muted-foreground">Fill in your details to generate a stunning portfolio</p>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/")}
-              className="flex items-center gap-2"
-            >
-              <Home className="h-4 w-4" />
-              Back to Home
+            <Button variant="outline" onClick={() => navigate("/")} className="flex items-center gap-2">
+              <Home className="h-4 w-4" /> Back to Home
             </Button>
           </div>
 
-          {/* Progress Bar */}
+          {/* Step Indicator */}
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-4">
               {sections.map((section, index) => (
-                <div
-                  key={index}
-                  className={`text-sm font-medium ${
-                    index <= currentSection ? "text-primary" : "text-muted-foreground"
-                  }`}
-                >
-                  {section}
+                <div key={index} className="flex flex-col items-center flex-1">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                      index < currentSection
+                        ? "bg-primary text-primary-foreground"
+                        : index === currentSection
+                        ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {index < currentSection ? <Check className="h-4 w-4" /> : index + 1}
+                  </div>
+                  <span className={`text-xs mt-1 text-center hidden md:block ${
+                    index <= currentSection ? "text-primary font-medium" : "text-muted-foreground"
+                  }`}>
+                    {section}
+                  </span>
                 </div>
               ))}
             </div>
             <div className="w-full bg-muted rounded-full h-2">
               <div
-                className="bg-primary h-2 rounded-full transition-all duration-300"
+                className="bg-primary h-2 rounded-full transition-all duration-500"
                 style={{ width: `${((currentSection + 1) / sections.length) * 100}%` }}
               />
             </div>
@@ -430,194 +287,121 @@ const PortfolioSetup = () => {
               <CardTitle>{sections[currentSection]}</CardTitle>
             </CardHeader>
             <CardContent>
-              {/* Personal Information */}
+              {/* Step 0: Job Role */}
               {currentSection === 0 && (
-                <div className="space-y-4">
+                <div className="animate-fade-in">
+                  <JobRoleSelection selectedRole={selectedRole} onRoleSelect={setSelectedRole} />
+                </div>
+              )}
+
+              {/* Step 1: Resume Upload */}
+              {currentSection === 1 && user && (
+                <div className="animate-fade-in">
+                  <ResumeUpload
+                    userId={user.id}
+                    onParsed={handleResumeParsed}
+                    onSkip={() => setCurrentSection(2)}
+                  />
+                </div>
+              )}
+
+              {/* Step 2: Personal Information */}
+              {currentSection === 2 && (
+                <div className="space-y-4 animate-fade-in">
                   <div>
                     <Label htmlFor="profileImage">Profile Photo</Label>
                     <div className="flex items-center gap-4 mt-2">
                       {profileImagePreview && (
-                        <img
-                          src={profileImagePreview}
-                          alt="Profile preview"
-                          className="w-20 h-20 rounded-full object-cover"
-                        />
+                        <img src={profileImagePreview} alt="Profile preview" className="w-20 h-20 rounded-full object-cover" />
                       )}
-                      <Input
-                        id="profileImage"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleProfileImageChange}
-                        className="flex-1"
-                      />
+                      <Input id="profileImage" type="file" accept="image/*" onChange={handleProfileImageChange} className="flex-1" />
                     </div>
                   </div>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="full_name">Full Name *</Label>
-                      <Input
-                        id="full_name"
-                        value={profile.full_name}
-                        onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                        placeholder="Your full name"
-                        required
-                      />
+                      <Input id="full_name" value={profile.full_name} onChange={(e) => setProfile({ ...profile, full_name: e.target.value })} placeholder="Your full name" required />
                     </div>
                     <div>
                       <Label htmlFor="profession">Profession *</Label>
-                      <Input
-                        id="profession"
-                        value={profile.profession}
-                        onChange={(e) => setProfile({ ...profile, profession: e.target.value })}
-                        placeholder="e.g., Full Stack Developer"
-                        required
-                      />
+                      <Input id="profession" value={profile.profession} onChange={(e) => setProfile({ ...profile, profession: e.target.value })} placeholder="e.g., Full Stack Developer" required />
                     </div>
                   </div>
-                  
                   <div>
                     <Label htmlFor="bio">Bio/Summary *</Label>
-                    <Textarea
-                      id="bio"
-                      value={profile.bio}
-                      onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                      placeholder="Tell us about yourself..."
-                      rows={4}
-                      required
-                    />
+                    <Textarea id="bio" value={profile.bio} onChange={(e) => setProfile({ ...profile, bio: e.target.value })} placeholder="Tell us about yourself..." rows={4} required />
                   </div>
-
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="location">Location</Label>
-                      <Input
-                        id="location"
-                        value={profile.location}
-                        onChange={(e) => setProfile({ ...profile, location: e.target.value })}
-                        placeholder="City, Country"
-                      />
+                      <Input id="location" value={profile.location} onChange={(e) => setProfile({ ...profile, location: e.target.value })} placeholder="City, Country" />
                     </div>
                     <div>
                       <Label htmlFor="phone">Phone</Label>
-                      <Input
-                        id="phone"
-                        value={profile.phone}
-                        onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                        placeholder="+1 (555) 123-4567"
-                      />
+                      <Input id="phone" value={profile.phone} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} placeholder="+1 (555) 123-4567" />
                     </div>
                   </div>
-
                   <div>
                     <Label htmlFor="linkedin_url">LinkedIn URL</Label>
-                    <Input
-                      id="linkedin_url"
-                      value={profile.linkedin_url}
-                      onChange={(e) => setProfile({ ...profile, linkedin_url: e.target.value })}
-                      placeholder="https://linkedin.com/in/..."
-                    />
+                    <Input id="linkedin_url" value={profile.linkedin_url} onChange={(e) => setProfile({ ...profile, linkedin_url: e.target.value })} placeholder="https://linkedin.com/in/..." />
                   </div>
                 </div>
               )}
 
-              {/* Skills */}
-              {currentSection === 1 && (
-                <div className="space-y-4">
+              {/* Step 3: Skills */}
+              {currentSection === 3 && (
+                <div className="space-y-4 animate-fade-in">
                   <div className="flex gap-2">
-                    <Input
-                      value={newSkill}
-                      onChange={(e) => setNewSkill(e.target.value)}
-                      placeholder="Add a skill"
-                      onKeyPress={(e) => e.key === "Enter" && addSkill()}
-                    />
-                    <Button onClick={addSkill}>
-                      <Plus className="h-4 w-4" />
-                    </Button>
+                    <Input value={newSkill} onChange={(e) => setNewSkill(e.target.value)} placeholder="Add a skill" onKeyPress={(e) => e.key === "Enter" && addSkill()} />
+                    <Button onClick={addSkill}><Plus className="h-4 w-4" /></Button>
                   </div>
-                  
                   <div className="flex flex-wrap gap-2">
                     {skills.map((skill, index) => (
                       <Badge key={index} variant="secondary" className="flex items-center gap-2">
                         {skill.name}
-                        <X 
-                          className="h-3 w-3 cursor-pointer" 
-                          onClick={() => removeSkill(index)}
-                        />
+                        <X className="h-3 w-3 cursor-pointer" onClick={() => removeSkill(index)} />
                       </Badge>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Projects */}
-              {currentSection === 2 && (
-                <div className="space-y-6">
+              {/* Step 4: Projects */}
+              {currentSection === 4 && (
+                <div className="space-y-6 animate-fade-in">
                   <div className="border rounded-lg p-4 space-y-4">
                     <h3 className="font-semibold">Add New Project</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="project_title">Project Title</Label>
-                        <Input
-                          id="project_title"
-                          value={newProject.title}
-                          onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
-                          placeholder="Project name"
-                        />
+                        <Input id="project_title" value={newProject.title} onChange={(e) => setNewProject({ ...newProject, title: e.target.value })} placeholder="Project name" />
                       </div>
                       <div>
                         <Label htmlFor="project_url">Project URL</Label>
-                        <Input
-                          id="project_url"
-                          value={newProject.project_url}
-                          onChange={(e) => setNewProject({ ...newProject, project_url: e.target.value })}
-                          placeholder="https://project-demo.com"
-                        />
+                        <Input id="project_url" value={newProject.project_url} onChange={(e) => setNewProject({ ...newProject, project_url: e.target.value })} placeholder="https://project-demo.com" />
                       </div>
                     </div>
-                    
                     <div>
                       <Label htmlFor="project_description">Description</Label>
-                      <Textarea
-                        id="project_description"
-                        value={newProject.description}
-                        onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                        placeholder="Describe your project"
-                        rows={3}
-                      />
+                      <Textarea id="project_description" value={newProject.description} onChange={(e) => setNewProject({ ...newProject, description: e.target.value })} placeholder="Describe your project" rows={3} />
                     </div>
-
                     <div>
                       <Label>Tech Stack</Label>
                       <div className="flex gap-2 mt-2">
-                        <Input
-                          value={newTech}
-                          onChange={(e) => setNewTech(e.target.value)}
-                          placeholder="Add technology"
-                          onKeyPress={(e) => e.key === "Enter" && addTechToProject()}
-                        />
-                        <Button onClick={addTechToProject}>
-                          <Plus className="h-4 w-4" />
-                        </Button>
+                        <Input value={newTech} onChange={(e) => setNewTech(e.target.value)} placeholder="Add technology" onKeyPress={(e) => e.key === "Enter" && addTechToProject()} />
+                        <Button onClick={addTechToProject}><Plus className="h-4 w-4" /></Button>
                       </div>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {newProject.tech_stack.map((tech, index) => (
                           <Badge key={index} variant="outline" className="flex items-center gap-2">
                             {tech}
-                            <X 
-                              className="h-3 w-3 cursor-pointer" 
-                              onClick={() => removeTechFromProject(index)}
-                            />
+                            <X className="h-3 w-3 cursor-pointer" onClick={() => removeTechFromProject(index)} />
                           </Badge>
                         ))}
                       </div>
                     </div>
-
-                    <Button onClick={addProject} disabled={!newProject.title.trim()}>
-                      Add Project
-                    </Button>
+                    <Button onClick={addProject} disabled={!newProject.title.trim()}>Add Project</Button>
                   </div>
-
                   {projects.map((project, index) => (
                     <div key={index} className="border rounded-lg p-4">
                       <div className="flex justify-between items-start">
@@ -625,77 +409,41 @@ const PortfolioSetup = () => {
                           <h4 className="font-semibold">{project.title}</h4>
                           <p className="text-muted-foreground text-sm">{project.description}</p>
                           <div className="flex flex-wrap gap-1 mt-2">
-                            {project.tech_stack.map((tech, techIndex) => (
-                              <Badge key={techIndex} variant="outline" className="text-xs">
-                                {tech}
-                              </Badge>
-                            ))}
+                            {project.tech_stack.map((tech, ti) => (<Badge key={ti} variant="outline" className="text-xs">{tech}</Badge>))}
                           </div>
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => removeProject(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => removeProject(index)}><X className="h-4 w-4" /></Button>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Education */}
-              {currentSection === 3 && (
-                <div className="space-y-6">
+              {/* Step 5: Education */}
+              {currentSection === 5 && (
+                <div className="space-y-6 animate-fade-in">
                   <div className="border rounded-lg p-4 space-y-4">
                     <h3 className="font-semibold">Add Education</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="degree">Degree</Label>
-                        <Input
-                          id="degree"
-                          value={newEducation.degree}
-                          onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
-                          placeholder="Bachelor of Science in..."
-                        />
+                        <Input id="degree" value={newEducation.degree} onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })} placeholder="Bachelor of Science in..." />
                       </div>
                       <div>
                         <Label htmlFor="institution">Institution</Label>
-                        <Input
-                          id="institution"
-                          value={newEducation.institution}
-                          onChange={(e) => setNewEducation({ ...newEducation, institution: e.target.value })}
-                          placeholder="University name"
-                        />
+                        <Input id="institution" value={newEducation.institution} onChange={(e) => setNewEducation({ ...newEducation, institution: e.target.value })} placeholder="University name" />
                       </div>
                       <div>
                         <Label htmlFor="year">Year</Label>
-                        <Input
-                          id="year"
-                          value={newEducation.year}
-                          onChange={(e) => setNewEducation({ ...newEducation, year: e.target.value })}
-                          placeholder="2019-2023"
-                        />
+                        <Input id="year" value={newEducation.year} onChange={(e) => setNewEducation({ ...newEducation, year: e.target.value })} placeholder="2019-2023" />
                       </div>
                       <div>
                         <Label htmlFor="gpa">GPA (Optional)</Label>
-                        <Input
-                          id="gpa"
-                          value={newEducation.gpa}
-                          onChange={(e) => setNewEducation({ ...newEducation, gpa: e.target.value })}
-                          placeholder="3.8/4.0"
-                        />
+                        <Input id="gpa" value={newEducation.gpa} onChange={(e) => setNewEducation({ ...newEducation, gpa: e.target.value })} placeholder="3.8/4.0" />
                       </div>
                     </div>
-                    <Button 
-                      onClick={addEducation} 
-                      disabled={!newEducation.degree.trim() || !newEducation.institution.trim()}
-                    >
-                      Add Education
-                    </Button>
+                    <Button onClick={addEducation} disabled={!newEducation.degree.trim() || !newEducation.institution.trim()}>Add Education</Button>
                   </div>
-
                   {education.map((edu, index) => (
                     <div key={index} className="border rounded-lg p-4">
                       <div className="flex justify-between items-start">
@@ -707,73 +455,65 @@ const PortfolioSetup = () => {
                             {edu.gpa && <span>GPA: {edu.gpa}</span>}
                           </div>
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => removeEducation(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => removeEducation(index)}><X className="h-4 w-4" /></Button>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Achievements */}
-              {currentSection === 4 && (
-                <div className="space-y-6">
+              {/* Step 6 (non-fresher): Achievements */}
+              {!isFresher && currentSection === 6 && (
+                <div className="space-y-6 animate-fade-in">
                   <div className="border rounded-lg p-4 space-y-4">
                     <h3 className="font-semibold">Add Achievement</h3>
                     <div>
                       <Label htmlFor="achievement_title">Title</Label>
-                      <Input
-                        id="achievement_title"
-                        value={newAchievement.title}
-                        onChange={(e) => setNewAchievement({ ...newAchievement, title: e.target.value })}
-                        placeholder="Achievement title"
-                      />
+                      <Input id="achievement_title" value={newAchievement.title} onChange={(e) => setNewAchievement({ ...newAchievement, title: e.target.value })} placeholder="Achievement title" />
                     </div>
                     <div>
                       <Label htmlFor="achievement_description">Description (Optional)</Label>
-                      <Textarea
-                        id="achievement_description"
-                        value={newAchievement.description}
-                        onChange={(e) => setNewAchievement({ ...newAchievement, description: e.target.value })}
-                        placeholder="Describe your achievement"
-                        rows={2}
-                      />
+                      <Textarea id="achievement_description" value={newAchievement.description} onChange={(e) => setNewAchievement({ ...newAchievement, description: e.target.value })} placeholder="Describe your achievement" rows={2} />
                     </div>
-                    <Button onClick={addAchievement} disabled={!newAchievement.title.trim()}>
-                      Add Achievement
-                    </Button>
+                    <Button onClick={addAchievement} disabled={!newAchievement.title.trim()}>Add Achievement</Button>
                   </div>
-
                   {achievements.map((achievement, index) => (
                     <div key={index} className="border rounded-lg p-4">
                       <div className="flex justify-between items-start">
                         <div>
                           <h4 className="font-semibold">{achievement.title}</h4>
-                          {achievement.description && (
-                            <p className="text-muted-foreground text-sm">{achievement.description}</p>
-                          )}
+                          {achievement.description && <p className="text-muted-foreground text-sm">{achievement.description}</p>}
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => removeAchievement(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => removeAchievement(index)}><X className="h-4 w-4" /></Button>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Theme Selection Section */}
-              {currentSection === 5 && (
-                <div className="animate-fade-in">
+              {/* Theme Selection (last step) */}
+              {currentSection === sections.length - 1 && (
+                <div className="animate-fade-in space-y-6">
+                  {/* Recommended Themes */}
+                  {recommendedThemes.length > 0 && (
+                    <Card className="p-4 border-primary/30 bg-primary/5">
+                      <h3 className="font-semibold mb-3 text-primary">🎯 Recommended for You</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {recommendedThemes.map((rec) => (
+                          <Card
+                            key={rec.themeId}
+                            className={`p-3 cursor-pointer transition-all hover:shadow-md ${
+                              selectedTheme === rec.themeId ? "ring-2 ring-primary" : ""
+                            }`}
+                            onClick={() => setSelectedTheme(rec.themeId)}
+                          >
+                            <p className="font-medium text-sm">{rec.label}</p>
+                            <p className="text-xs text-muted-foreground">{rec.reason}</p>
+                          </Card>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
                   <ThemeSelection
                     selectedTheme={selectedTheme}
                     onThemeSelect={setSelectedTheme}
@@ -793,17 +533,23 @@ const PortfolioSetup = () => {
             >
               Previous
             </Button>
-            
-            {currentSection < sections.length - 1 && (
-              <Button onClick={() => setCurrentSection(currentSection + 1)}>
+            {currentSection < sections.length - 1 && currentSection !== 1 && (
+              <Button
+                onClick={() => setCurrentSection(currentSection + 1)}
+                disabled={currentSection === 0 && !selectedRole}
+              >
                 Next
+              </Button>
+            )}
+            {currentSection === 1 && (
+              <Button onClick={() => setCurrentSection(2)}>
+                Skip to Manual Entry
               </Button>
             )}
           </div>
         </div>
       </div>
-      
-      {/* Share Modal */}
+
       <SharePortfolioModal
         isOpen={showShareModal}
         onClose={() => {
