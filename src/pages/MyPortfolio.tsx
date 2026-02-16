@@ -306,7 +306,12 @@ const MyPortfolio = () => {
   };
 
   const handleEdit = () => {
-    navigate("/portfolio-setup");
+    const profileId = id || (profile as any)?.id;
+    if (profileId) {
+      navigate(`/portfolio-setup?edit=${profileId}`);
+    } else {
+      navigate("/portfolio-setup");
+    }
   };
 
   const handleDownload = () => {

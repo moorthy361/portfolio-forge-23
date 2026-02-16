@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,7 +52,11 @@ interface Achievement {
 const PortfolioSetup = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
+
+  const editProfileId = searchParams.get("edit");
+  const isEditMode = !!editProfileId;
   
   const [profile, setProfile] = useState<ProfileData>({
     full_name: "",
@@ -95,15 +99,97 @@ const PortfolioSetup = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [createdPortfolioId, setCreatedPortfolioId] = useState<string>("");
   const [createdPortfolioName, setCreatedPortfolioName] = useState<string>("");
+  const [editUserId, setEditUserId] = useState<string>("");
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  // Load existing data in edit mode
+  useEffect(() => {
+    if (isEditMode && user && !dataLoaded) {
+      loadExistingData();
+    }
+  }, [isEditMode, user, dataLoaded]);
+
+  const loadExistingData = async () => {
+    if (!editProfileId || !user) return;
+    try {
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", editProfileId)
+        .single();
+
+      if (!profileData) {
+        toast({ title: "Error", description: "Portfolio not found", variant: "destructive" });
+        navigate("/portfolio-setup");
+        return;
+      }
+
+      setEditUserId(profileData.user_id);
+      setProfile({
+        full_name: profileData.full_name || "",
+        profession: profileData.profession || "",
+        bio: profileData.bio || "",
+        location: profileData.location || "",
+        phone: profileData.phone || "",
+        linkedin_url: profileData.linkedin_url || "",
+      });
+      setSelectedTheme(profileData.theme || "classic");
+      setSelectedRole(profileData.job_role || "");
+      setIsFresher(profileData.is_fresher || false);
+      setResumeUrl(profileData.resume_url || "");
+      if (profileData.profile_image_url) {
+        setProfileImagePreview(profileData.profile_image_url);
+      }
+
+      const [
+        { data: skillsData },
+        { data: projectsData },
+        { data: educationData },
+        { data: achievementsData },
+      ] = await Promise.all([
+        supabase.from("skills").select("*").eq("user_id", profileData.user_id),
+        supabase.from("projects").select("*").eq("user_id", profileData.user_id),
+        supabase.from("education").select("*").eq("user_id", profileData.user_id),
+        supabase.from("achievements").select("*").eq("user_id", profileData.user_id),
+      ]);
+
+      setSkills((skillsData || []).map((s: any) => ({ name: s.name })));
+      setProjects((projectsData || []).map((p: any) => ({
+        title: p.title,
+        description: p.description || "",
+        tech_stack: p.tech_stack || [],
+        project_url: p.project_url || "",
+      })));
+      setEducation((educationData || []).map((e: any) => ({
+        degree: e.degree,
+        institution: e.institution,
+        year: e.year || "",
+        gpa: e.gpa || "",
+      })));
+      setAchievements((achievementsData || []).map((a: any) => ({
+        title: a.title,
+        description: a.description || "",
+      })));
+
+      // Skip to personal info step (step 2) in edit mode
+      setCurrentSection(2);
+      setDataLoaded(true);
+    } catch (error) {
+      console.error("Error loading portfolio for edit:", error);
+      toast({ title: "Error", description: "Failed to load portfolio data", variant: "destructive" });
+    }
+  };
 
   useEffect(() => {
-    localStorage.removeItem('portfolioData');
-    localStorage.removeItem('currentPortfolio');
-    sessionStorage.removeItem('portfolioData');
-    setCurrentSection(0);
-    setIsSubmitting(false);
-    setShowShareModal(false);
-  }, []);
+    if (!isEditMode) {
+      localStorage.removeItem('portfolioData');
+      localStorage.removeItem('currentPortfolio');
+      sessionStorage.removeItem('portfolioData');
+      setCurrentSection(0);
+      setIsSubmitting(false);
+      setShowShareModal(false);
+    }
+  }, [isEditMode]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -173,7 +259,7 @@ const PortfolioSetup = () => {
     if (!user) return;
     setIsSubmitting(true);
     try {
-      let profileImageUrl = "";
+      let profileImageUrl = profileImagePreview || "";
       if (profileImage) {
         const fileExt = profileImage.name.split('.').pop();
         const fileName = `${user.id}/${Date.now()}.${fileExt}`;
@@ -183,25 +269,50 @@ const PortfolioSetup = () => {
         profileImageUrl = publicUrl;
       }
 
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .insert({
-          user_id: user.id,
-          ...profile,
-          profile_image_url: profileImageUrl,
-          title: "My Portfolio",
-          email: user.email,
-          theme: selectedTheme,
-          job_role: selectedRole,
-          is_fresher: isFresher,
-          resume_url: resumeUrl,
-          template_type: selectedTheme,
-        })
-        .select()
-        .single();
+      const profilePayload = {
+        user_id: user.id,
+        ...profile,
+        profile_image_url: profileImageUrl,
+        title: "My Portfolio",
+        email: user.email,
+        theme: selectedTheme,
+        job_role: selectedRole,
+        is_fresher: isFresher,
+        resume_url: resumeUrl,
+        template_type: selectedTheme,
+      };
 
-      if (profileError) throw profileError;
-      const profileId = profileData.id;
+      let profileId: string;
+
+      if (isEditMode && editProfileId) {
+        // UPDATE existing profile
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .update(profilePayload)
+          .eq("id", editProfileId)
+          .select()
+          .single();
+        if (profileError) throw profileError;
+        profileId = profileData.id;
+
+        // Delete old related data, then re-insert
+        const userId = user.id;
+        await Promise.all([
+          supabase.from("skills").delete().eq("user_id", userId),
+          supabase.from("projects").delete().eq("user_id", userId),
+          supabase.from("education").delete().eq("user_id", userId),
+          supabase.from("achievements").delete().eq("user_id", userId),
+        ]);
+      } else {
+        // INSERT new profile
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .insert(profilePayload)
+          .select()
+          .single();
+        if (profileError) throw profileError;
+        profileId = profileData.id;
+      }
 
       const insertPromises = [];
       if (skills.length > 0) insertPromises.push(supabase.from("skills").insert(skills.map(s => ({ user_id: user.id, name: s.name }))));
@@ -211,10 +322,15 @@ const PortfolioSetup = () => {
       await Promise.allSettled(insertPromises);
 
       addPortfolioToHistory(profileId, profile.full_name);
-      toast({ title: "Portfolio Created!", description: "Your new portfolio has been successfully created." });
+      toast({ title: isEditMode ? "Portfolio Updated!" : "Portfolio Created!", description: isEditMode ? "Your portfolio has been successfully updated." : "Your new portfolio has been successfully created." });
       setCreatedPortfolioId(profileId);
       setCreatedPortfolioName(profile.full_name);
-      setShowShareModal(true);
+      
+      if (isEditMode) {
+        navigate(`/portfolio-view/${profileId}`);
+      } else {
+        setShowShareModal(true);
+      }
     } catch (error: any) {
       console.error("Error saving portfolio:", error);
       toast({ title: "Error", description: error.message || "Failed to save portfolio", variant: "destructive" });
@@ -242,8 +358,8 @@ const PortfolioSetup = () => {
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <div className="text-center flex-1">
-              <h1 className="text-4xl font-bold mb-4">Create Your Portfolio</h1>
-              <p className="text-muted-foreground">Fill in your details to generate a stunning portfolio</p>
+              <h1 className="text-4xl font-bold mb-4">{isEditMode ? "Edit Your Portfolio" : "Create Your Portfolio"}</h1>
+              <p className="text-muted-foreground">{isEditMode ? "Update your details and save changes" : "Fill in your details to generate a stunning portfolio"}</p>
             </div>
             <Button variant="outline" onClick={() => navigate("/")} className="flex items-center gap-2">
               <Home className="h-4 w-4" /> Back to Home
