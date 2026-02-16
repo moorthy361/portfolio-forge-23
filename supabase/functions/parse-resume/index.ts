@@ -3,8 +3,18 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+function uint8ArrayToBase64(bytes: Uint8Array): string {
+  const chunk = 8192;
+  let result = "";
+  for (let i = 0; i < bytes.length; i += chunk) {
+    const slice = bytes.subarray(i, i + chunk);
+    result += String.fromCharCode(...slice);
+  }
+  return btoa(result);
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -33,7 +43,7 @@ serve(async (req) => {
     
     // For PDF/DOCX, we send the raw text content we can extract
     // Convert to base64 for the AI to process
-    const base64 = btoa(String.fromCharCode(...uint8Array));
+    const base64 = uint8ArrayToBase64(uint8Array);
     
     // Use Lovable AI to parse the resume
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
