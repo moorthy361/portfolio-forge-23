@@ -231,6 +231,8 @@ const MyPortfolio = () => {
   
   const [profile, setProfile] = useState<Profile | null>(null);
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [technicalSkills, setTechnicalSkills] = useState<string[]>([]);
+  const [softSkills, setSoftSkills] = useState<string[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [education, setEducation] = useState<Education[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -279,6 +281,8 @@ const MyPortfolio = () => {
 
       setProfile(profileData as any);
       setTheme((profileData as any).theme || "classic");
+      setTechnicalSkills((profileData as any).technical_skills || []);
+      setSoftSkills((profileData as any).soft_skills || []);
       
       const portfolioUserId = profileData.user_id;
 
@@ -539,7 +543,13 @@ const MyPortfolio = () => {
   };
 
   const renderSkills = () => {
-    if (skills.length === 0) return null;
+    const hasTechnical = technicalSkills.length > 0;
+    const hasSoft = softSkills.length > 0;
+    const hasLegacy = skills.length > 0;
+    
+    // If no skills at all, don't render
+    if (!hasTechnical && !hasSoft && !hasLegacy) return null;
+
     return (
       <section id="skills" className="py-20 scroll-mt-16" key="skills">
         <div className="max-w-5xl mx-auto">
@@ -548,20 +558,70 @@ const MyPortfolio = () => {
             <div className="w-24 h-1.5 bg-gradient-to-r from-primary to-accent mx-auto rounded-full"></div>
           </div>
           
-          <Card className="card-glass border-0 shadow-2xl">
-            <CardContent className="p-8 md:p-12">
-              <div className="flex flex-wrap gap-3 justify-center">
-                {skills.map((skill, index) => (
-                  <Badge 
-                    key={index} 
-                    className="px-5 py-2.5 text-base font-medium bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary hover:to-accent hover:text-primary-foreground transition-all duration-300 cursor-default hover-scale shadow-md border-0"
-                  >
-                    {skill.name}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="space-y-8">
+            {/* Technical Skills */}
+            {hasTechnical && (
+              <Card className="card-glass border-0 shadow-2xl">
+                <CardContent className="p-8 md:p-12">
+                  <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                    <Code className="h-5 w-5 text-primary" />
+                    Technical Skills
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {technicalSkills.map((skill, index) => (
+                      <Badge 
+                        key={index} 
+                        className="px-5 py-2.5 text-base font-medium bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary hover:to-accent hover:text-primary-foreground transition-all duration-300 cursor-default hover-scale shadow-md border-0"
+                      >
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Soft Skills */}
+            {hasSoft && (
+              <Card className="card-glass border-0 shadow-2xl">
+                <CardContent className="p-8 md:p-12">
+                  <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                    <Award className="h-5 w-5 text-primary" />
+                    Soft Skills
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {softSkills.map((skill, index) => (
+                      <Badge 
+                        key={index} 
+                        variant="secondary"
+                        className="px-5 py-2.5 text-base font-medium rounded-full hover:bg-secondary/80 transition-all duration-300 cursor-default hover-scale shadow-sm"
+                      >
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Fallback: Legacy skills (if no technical/soft defined) */}
+            {!hasTechnical && !hasSoft && hasLegacy && (
+              <Card className="card-glass border-0 shadow-2xl">
+                <CardContent className="p-8 md:p-12">
+                  <div className="flex flex-wrap gap-3 justify-center">
+                    {skills.map((skill, index) => (
+                      <Badge 
+                        key={index} 
+                        className="px-5 py-2.5 text-base font-medium bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary hover:to-accent hover:text-primary-foreground transition-all duration-300 cursor-default hover-scale shadow-md border-0"
+                      >
+                        {skill.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
       </section>
     );
@@ -684,7 +744,7 @@ const MyPortfolio = () => {
   const navSections = layoutConfig.sectionOrder.filter(section => {
     if (section === "about") return !!profile.bio;
     if (section === "projects") return projects.length > 0;
-    if (section === "skills") return skills.length > 0;
+    if (section === "skills") return technicalSkills.length > 0 || softSkills.length > 0 || skills.length > 0;
     if (section === "education") return education.length > 0;
     if (section === "achievements") return achievements.length > 0;
     if (section === "contact") return !!profile.email;

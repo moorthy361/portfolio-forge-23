@@ -83,6 +83,8 @@ export type Database = {
           profession: string | null
           profile_image_url: string | null
           resume_url: string | null
+          soft_skills: string[] | null
+          technical_skills: string[] | null
           template_type: string | null
           theme: string | null
           title: string | null
@@ -103,6 +105,8 @@ export type Database = {
           profession?: string | null
           profile_image_url?: string | null
           resume_url?: string | null
+          soft_skills?: string[] | null
+          technical_skills?: string[] | null
           template_type?: string | null
           theme?: string | null
           title?: string | null
@@ -123,6 +127,8 @@ export type Database = {
           profession?: string | null
           profile_image_url?: string | null
           resume_url?: string | null
+          soft_skills?: string[] | null
+          technical_skills?: string[] | null
           template_type?: string | null
           theme?: string | null
           title?: string | null

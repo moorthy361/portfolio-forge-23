@@ -71,6 +71,10 @@ const PortfolioSetup = () => {
   const [profileImagePreview, setProfileImagePreview] = useState<string>("");
   
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [technicalSkills, setTechnicalSkills] = useState<string[]>([]);
+  const [softSkills, setSoftSkills] = useState<string[]>([]);
+  const [newTechnicalSkill, setNewTechnicalSkill] = useState("");
+  const [newSoftSkill, setNewSoftSkill] = useState("");
   const [newSkill, setNewSkill] = useState("");
   
   const [projects, setProjects] = useState<Project[]>([]);
@@ -141,6 +145,10 @@ const PortfolioSetup = () => {
         setProfileImagePreview(profileData.profile_image_url);
       }
 
+      // Load technical_skills and soft_skills from profile
+      setTechnicalSkills((profileData as any).technical_skills || []);
+      setSoftSkills((profileData as any).soft_skills || []);
+
       const [
         { data: skillsData },
         { data: projectsData },
@@ -208,6 +216,33 @@ const PortfolioSetup = () => {
     }
   }, [selectedRole]);
 
+  // Known technical keywords for auto-classification
+  const TECHNICAL_KEYWORDS = [
+    "react", "node", "python", "java", "javascript", "typescript", "sql", "nosql", "mongodb",
+    "docker", "kubernetes", "aws", "azure", "gcp", "html", "css", "sass", "tailwind",
+    "git", "github", "linux", "api", "rest", "graphql", "firebase", "supabase",
+    "flutter", "swift", "kotlin", "c++", "c#", "rust", "go", "php", "ruby",
+    "django", "flask", "spring", "express", "next", "vue", "angular", "svelte",
+    "tensorflow", "pytorch", "pandas", "numpy", "scikit", "opencv", "keras",
+    "machine learning", "deep learning", "ai", "ml", "data analysis", "data science",
+    "devops", "ci/cd", "jenkins", "terraform", "ansible", "agile", "scrum",
+    "figma", "photoshop", "illustrator", "sketch", "xd", "ui", "ux",
+    "mysql", "postgresql", "redis", "elasticsearch", "kafka",
+    "blockchain", "solidity", "web3", "lstm", "bi-lstm", "gans", "yolo",
+    "ocr", "nlp", "computer vision", "neural network", "hadoop", "spark",
+    "tableau", "power bi", "excel", "r", "matlab", "sas", "spss",
+    "selenium", "cypress", "jest", "mocha", "testing", "qa",
+    "networking", "tcp/ip", "dns", "http", "ssl", "tls",
+    "oops", "software engineering", "data structures", "algorithms",
+  ];
+
+  const classifySkill = (skill: string): "technical" | "soft" => {
+    const lower = skill.toLowerCase().trim();
+    return TECHNICAL_KEYWORDS.some(kw => lower.includes(kw) || kw.includes(lower))
+      ? "technical"
+      : "soft";
+  };
+
   const handleResumeParsed = (data: ParsedResumeData) => {
     setProfile({
       full_name: data.full_name || "",
@@ -217,15 +252,28 @@ const PortfolioSetup = () => {
       phone: data.phone || "",
       linkedin_url: data.linkedin_url || "",
     });
-    setSkills(data.skills?.map(s => ({ name: s })) || []);
+    
+    // Auto-classify skills from resume
+    const allSkills = data.skills || [];
+    const tech: string[] = [];
+    const soft: string[] = [];
+    allSkills.forEach(s => {
+      if (classifySkill(s) === "technical") tech.push(s);
+      else soft.push(s);
+    });
+    setTechnicalSkills(tech);
+    setSoftSkills(soft);
+    // Keep backward-compatible skills
+    setSkills(allSkills.map(s => ({ name: s })));
+    
     setEducation(data.education || []);
     setProjects(data.projects || []);
     if (data.experience?.length > 0) {
       setAchievements(data.experience.map(e => ({ title: e.title, description: e.description })));
     }
     // Smart theme suggestion from skills
-    if (data.skills?.length > 0) {
-      const suggested = suggestThemeFromSkills(data.skills);
+    if (allSkills.length > 0) {
+      const suggested = suggestThemeFromSkills(allSkills);
       setRecommendedThemes(suggested);
       setSelectedTheme(suggested[0].themeId);
     }
@@ -236,6 +284,10 @@ const PortfolioSetup = () => {
 
   const addSkill = () => { if (newSkill.trim()) { setSkills([...skills, { name: newSkill.trim() }]); setNewSkill(""); } };
   const removeSkill = (i: number) => setSkills(skills.filter((_, idx) => idx !== i));
+  const addTechnicalSkill = () => { if (newTechnicalSkill.trim() && !technicalSkills.includes(newTechnicalSkill.trim())) { setTechnicalSkills([...technicalSkills, newTechnicalSkill.trim()]); setNewTechnicalSkill(""); } };
+  const removeTechnicalSkill = (i: number) => setTechnicalSkills(technicalSkills.filter((_, idx) => idx !== i));
+  const addSoftSkill = () => { if (newSoftSkill.trim() && !softSkills.includes(newSoftSkill.trim())) { setSoftSkills([...softSkills, newSoftSkill.trim()]); setNewSoftSkill(""); } };
+  const removeSoftSkill = (i: number) => setSoftSkills(softSkills.filter((_, idx) => idx !== i));
   const addTechToProject = () => { if (newTech.trim()) { setNewProject({ ...newProject, tech_stack: [...newProject.tech_stack, newTech.trim()] }); setNewTech(""); } };
   const removeTechFromProject = (i: number) => setNewProject({ ...newProject, tech_stack: newProject.tech_stack.filter((_, idx) => idx !== i) });
   const addProject = () => { if (newProject.title.trim()) { setProjects([...projects, newProject]); setNewProject({ title: "", description: "", tech_stack: [], project_url: "" }); } };
@@ -280,6 +332,8 @@ const PortfolioSetup = () => {
         is_fresher: isFresher,
         resume_url: resumeUrl,
         template_type: selectedTheme,
+        technical_skills: technicalSkills,
+        soft_skills: softSkills,
       };
 
       let profileId: string;
@@ -466,18 +520,47 @@ const PortfolioSetup = () => {
 
               {/* Step 3: Skills */}
               {currentSection === 3 && (
-                <div className="space-y-4 animate-fade-in">
-                  <div className="flex gap-2">
-                    <Input value={newSkill} onChange={(e) => setNewSkill(e.target.value)} placeholder="Add a skill" onKeyPress={(e) => e.key === "Enter" && addSkill()} />
-                    <Button onClick={addSkill}><Plus className="h-4 w-4" /></Button>
+                <div className="space-y-8 animate-fade-in">
+                  {/* Technical Skills */}
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">💻 Technical Skills</h3>
+                      <p className="text-sm text-muted-foreground">Programming languages, frameworks, tools, and technologies</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Input value={newTechnicalSkill} onChange={(e) => setNewTechnicalSkill(e.target.value)} placeholder="e.g., React, Python, Docker, SQL..." onKeyPress={(e) => e.key === "Enter" && addTechnicalSkill()} />
+                      <Button onClick={addTechnicalSkill}><Plus className="h-4 w-4" /></Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {technicalSkills.map((skill, index) => (
+                        <Badge key={index} className="flex items-center gap-2 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
+                          {skill}
+                          <X className="h-3 w-3 cursor-pointer" onClick={() => removeTechnicalSkill(index)} />
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {skills.map((skill, index) => (
-                      <Badge key={index} variant="secondary" className="flex items-center gap-2">
-                        {skill.name}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => removeSkill(index)} />
-                      </Badge>
-                    ))}
+
+                  <div className="border-t border-border" />
+
+                  {/* Soft Skills */}
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">🤝 Soft Skills</h3>
+                      <p className="text-sm text-muted-foreground">Interpersonal, communication, and leadership abilities</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Input value={newSoftSkill} onChange={(e) => setNewSoftSkill(e.target.value)} placeholder="e.g., Communication, Teamwork, Leadership..." onKeyPress={(e) => e.key === "Enter" && addSoftSkill()} />
+                      <Button onClick={addSoftSkill}><Plus className="h-4 w-4" /></Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {softSkills.map((skill, index) => (
+                        <Badge key={index} variant="secondary" className="flex items-center gap-2">
+                          {skill}
+                          <X className="h-3 w-3 cursor-pointer" onClick={() => removeSoftSkill(index)} />
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
