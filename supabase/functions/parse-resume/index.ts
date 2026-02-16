@@ -37,13 +37,17 @@ serve(async (req) => {
 
     if (downloadErr) throw downloadErr;
 
-    // Convert to text for AI parsing
+    // Convert to base64 for AI processing
     const arrayBuffer = await fileData.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
-    
-    // For PDF/DOCX, we send the raw text content we can extract
-    // Convert to base64 for the AI to process
     const base64 = uint8ArrayToBase64(uint8Array);
+
+    // Determine correct MIME type from file extension
+    const ext = fileName.split(".").pop()?.toLowerCase();
+    let mimeType = "application/pdf";
+    if (ext === "docx") {
+      mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    }
     
     // Use Lovable AI to parse the resume
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -84,7 +88,7 @@ If a field is not found, use empty string or empty array. Always return valid JS
               {
                 type: "image_url",
                 image_url: {
-                  url: `data:application/octet-stream;base64,${base64}`
+                  url: `data:${mimeType};base64,${base64}`
                 }
               }
             ]
