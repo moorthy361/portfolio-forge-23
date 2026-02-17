@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN design_variant jsonb DEFAULT '{}'::jsonb;

@@ -4,34 +4,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Linkedin, 
-  Github, 
-  Globe,
-  Download,
-  Edit,
-  GraduationCap,
-  Briefcase,
-  Award,
-  Code,
-  ExternalLink,
-  Home,
-  Terminal,
-  Palette,
-  BarChart3,
-  Shield,
-  Cloud,
-  Bot,
-  Megaphone,
-  Smartphone
+  Mail, Phone, MapPin, Linkedin, Github, Globe,
+  Download, Edit, GraduationCap, Briefcase, Award, Code,
+  ExternalLink, Home, Terminal, Palette, BarChart3, Shield,
+  Cloud, Bot, Megaphone, Smartphone
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { themeStyles, type ThemeId } from "@/lib/themes";
 import { jobRoles } from "@/lib/roleThemeMapping";
+import { useDesignEngine } from "@/hooks/useDesignEngine";
+import type { DesignVariant } from "@/lib/designVariantGenerator";
+import FuturisticWrapper, { AnimatedSection, GlowCard } from "@/components/FuturisticWrapper";
 
 interface Profile {
   user_id: string;
@@ -51,28 +36,10 @@ interface Profile {
   theme: string;
 }
 
-interface Skill {
-  name: string;
-}
-
-interface Project {
-  title: string;
-  description: string;
-  tech_stack: string[];
-  project_url: string;
-}
-
-interface Education {
-  degree: string;
-  institution: string;
-  year: string;
-  gpa: string;
-}
-
-interface Achievement {
-  title: string;
-  description: string;
-}
+interface Skill { name: string; }
+interface Project { title: string; description: string; tech_stack: string[]; project_url: string; }
+interface Education { degree: string; institution: string; year: string; gpa: string; }
+interface Achievement { title: string; description: string; }
 
 // Role-specific configuration for layout customization
 const roleLayoutConfig: Record<string, {
@@ -238,6 +205,7 @@ const MyPortfolio = () => {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState("classic");
+  const [designVariant, setDesignVariant] = useState<DesignVariant | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -283,6 +251,7 @@ const MyPortfolio = () => {
       setTheme((profileData as any).theme || "classic");
       setTechnicalSkills((profileData as any).technical_skills || []);
       setSoftSkills((profileData as any).soft_skills || []);
+      setDesignVariant((profileData as any).design_variant || null);
       
       const portfolioUserId = profileData.user_id;
 
@@ -329,16 +298,19 @@ const MyPortfolio = () => {
 
   const isFresher = profile?.is_fresher || profile?.job_role === "fresher";
 
-  // Find the role label for display
   const roleLabel = profile?.job_role
     ? jobRoles.find(r => r.id === profile.job_role)?.label || profile.profession
     : profile?.profession;
 
+  // Design engine
+  const engine = useDesignEngine(profile?.job_role || "fresher", designVariant);
+
   if (loading || isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Loading your portfolio...</h2>
+          <div className="w-12 h-12 border-2 border-t-cyan-400 border-cyan-400/20 rounded-full animate-spin mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white/80">Loading your portfolio...</h2>
         </div>
       </div>
     );
@@ -346,10 +318,10 @@ const MyPortfolio = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Portfolio not found</h2>
-          <p className="text-muted-foreground mb-4">
+          <h2 className="text-2xl font-bold text-white mb-4">Portfolio not found</h2>
+          <p className="text-white/60 mb-4">
             It looks like you haven't created your portfolio yet.
           </p>
           <Button onClick={() => navigate("/portfolio-setup")}>
@@ -360,185 +332,162 @@ const MyPortfolio = () => {
     );
   }
 
-  // Section renderers
+  // Section renderers with futuristic design
   const renderAbout = () => {
     if (!profile.bio) return null;
     return (
-      <section id="about" className="py-20 scroll-mt-16" key="about">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">About Me</h2>
-            <div className="w-24 h-1.5 bg-gradient-to-r from-primary to-accent mx-auto rounded-full"></div>
-          </div>
-          
-          <Card className="card-glass shadow-2xl border-0 overflow-hidden">
-            <CardContent className="p-8 md:p-12">
-              <div className="grid md:grid-cols-2 gap-12 items-start">
-                <div className="space-y-6">
-                  {isFresher && (
-                    <Badge className="mb-2 bg-primary/10 text-primary border-primary/20">
-                      <GraduationCap className="h-3 w-3 mr-1" />
-                      Fresh Graduate
-                    </Badge>
-                  )}
-                  {roleLabel && !isFresher && (
-                    <Badge className="mb-2 bg-primary/10 text-primary border-primary/20">
-                      {roleLabel}
-                    </Badge>
-                  )}
-                  <p className="text-lg leading-relaxed text-foreground/90">
-                    {profile.bio}
-                  </p>
+      <AnimatedSection animationType={engine.heroAnimationType} delay={0.1} key="about">
+        <section id="about" className="py-20 scroll-mt-16">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className={`text-4xl md:text-5xl ${engine.headingClass} mb-4 text-white`}>About Me</h2>
+              <div className={`w-24 h-1.5 bg-gradient-to-r ${engine.accentGradientClass} mx-auto rounded-full`}></div>
+            </div>
+            
+            <GlowCard className={engine.cardClass + " overflow-hidden rounded-xl"} glowColor={`bg-gradient-to-r ${engine.accentGradientClass}`}>
+              <div className="p-8 md:p-12">
+                <div className="grid md:grid-cols-2 gap-12 items-start">
+                  <div className="space-y-6">
+                    {isFresher && (
+                      <Badge className={`mb-2 ${engine.badgeClass}`}>
+                        <GraduationCap className="h-3 w-3 mr-1" />
+                        Fresh Graduate
+                      </Badge>
+                    )}
+                    {roleLabel && !isFresher && (
+                      <Badge className={`mb-2 ${engine.badgeClass}`}>
+                        {roleLabel}
+                      </Badge>
+                    )}
+                    <p className={`text-lg leading-relaxed text-white/80 ${engine.bodyClass}`}>
+                      {profile.bio}
+                    </p>
+                    
+                    <div className="space-y-4 pt-4">
+                      {profile.location && (
+                        <div className="flex items-center gap-3 group">
+                          <div className="p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors">
+                            <MapPin className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
+                          </div>
+                          <span className="text-white/70">{profile.location}</span>
+                        </div>
+                      )}
+                      {profile.phone && (
+                        <div className="flex items-center gap-3 group">
+                          <div className="p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors">
+                            <Phone className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
+                          </div>
+                          <a href={`tel:${profile.phone}`} className="text-white/70 hover:text-white transition-colors">
+                            {profile.phone}
+                          </a>
+                        </div>
+                      )}
+                      {profile.email && (
+                        <div className="flex items-center gap-3 group">
+                          <div className="p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors">
+                            <Mail className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
+                          </div>
+                          <a href={`mailto:${profile.email}`} className="text-white/70 hover:text-white transition-colors">
+                            {profile.email}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                   
-                  <div className="space-y-4 pt-4">
-                    {profile.location && (
-                      <div className="flex items-center gap-3 group">
-                        <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                          <MapPin className="h-5 w-5 text-primary" />
-                        </div>
-                        <span className="text-foreground/80">{profile.location}</span>
+                  <div className="flex flex-col items-center space-y-8">
+                    {profile.profile_image_url && (
+                      <div className={`relative group rounded-xl overflow-hidden ${engine.accentGlowClass}`}>
+                        <img
+                          src={profile.profile_image_url}
+                          alt={profile.full_name}
+                          className="w-64 h-64 rounded-xl object-cover"
+                        />
+                        <div className={`absolute inset-0 bg-gradient-to-t ${engine.accentGradientClass} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
                       </div>
                     )}
-                    {profile.phone && (
-                      <div className="flex items-center gap-3 group">
-                        <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                          <Phone className="h-5 w-5 text-primary" />
-                        </div>
-                        <a href={`tel:${profile.phone}`} className="text-foreground/80 hover:text-primary transition-colors">
-                          {profile.phone}
-                        </a>
-                      </div>
-                    )}
-                    {profile.email && (
-                      <div className="flex items-center gap-3 group">
-                        <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                          <Mail className="h-5 w-5 text-primary" />
-                        </div>
-                        <a href={`mailto:${profile.email}`} className="text-foreground/80 hover:text-primary transition-colors">
-                          {profile.email}
-                        </a>
+                    
+                    {(profile.linkedin_url || (profile as any).github_url || (profile as any).website_url) && (
+                      <div className="flex gap-4">
+                        {profile.linkedin_url && (
+                          <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer"
+                            className={`p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 ${engine.accentGlowClass.replace('shadow', 'hover:shadow')}`}>
+                            <Linkedin className={`h-6 w-6 ${engine.accentPrimaryClass}`} />
+                          </a>
+                        )}
+                        {(profile as any).github_url && (
+                          <a href={(profile as any).github_url} target="_blank" rel="noopener noreferrer"
+                            className="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300">
+                            <Github className={`h-6 w-6 ${engine.accentPrimaryClass}`} />
+                          </a>
+                        )}
+                        {(profile as any).website_url && (
+                          <a href={(profile as any).website_url} target="_blank" rel="noopener noreferrer"
+                            className="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300">
+                            <Globe className={`h-6 w-6 ${engine.accentPrimaryClass}`} />
+                          </a>
+                        )}
                       </div>
                     )}
                   </div>
                 </div>
-                
-                <div className="flex flex-col items-center space-y-8">
-                  {profile.profile_image_url && (
-                    <div className="relative group">
-                      <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-300"></div>
-                      <img
-                        src={profile.profile_image_url}
-                        alt={profile.full_name}
-                        className="relative w-64 h-64 rounded-xl object-cover shadow-2xl"
-                      />
-                    </div>
-                  )}
-                  
-                  {(profile.linkedin_url || (profile as any).github_url || (profile as any).website_url) && (
-                    <div className="flex gap-4">
-                      {profile.linkedin_url && (
-                        <a 
-                          href={profile.linkedin_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="p-3 bg-primary/10 rounded-xl hover:bg-primary hover:text-primary-foreground transition-all hover-scale shadow-lg"
-                        >
-                          <Linkedin className="h-6 w-6" />
-                        </a>
-                      )}
-                      {(profile as any).github_url && (
-                        <a 
-                          href={(profile as any).github_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="p-3 bg-primary/10 rounded-xl hover:bg-primary hover:text-primary-foreground transition-all hover-scale shadow-lg"
-                        >
-                          <Github className="h-6 w-6" />
-                        </a>
-                      )}
-                      {(profile as any).website_url && (
-                        <a 
-                          href={(profile as any).website_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="p-3 bg-primary/10 rounded-xl hover:bg-primary hover:text-primary-foreground transition-all hover-scale shadow-lg"
-                        >
-                          <Globe className="h-6 w-6" />
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+            </GlowCard>
+          </div>
+        </section>
+      </AnimatedSection>
     );
   };
 
   const renderProjects = () => {
     if (projects.length === 0) return null;
     return (
-      <section id="projects" className="py-20 scroll-mt-16 section-gradient" key="projects">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">{layoutConfig.projectsLabel}</h2>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-primary to-accent mx-auto rounded-full mb-6"></div>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            {layoutConfig.projectsSubtext}
-          </p>
-        </div>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {projects.map((project, index) => (
-            <Card key={index} className="card-glass border-0 hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2 animate-scale-in">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-primary/10 rounded-xl group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                    {layoutConfig.projectIcon}
+      <AnimatedSection animationType={engine.heroAnimationType} delay={0.15} key="projects">
+        <section id="projects" className={`py-20 scroll-mt-16 ${engine.sectionBgClass}`}>
+          <div className="text-center mb-16">
+            <h2 className={`text-4xl md:text-5xl ${engine.headingClass} mb-4 text-white`}>{layoutConfig.projectsLabel}</h2>
+            <div className={`w-24 h-1.5 bg-gradient-to-r ${engine.accentGradientClass} mx-auto rounded-full mb-6`}></div>
+            <p className={`text-white/50 max-w-2xl mx-auto text-lg ${engine.bodyClass}`}>
+              {layoutConfig.projectsSubtext}
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {projects.map((project, index) => (
+              <GlowCard key={index} className={`${engine.cardClass} rounded-xl`} glowColor={`bg-gradient-to-r ${engine.accentGradientClass}`}>
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className={`p-3 bg-white/5 rounded-xl`}>
+                      {layoutConfig.projectIcon}
+                    </div>
+                    {project.project_url && (
+                      <a href={project.project_url} target="_blank" rel="noopener noreferrer"
+                        className="p-2 hover:bg-white/10 rounded-lg transition-all">
+                        <ExternalLink className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
+                      </a>
+                    )}
                   </div>
-                  {project.project_url && (
-                    <a
-                      href={project.project_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 hover:bg-primary/20 rounded-lg transition-all hover-scale"
-                    >
-                      <ExternalLink className="h-5 w-5 text-primary" />
-                    </a>
-                  )}
+                  
+                  <h3 className={`text-xl ${engine.headingClass} mb-3 text-white`}>
+                    {project.title}
+                  </h3>
+                  <p className={`text-white/60 mb-6 leading-relaxed line-clamp-3 ${engine.bodyClass}`}>
+                    {project.description}
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {project.tech_stack?.map((tech, techIndex) => (
+                      <Badge key={techIndex} className={`px-3 py-1 ${engine.badgeClass}`}>
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-                
-                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
-                  {project.title}
-                </h3>
-                
-                <p className="text-foreground/70 mb-6 leading-relaxed line-clamp-3">
-                  {project.description}
-                </p>
-                
-                {layoutConfig.showTechStackProminent ? (
-                  <div className="flex flex-wrap gap-2">
-                    {project.tech_stack?.map((tech, techIndex) => (
-                      <Badge key={techIndex} className="px-3 py-1 bg-primary/10 text-primary border-0 font-medium hover-scale">
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap gap-2">
-                    {project.tech_stack?.map((tech, techIndex) => (
-                      <Badge key={techIndex} variant="secondary" className="px-3 py-1 hover-scale">
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
+              </GlowCard>
+            ))}
+          </div>
+        </section>
+      </AnimatedSection>
     );
   };
 
@@ -546,191 +495,183 @@ const MyPortfolio = () => {
     const hasTechnical = technicalSkills.length > 0;
     const hasSoft = softSkills.length > 0;
     const hasLegacy = skills.length > 0;
-    
-    // If no skills at all, don't render
     if (!hasTechnical && !hasSoft && !hasLegacy) return null;
 
     return (
-      <section id="skills" className="py-20 scroll-mt-16" key="skills">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">{layoutConfig.skillsLabel}</h2>
-            <div className="w-24 h-1.5 bg-gradient-to-r from-primary to-accent mx-auto rounded-full"></div>
-          </div>
-          
-          <div className="space-y-8">
-            {/* Technical Skills */}
-            {hasTechnical && (
-              <Card className="card-glass border-0 shadow-2xl">
-                <CardContent className="p-8 md:p-12">
-                  <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                    <Code className="h-5 w-5 text-primary" />
-                    Technical Skills
-                  </h3>
-                  <div className="flex flex-wrap gap-3">
-                    {technicalSkills.map((skill, index) => (
-                      <Badge 
-                        key={index} 
-                        className="px-5 py-2.5 text-base font-medium bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary hover:to-accent hover:text-primary-foreground transition-all duration-300 cursor-default hover-scale shadow-md border-0"
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
+      <AnimatedSection animationType={engine.heroAnimationType} delay={0.2} key="skills">
+        <section id="skills" className="py-20 scroll-mt-16">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className={`text-4xl md:text-5xl ${engine.headingClass} mb-4 text-white`}>{layoutConfig.skillsLabel}</h2>
+              <div className={`w-24 h-1.5 bg-gradient-to-r ${engine.accentGradientClass} mx-auto rounded-full`}></div>
+            </div>
+            
+            <div className="space-y-8">
+              {hasTechnical && (
+                <GlowCard className={`${engine.cardClass} rounded-xl`} glowColor={`bg-gradient-to-r ${engine.accentGradientClass}`}>
+                  <div className="p-8 md:p-12">
+                    <h3 className={`text-xl font-semibold mb-6 flex items-center gap-2 text-white`}>
+                      <Code className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
+                      Technical Skills
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                      {technicalSkills.map((skill, index) => (
+                        <Badge key={index} className={`px-5 py-2.5 text-base font-medium ${engine.badgeClass} transition-all duration-300 hover:scale-105`}>
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                </GlowCard>
+              )}
 
-            {/* Soft Skills */}
-            {hasSoft && (
-              <Card className="card-glass border-0 shadow-2xl">
-                <CardContent className="p-8 md:p-12">
-                  <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                    <Award className="h-5 w-5 text-primary" />
-                    Soft Skills
-                  </h3>
-                  <div className="flex flex-wrap gap-3">
-                    {softSkills.map((skill, index) => (
-                      <Badge 
-                        key={index} 
-                        variant="secondary"
-                        className="px-5 py-2.5 text-base font-medium rounded-full hover:bg-secondary/80 transition-all duration-300 cursor-default hover-scale shadow-sm"
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
+              {hasSoft && (
+                <GlowCard className={`${engine.cardClass} rounded-xl`}>
+                  <div className="p-8 md:p-12">
+                    <h3 className="text-xl font-semibold mb-6 flex items-center gap-2 text-white">
+                      <Award className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
+                      Soft Skills
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                      {softSkills.map((skill, index) => (
+                        <Badge key={index} className="px-5 py-2.5 text-base font-medium rounded-full bg-white/5 text-white/80 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                </GlowCard>
+              )}
 
-            {/* Fallback: Legacy skills (if no technical/soft defined) */}
-            {!hasTechnical && !hasSoft && hasLegacy && (
-              <Card className="card-glass border-0 shadow-2xl">
-                <CardContent className="p-8 md:p-12">
-                  <div className="flex flex-wrap gap-3 justify-center">
-                    {skills.map((skill, index) => (
-                      <Badge 
-                        key={index} 
-                        className="px-5 py-2.5 text-base font-medium bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary hover:to-accent hover:text-primary-foreground transition-all duration-300 cursor-default hover-scale shadow-md border-0"
-                      >
-                        {skill.name}
-                      </Badge>
-                    ))}
+              {!hasTechnical && !hasSoft && hasLegacy && (
+                <GlowCard className={`${engine.cardClass} rounded-xl`}>
+                  <div className="p-8 md:p-12">
+                    <div className="flex flex-wrap gap-3 justify-center">
+                      {skills.map((skill, index) => (
+                        <Badge key={index} className={`px-5 py-2.5 text-base font-medium ${engine.badgeClass} hover:scale-105 transition-all duration-300`}>
+                          {skill.name}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                </GlowCard>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
     );
   };
 
   const renderEducation = () => {
     if (education.length === 0) return null;
     return (
-      <section id="education" className="py-20 scroll-mt-16" key="education">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            {isFresher ? "Education & Academics" : "Education"}
-          </h2>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-primary to-accent mx-auto rounded-full"></div>
-        </div>
-        
-        <div className="max-w-4xl mx-auto space-y-6">
-          {education.map((edu, index) => (
-            <Card key={index} className="card-elevated hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-primary/10 rounded-lg">
-                    <GraduationCap className="h-6 w-6 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold mb-2">{edu.degree}</h3>
-                    <p className="text-primary font-medium mb-2">{edu.institution}</p>
-                    <div className="flex gap-4 text-muted-foreground">
-                      <span>{edu.year}</span>
-                      {edu.gpa && <span>GPA: {edu.gpa}</span>}
+      <AnimatedSection animationType={engine.heroAnimationType} delay={0.25} key="education">
+        <section id="education" className="py-20 scroll-mt-16">
+          <div className="text-center mb-16">
+            <h2 className={`text-4xl md:text-5xl ${engine.headingClass} mb-4 text-white`}>
+              {isFresher ? "Education & Academics" : "Education"}
+            </h2>
+            <div className={`w-24 h-1.5 bg-gradient-to-r ${engine.accentGradientClass} mx-auto rounded-full`}></div>
+          </div>
+          
+          <div className="max-w-4xl mx-auto space-y-6">
+            {education.map((edu, index) => (
+              <GlowCard key={index} className={`${engine.cardClass} rounded-xl`}>
+                <div className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-white/5 rounded-lg">
+                      <GraduationCap className={`h-6 w-6 ${engine.accentPrimaryClass}`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className={`text-xl font-semibold mb-2 text-white`}>{edu.degree}</h3>
+                      <p className={`${engine.accentPrimaryClass} font-medium mb-2`}>{edu.institution}</p>
+                      <div className="flex gap-4 text-white/50">
+                        <span>{edu.year}</span>
+                        {edu.gpa && <span>GPA: {edu.gpa}</span>}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
+              </GlowCard>
+            ))}
+          </div>
+        </section>
+      </AnimatedSection>
     );
   };
 
   const renderAchievements = () => {
     if (achievements.length === 0) return null;
     return (
-      <section id="achievements" className="py-20 scroll-mt-16" key="achievements">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            {isFresher ? "Certifications & Achievements" : "Achievements & Certifications"}
-          </h2>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-primary to-accent mx-auto rounded-full"></div>
-        </div>
-        
-        <div className="max-w-4xl mx-auto space-y-4">
-          {achievements.map((achievement, index) => (
-            <Card key={index} className="card-elevated hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <Award className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">{achievement.title}</h3>
-                    {achievement.description && (
-                      <p className="text-muted-foreground">{achievement.description}</p>
-                    )}
+      <AnimatedSection animationType={engine.heroAnimationType} delay={0.3} key="achievements">
+        <section id="achievements" className="py-20 scroll-mt-16">
+          <div className="text-center mb-16">
+            <h2 className={`text-4xl md:text-5xl ${engine.headingClass} mb-4 text-white`}>
+              {isFresher ? "Certifications & Achievements" : "Achievements & Certifications"}
+            </h2>
+            <div className={`w-24 h-1.5 bg-gradient-to-r ${engine.accentGradientClass} mx-auto rounded-full`}></div>
+          </div>
+          
+          <div className="max-w-4xl mx-auto space-y-4">
+            {achievements.map((achievement, index) => (
+              <GlowCard key={index} className={`${engine.cardClass} rounded-xl`}>
+                <div className="p-6">
+                  <div className="flex items-start gap-4">
+                    <Award className={`h-6 w-6 ${engine.accentPrimaryClass} mt-1 flex-shrink-0`} />
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2 text-white">{achievement.title}</h3>
+                      {achievement.description && (
+                        <p className="text-white/60">{achievement.description}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
+              </GlowCard>
+            ))}
+          </div>
+        </section>
+      </AnimatedSection>
     );
   };
 
   const renderContact = () => (
-    <section id="contact" className="py-20 scroll-mt-16" key="contact">
-      <Card className="card-elevated max-w-4xl mx-auto">
-        <CardContent className="p-8 md:p-12 text-center">
-          <h2 className="text-4xl font-bold mb-4">Get In Touch</h2>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-primary to-accent mx-auto rounded-full mb-8"></div>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            {isFresher
-              ? "I'm actively looking for opportunities to kickstart my career. Let's connect!"
-              : "I'm always open to discussing new opportunities and interesting projects. Let's connect and see how we can work together!"}
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {profile.email && (
-              <Button size="lg" className="btn-hero" asChild>
-                <a href={`mailto:${profile.email}`}>
-                  <Mail className="h-5 w-5 mr-2" />
-                  Email Me
-                </a>
-              </Button>
-            )}
-            {profile.linkedin_url && (
-              <Button size="lg" variant="outline" asChild>
-                <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer">
-                  <Linkedin className="h-5 w-5 mr-2" />
-                  LinkedIn
-                </a>
-              </Button>
-            )}
+    <AnimatedSection animationType={engine.heroAnimationType} delay={0.35} key="contact">
+      <section id="contact" className="py-20 scroll-mt-16">
+        <GlowCard className={`${engine.cardClass} max-w-4xl mx-auto rounded-xl`} glowColor={`bg-gradient-to-r ${engine.accentGradientClass}`}>
+          <div className="p-8 md:p-12 text-center">
+            <h2 className={`text-4xl ${engine.headingClass} mb-4 text-white`}>Get In Touch</h2>
+            <div className={`w-24 h-1.5 bg-gradient-to-r ${engine.accentGradientClass} mx-auto rounded-full mb-8`}></div>
+            <p className={`text-lg text-white/50 mb-8 max-w-2xl mx-auto ${engine.bodyClass}`}>
+              {isFresher
+                ? "I'm actively looking for opportunities to kickstart my career. Let's connect!"
+                : "I'm always open to discussing new opportunities and interesting projects. Let's connect and see how we can work together!"}
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              {profile.email && (
+                <Button size="lg" className={`bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 ${engine.accentGlowClass}`} asChild>
+                  <a href={`mailto:${profile.email}`}>
+                    <Mail className="h-5 w-5 mr-2" />
+                    Email Me
+                  </a>
+                </Button>
+              )}
+              {profile.linkedin_url && (
+                <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10" asChild>
+                  <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer">
+                    <Linkedin className="h-5 w-5 mr-2" />
+                    LinkedIn
+                  </a>
+                </Button>
+              )}
+            </div>
           </div>
-        </CardContent>
-      </Card>
-    </section>
+        </GlowCard>
+      </section>
+    </AnimatedSection>
   );
 
-  // Map section names to renderers
   const sectionRenderers: Record<string, () => React.ReactNode> = {
     about: renderAbout,
     projects: renderProjects,
@@ -740,7 +681,6 @@ const MyPortfolio = () => {
     contact: renderContact,
   };
 
-  // Build nav links based on section order (only show sections with data)
   const navSections = layoutConfig.sectionOrder.filter(section => {
     if (section === "about") return !!profile.bio;
     if (section === "projects") return projects.length > 0;
@@ -761,19 +701,19 @@ const MyPortfolio = () => {
   };
 
   return (
-    <div className={`min-h-screen ${currentTheme.bg} ${currentTheme.text}`}>
+    <FuturisticWrapper engine={engine}>
       {/* Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-background/90 border-b shadow-sm">
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-gray-950/80 border-b border-white/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gradient">
+              <h1 className={`text-xl font-bold bg-gradient-to-r ${engine.accentGradientClass} bg-clip-text text-transparent`}>
                 {profile.full_name}
               </h1>
               <div className="hidden md:flex space-x-6">
-                <a href="#home" className="text-sm font-medium hover:text-primary transition-all hover-scale">Home</a>
+                <a href="#home" className="text-sm font-medium text-white/60 hover:text-white transition-all">Home</a>
                 {navSections.map(section => (
-                  <a key={section} href={`#${section}`} className="text-sm font-medium hover:text-primary transition-all hover-scale">
+                  <a key={section} href={`#${section}`} className="text-sm font-medium text-white/60 hover:text-white transition-all">
                     {navLabels[section]}
                   </a>
                 ))}
@@ -785,13 +725,11 @@ const MyPortfolio = () => {
                   onClick={() => {
                     const portfolioUrl = `${window.location.origin}/portfolio-view/${id}`;
                     navigator.clipboard.writeText(portfolioUrl);
-                    toast({
-                      title: 'Link Copied!',
-                      description: 'Portfolio link copied to clipboard'
-                    });
+                    toast({ title: 'Link Copied!', description: 'Portfolio link copied to clipboard' });
                   }} 
                   variant="outline" 
                   size="sm"
+                  className="border-white/20 text-white hover:bg-white/10"
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Share
@@ -799,17 +737,17 @@ const MyPortfolio = () => {
               )}
               {user && profile && user.id === profile.user_id && (
                 <>
-                  <Button onClick={handleEdit} variant="ghost" size="sm">
+                  <Button onClick={handleEdit} variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10">
                     <Edit className="h-4 w-4 mr-2" />
                     Edit
                   </Button>
-                  <Button onClick={handleDownload} variant="ghost" size="sm">
+                  <Button onClick={handleDownload} variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10">
                     <Download className="h-4 w-4 mr-2" />
                     Download
                   </Button>
                 </>
               )}
-              <Button onClick={() => navigate("/")} variant="default" size="sm">
+              <Button onClick={() => navigate("/")} size="sm" className={`bg-gradient-to-r ${engine.accentGradientClass} text-white border-0`}>
                 <Home className="h-4 w-4 mr-2" />
                 Home
               </Button>
@@ -820,51 +758,55 @@ const MyPortfolio = () => {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
-        <section id="home" className="min-h-screen flex items-center justify-center pt-24 pb-20">
-          <div className="text-center max-w-5xl mx-auto animate-fade-in">
-            <div className="mb-12">
-              {profile.profile_image_url && (
-                <div className="mb-8 flex justify-center">
-                  <img
-                    src={profile.profile_image_url}
-                    alt={profile.full_name}
-                    className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover ring-4 ring-primary/20 shadow-2xl animate-scale-in"
-                  />
-                </div>
-              )}
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight">
-                Hi, I'm{" "}
-                <span className={currentTheme.primary}>
-                  {profile.full_name}
-                </span>
-              </h1>
-              <p className={`text-2xl md:text-4xl font-bold ${currentTheme.secondary} mb-4 animate-slide-up`}>
-                {profile.profession || roleLabel}
-              </p>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-slide-up">
-                {layoutConfig.heroSubtext}
-              </p>
+        <AnimatedSection animationType={engine.heroAnimationType}>
+          <section id="home" className="min-h-screen flex items-center justify-center pt-24 pb-20">
+            <div className="text-center max-w-5xl mx-auto">
+              <div className="mb-12">
+                {profile.profile_image_url && (
+                  <div className="mb-8 flex justify-center">
+                    <div className={`rounded-full overflow-hidden ${engine.accentGlowClass}`}>
+                      <img
+                        src={profile.profile_image_url}
+                        alt={profile.full_name}
+                        className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover ring-4 ring-white/10"
+                      />
+                    </div>
+                  </div>
+                )}
+                <h1 className={`text-5xl md:text-7xl lg:text-8xl ${engine.headingClass} mb-6 leading-tight text-white`}>
+                  Hi, I'm{" "}
+                  <span className={`bg-gradient-to-r ${engine.accentGradientClass} bg-clip-text text-transparent`}>
+                    {profile.full_name}
+                  </span>
+                </h1>
+                <p className={`text-2xl md:text-4xl ${engine.headingClass} ${engine.accentPrimaryClass} mb-4`}>
+                  {profile.profession || roleLabel}
+                </p>
+                <p className={`text-lg md:text-xl text-white/50 max-w-2xl mx-auto ${engine.bodyClass}`}>
+                  {layoutConfig.heroSubtext}
+                </p>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#projects">
+                  <Button size="lg" className={`text-lg px-10 py-6 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 ${engine.accentGlowClass} hover:opacity-90 transition-all`}>
+                    View My Work
+                  </Button>
+                </a>
+                <a href="#contact">
+                  <Button size="lg" variant="outline" className="text-lg px-10 py-6 border-white/20 text-white hover:bg-white/10 transition-all">
+                    Get in Touch
+                  </Button>
+                </a>
+              </div>
             </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-              <a href="#projects">
-                <Button size="lg" className="text-lg px-10 py-6 shadow-lg hover:shadow-2xl transition-all">
-                  View My Work
-                </Button>
-              </a>
-              <a href="#contact">
-                <Button size="lg" variant="outline" className="text-lg px-10 py-6 shadow-md hover:shadow-xl transition-all">
-                  Get in Touch
-                </Button>
-              </a>
-            </div>
-          </div>
-        </section>
+          </section>
+        </AnimatedSection>
 
         {/* Render sections in role-specific order */}
         {layoutConfig.sectionOrder.map(section => sectionRenderers[section]?.())}
       </div>
-    </div>
+    </FuturisticWrapper>
   );
 };
 
