@@ -72,6 +72,7 @@ export type Database = {
         Row: {
           bio: string | null
           created_at: string
+          design_variant: Json | null
           email: string | null
           full_name: string
           id: string
@@ -94,6 +95,7 @@ export type Database = {
         Insert: {
           bio?: string | null
           created_at?: string
+          design_variant?: Json | null
           email?: string | null
           full_name?: string
           id?: string
@@ -116,6 +118,7 @@ export type Database = {
         Update: {
           bio?: string | null
           created_at?: string
+          design_variant?: Json | null
           email?: string | null
           full_name?: string
           id?: string

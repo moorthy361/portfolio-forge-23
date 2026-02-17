@@ -15,6 +15,7 @@ import { ThemeSelection } from "@/components/ThemeSelection";
 import { JobRoleSelection } from "@/components/JobRoleSelection";
 import { ResumeUpload, ParsedResumeData } from "@/components/ResumeUpload";
 import { roleThemeMap, suggestThemeFromSkills, RoleThemeRecommendation } from "@/lib/roleThemeMapping";
+import { generateDesignVariant, type DesignVariant } from "@/lib/designVariantGenerator";
 import { X, Plus, Home, Check } from "lucide-react";
 
 interface ProfileData {
@@ -321,7 +322,10 @@ const PortfolioSetup = () => {
         profileImageUrl = publicUrl;
       }
 
-      const profilePayload = {
+      // Generate a new design variant only for new portfolios
+      const designVariant = isEditMode ? undefined : generateDesignVariant();
+
+      const profilePayload: Record<string, any> = {
         user_id: user.id,
         ...profile,
         profile_image_url: profileImageUrl,
@@ -336,13 +340,17 @@ const PortfolioSetup = () => {
         soft_skills: softSkills,
       };
 
+      if (designVariant) {
+        profilePayload.design_variant = designVariant;
+      }
+
       let profileId: string;
 
       if (isEditMode && editProfileId) {
         // UPDATE existing profile
         const { data: profileData, error: profileError } = await supabase
           .from("profiles")
-          .update(profilePayload)
+          .update(profilePayload as any)
           .eq("id", editProfileId)
           .select()
           .single();
@@ -361,7 +369,7 @@ const PortfolioSetup = () => {
         // INSERT new profile
         const { data: profileData, error: profileError } = await supabase
           .from("profiles")
-          .insert(profilePayload)
+          .insert(profilePayload as any)
           .select()
           .single();
         if (profileError) throw profileError;
