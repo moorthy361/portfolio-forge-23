@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Upload, FileText, CheckCircle, AlertCircle, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { TEST_MODE, MOCK_RESUME_DATA, debugLog } from "@/lib/testConfig";
 
 export interface ParsedResumeData {
   full_name: string;
@@ -82,6 +83,21 @@ export const ResumeUpload = ({ userId, onParsed, onSkip }: ResumeUploadProps) =>
     setProgress(20);
 
     try {
+      if (TEST_MODE) {
+        // Mock mode: skip actual upload/parse
+        debugLog("TEST_MODE: Using mock resume data");
+        setProgress(50);
+        setStatus("parsing");
+        await new Promise(r => setTimeout(r, 1000));
+        setProgress(100);
+        setStatus("success");
+        toast({ title: "Resume Parsed! (Test Mode)", description: "Mock data loaded successfully." });
+        setTimeout(() => {
+          onParsed(MOCK_RESUME_DATA as ParsedResumeData);
+        }, 800);
+        return;
+      }
+
       // Upload to storage
       const ext = file.name.split(".").pop();
       const path = `${userId}/${Date.now()}.${ext}`;

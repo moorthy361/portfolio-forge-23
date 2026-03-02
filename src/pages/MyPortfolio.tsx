@@ -17,6 +17,7 @@ import { jobRoles } from "@/lib/roleThemeMapping";
 import { useDesignEngine } from "@/hooks/useDesignEngine";
 import type { DesignVariant } from "@/lib/designVariantGenerator";
 import FuturisticWrapper, { AnimatedSection, GlowCard } from "@/components/FuturisticWrapper";
+import { debugLog } from "@/lib/testConfig";
 
 interface Profile {
   user_id: string;
@@ -252,6 +253,15 @@ const MyPortfolio = () => {
       setTechnicalSkills((profileData as any).technical_skills || []);
       setSoftSkills((profileData as any).soft_skills || []);
       setDesignVariant((profileData as any).design_variant || null);
+
+      debugLog("Portfolio loaded:", {
+        id: profileData.id,
+        job_role: (profileData as any).job_role,
+        theme: (profileData as any).theme,
+        design_variant: (profileData as any).design_variant,
+        technical_skills: (profileData as any).technical_skills?.length,
+        soft_skills: (profileData as any).soft_skills?.length,
+      });
       
       const portfolioUserId = profileData.user_id;
 
