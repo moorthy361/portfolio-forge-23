@@ -17,6 +17,7 @@ import { ResumeUpload, ParsedResumeData } from "@/components/ResumeUpload";
 import { roleThemeMap, suggestThemeFromSkills, RoleThemeRecommendation } from "@/lib/roleThemeMapping";
 import { generateDesignVariant, type DesignVariant } from "@/lib/designVariantGenerator";
 import { X, Plus, Home, Check } from "lucide-react";
+import { TEST_MODE, MOCK_RESUME_DATA, debugLog, validatePortfolioData } from "@/lib/testConfig";
 
 interface ProfileData {
   full_name: string;
@@ -309,8 +310,32 @@ const PortfolioSetup = () => {
   };
 
   const savePortfolio = async () => {
-    if (!user) return;
+    if (!user?.id) {
+      toast({ title: "Error", description: "You must be logged in to save a portfolio", variant: "destructive" });
+      return;
+    }
+
+    // Validation
+    const validation = validatePortfolioData({
+      full_name: profile.full_name,
+      job_role: selectedRole,
+      technicalSkills,
+      userId: user.id,
+    });
+
+    if (!validation.isValid) {
+      toast({
+        title: "Validation Error",
+        description: validation.errors.join(". "),
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
+    debugLog("User:", user.id);
+    debugLog("Job Role:", selectedRole);
+
     try {
       let profileImageUrl = profileImagePreview || "";
       if (profileImage) {
@@ -324,6 +349,7 @@ const PortfolioSetup = () => {
 
       // Generate a new design variant only for new portfolios
       const designVariant = isEditMode ? undefined : generateDesignVariant();
+      debugLog("Design Variant:", designVariant);
 
       const profilePayload: Record<string, any> = {
         user_id: user.id,
@@ -342,6 +368,7 @@ const PortfolioSetup = () => {
 
       if (designVariant) {
         profilePayload.design_variant = designVariant;
+        debugLog("Random Layout Applied:", designVariant.layout);
       }
 
       let profileId: string;
@@ -382,6 +409,8 @@ const PortfolioSetup = () => {
       if (education.length > 0) insertPromises.push(supabase.from("education").insert(education.map(e => ({ user_id: user.id, ...e }))));
       if (achievements.length > 0) insertPromises.push(supabase.from("achievements").insert(achievements.map(a => ({ user_id: user.id, ...a }))));
       await Promise.allSettled(insertPromises);
+
+      debugLog("Portfolio Saved Successfully", { profileId, isEditMode });
 
       addPortfolioToHistory(profileId, profile.full_name);
       toast({ title: isEditMode ? "Portfolio Updated!" : "Portfolio Created!", description: isEditMode ? "Your portfolio has been successfully updated." : "Your new portfolio has been successfully created." });
