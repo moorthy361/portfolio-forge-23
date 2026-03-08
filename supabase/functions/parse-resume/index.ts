@@ -157,7 +157,7 @@ If a field is not found, use empty string or empty array. Always return valid JS
   } catch (error) {
     console.error("Parse resume error:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Failed to process resume. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

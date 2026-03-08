@@ -231,15 +231,19 @@ const MyPortfolio = () => {
 
   const loadPortfolioData = async () => {
     try {
+      const isOwnerView = !id && !!user;
       let profileData;
+
       if (id) {
-        const { data } = await supabase
-          .from("profiles")
+        // Public view: use profiles_public view (excludes phone, email)
+        const { data } = await (supabase as any)
+          .from("profiles_public")
           .select("*")
           .eq("id", id)
           .maybeSingle();
         profileData = data;
       } else {
+        // Owner view: use base profiles table (all fields)
         const { data } = await supabase
           .from("profiles")
           .select("*")
@@ -272,6 +276,9 @@ const MyPortfolio = () => {
       
       const portfolioUserId = profileData.user_id;
 
+      // Use public views for non-owner, base tables for owner
+      const educationTable = isOwnerView ? "education" : "education_public";
+
       const [
         { data: skillsData },
         { data: projectsData },
@@ -280,7 +287,7 @@ const MyPortfolio = () => {
       ] = await Promise.all([
         supabase.from("skills").select("*").eq("user_id", portfolioUserId),
         supabase.from("projects").select("*").eq("user_id", portfolioUserId),
-        supabase.from("education").select("*").eq("user_id", portfolioUserId),
+        (supabase as any).from(educationTable).select("*").eq("user_id", portfolioUserId),
         supabase.from("achievements").select("*").eq("user_id", portfolioUserId)
       ]);
 
