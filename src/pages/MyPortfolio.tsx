@@ -427,7 +427,7 @@ const MyPortfolio = () => {
                     {(profile.linkedin_url || (profile as any).github_url || (profile as any).website_url) && (
                       <div className="flex gap-4">
                         {profile.linkedin_url && (
-                          <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer"
+                          <a href={safeUrl(profile.linkedin_url)} target="_blank" rel="noopener noreferrer"
                             className={`p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 ${engine.accentGlowClass.replace('shadow', 'hover:shadow')}`}>
                             <Linkedin className={`h-6 w-6 ${engine.accentPrimaryClass}`} />
                           </a>
