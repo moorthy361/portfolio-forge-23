@@ -705,7 +705,10 @@ const MyPortfolio = () => {
     contact: renderContact,
   };
 
-  const navSections = layoutConfig.sectionOrder.filter(section => {
+  // Use variant section order if available, else fallback to role layout
+  const effectiveSectionOrder = engine.sectionOrder.length > 0 ? engine.sectionOrder : layoutConfig.sectionOrder;
+
+  const navSections = effectiveSectionOrder.filter(section => {
     if (section === "about") return !!profile.bio;
     if (section === "projects") return projects.length > 0;
     if (section === "skills") return technicalSkills.length > 0 || softSkills.length > 0 || skills.length > 0;
