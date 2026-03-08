@@ -19,6 +19,13 @@ import type { DesignVariant } from "@/lib/designVariantGenerator";
 import FuturisticWrapper, { AnimatedSection, GlowCard } from "@/components/FuturisticWrapper";
 import { debugLog } from "@/lib/testConfig";
 
+/** Prevent javascript: scheme injection – only allow http(s) and mailto URLs */
+const safeUrl = (url: string): string =>
+  /^https?:\/\//i.test(url) ? url : '#';
+
+const safeEmail = (email: string): string =>
+  /^[^:\/]+@[^:\/]+$/.test(email) ? `mailto:${email}` : '#';
+
 interface Profile {
   user_id: string;
   full_name: string;
