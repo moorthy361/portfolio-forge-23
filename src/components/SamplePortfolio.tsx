@@ -104,7 +104,7 @@ const SamplePortfolio = ({ handleGetStarted }: SamplePortfolioProps) => {
                 </p>
                 
                 {/* Contact Info */}
-                <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
+                <div className="flex flex-wrap justify-center md:justify-start gap-3 sm:gap-4 mb-6">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Mail className="w-4 h-4" />
                     <span>alex.johnson@email.com</span>
