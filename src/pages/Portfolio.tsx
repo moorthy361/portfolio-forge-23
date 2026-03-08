@@ -47,18 +47,15 @@ const Portfolio = () => {
     let data = null;
     
     if (username) {
-      // Load specific portfolio by username
       const portfolios = JSON.parse(localStorage.getItem('portfolios') || '{}');
       data = portfolios[username];
       
-      // Check if this is the current user's portfolio
       const currentPortfolio = localStorage.getItem('portfolioData');
       if (currentPortfolio) {
         const currentData = JSON.parse(currentPortfolio);
         setIsOwnPortfolio(currentData.username === username);
       }
     } else {
-      // Load current user's portfolio
       const storedData = localStorage.getItem('portfolioData');
       if (storedData) {
         data = JSON.parse(storedData);
@@ -69,16 +66,13 @@ const Portfolio = () => {
     if (data) {
       setPortfolioData(data);
       
-      // Convert profile photo to URL if it exists and is a valid File/Blob
       if (data.profilePhoto && data.profilePhoto instanceof File) {
         const url = URL.createObjectURL(data.profilePhoto);
         setProfileImageUrl(url);
         
-        // Cleanup URL when component unmounts
         return () => URL.revokeObjectURL(url);
       }
     } else if (!username) {
-      // Only redirect if no username provided and no data found
       navigate('/create-portfolio');
     }
   }, [navigate, username]);
@@ -88,7 +82,6 @@ const Portfolio = () => {
   };
 
   const handleDownload = () => {
-    // Simple implementation - in a real app, you'd generate a PDF
     window.print();
   };
 
@@ -96,16 +89,16 @@ const Portfolio = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">
+          <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4">
             {username ? "Portfolio not found" : "Loading your portfolio..."}
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
             {username 
               ? "This portfolio doesn't exist or has been removed." 
               : "If this takes too long, please create a new portfolio."
             }
           </p>
-          <Button onClick={() => navigate('/')} className="mt-4">
+          <Button onClick={() => navigate('/')} className="mt-4 h-11 px-5 py-2.5 text-primary-foreground">
             Back to Home
           </Button>
         </div>
@@ -114,18 +107,18 @@ const Portfolio = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <div className="container mx-auto px-4 py-8">
         {/* Action buttons */}
-        <div className="flex justify-center gap-4 mb-8">
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
           {isOwnPortfolio && (
             <>
-              <Button onClick={handleEdit} variant="outline">
-                <Edit className="h-4 w-4 mr-2" />
+              <Button onClick={handleEdit} variant="outline" className="h-11 px-5 py-2.5 text-foreground hover:text-accent-foreground flex items-center gap-2">
+                <Edit className="h-4 w-4" />
                 Edit Portfolio
               </Button>
-              <Button onClick={handleDownload} variant="outline">
-                <Download className="h-4 w-4 mr-2" />
+              <Button onClick={handleDownload} variant="outline" className="h-11 px-5 py-2.5 text-foreground hover:text-accent-foreground flex items-center gap-2">
+                <Download className="h-4 w-4" />
                 Download PDF
               </Button>
             </>
@@ -135,24 +128,24 @@ const Portfolio = () => {
               onClick={() => {
                 const portfolioUrl = `${window.location.origin}/portfolio/${username}`;
                 navigator.clipboard.writeText(portfolioUrl);
-                // You could add a toast notification here
               }} 
               variant="outline"
+              className="h-11 px-5 py-2.5 text-foreground hover:text-accent-foreground flex items-center gap-2"
             >
               Copy Share Link
             </Button>
           )}
-          <Button onClick={() => navigate('/')}>
+          <Button onClick={() => navigate('/')} className="h-11 px-5 py-2.5 text-primary-foreground flex items-center gap-2">
             Back to Home
           </Button>
         </div>
 
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Header Section */}
-          <Card className="card-elevated">
-            <CardContent className="pt-6">
+          <Card className="relative card-elevated rounded-xl">
+            <CardContent className="p-4 md:p-6 lg:p-8">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                <div className="w-32 h-32 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                <div className="w-32 h-32 rounded-full bg-muted flex items-center justify-center overflow-hidden flex-shrink-0">
                   {profileImageUrl ? (
                     <img 
                       src={profileImageUrl} 
@@ -164,8 +157,8 @@ const Portfolio = () => {
                   )}
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                  <h1 className="text-4xl font-bold mb-4">{portfolioData.fullName}</h1>
-                  <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                  <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-4">{portfolioData.fullName}</h1>
+                  <p className="text-sm md:text-base text-muted-foreground mb-4 leading-relaxed">
                     {portfolioData.bio}
                   </p>
                   
@@ -174,7 +167,7 @@ const Portfolio = () => {
                     {portfolioData.contact.email && (
                       <a 
                         href={`mailto:${portfolioData.contact.email}`}
-                        className="flex items-center gap-2 text-primary hover:text-primary/80"
+                        className="flex items-center gap-2 text-sm md:text-base text-primary hover:text-primary/80 leading-relaxed"
                       >
                         <Mail className="h-4 w-4" />
                         Email
@@ -183,7 +176,7 @@ const Portfolio = () => {
                     {portfolioData.contact.phone && (
                       <a 
                         href={`tel:${portfolioData.contact.phone}`}
-                        className="flex items-center gap-2 text-primary hover:text-primary/80"
+                        className="flex items-center gap-2 text-sm md:text-base text-primary hover:text-primary/80 leading-relaxed"
                       >
                         <Phone className="h-4 w-4" />
                         Phone
@@ -194,7 +187,7 @@ const Portfolio = () => {
                         href={portfolioData.contact.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-primary hover:text-primary/80"
+                        className="flex items-center gap-2 text-sm md:text-base text-primary hover:text-primary/80 leading-relaxed"
                       >
                         <Linkedin className="h-4 w-4" />
                         LinkedIn
@@ -205,7 +198,7 @@ const Portfolio = () => {
                         href={portfolioData.contact.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-primary hover:text-primary/80"
+                        className="flex items-center gap-2 text-sm md:text-base text-primary hover:text-primary/80 leading-relaxed"
                       >
                         <Github className="h-4 w-4" />
                         GitHub
@@ -216,7 +209,7 @@ const Portfolio = () => {
                         href={portfolioData.contact.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-primary hover:text-primary/80"
+                        className="flex items-center gap-2 text-sm md:text-base text-primary hover:text-primary/80 leading-relaxed"
                       >
                         <Globe className="h-4 w-4" />
                         Website
@@ -230,17 +223,17 @@ const Portfolio = () => {
 
           {/* Skills Section */}
           {portfolioData.skills.length > 0 && (
-            <Card className="card-elevated">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <Card className="relative card-elevated rounded-xl">
+              <CardHeader className="p-4 md:p-6">
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl text-foreground">
                   <Award className="h-5 w-5" />
                   Skills
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 md:p-6 pt-0">
                 <div className="flex flex-wrap gap-2">
                   {portfolioData.skills.map((skill, index) => (
-                    <Badge key={index} variant="secondary" className="text-sm">
+                    <Badge key={index} variant="secondary" className="text-sm px-3 py-1">
                       {skill}
                     </Badge>
                   ))}
@@ -251,22 +244,22 @@ const Portfolio = () => {
 
           {/* Education Section */}
           {portfolioData.education.some(edu => edu.degree || edu.institution) && (
-            <Card className="card-elevated">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <Card className="relative card-elevated rounded-xl">
+              <CardHeader className="p-4 md:p-6">
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl text-foreground">
                   <GraduationCap className="h-5 w-5" />
                   Education
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 md:p-6 pt-0">
                 <div className="space-y-4">
                   {portfolioData.education
                     .filter(edu => edu.degree || edu.institution)
                     .map((edu, index) => (
-                    <div key={index} className="border-l-4 border-primary pl-4">
-                      <h3 className="font-semibold">{edu.degree}</h3>
-                      <p className="text-muted-foreground">{edu.institution}</p>
-                      {edu.year && <p className="text-sm text-muted-foreground">{edu.year}</p>}
+                    <div key={index} className="border-l-4 border-primary pl-4 rounded-lg p-4 bg-muted/30">
+                      <h3 className="text-base md:text-lg font-semibold text-foreground mb-2">{edu.degree}</h3>
+                      <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{edu.institution}</p>
+                      {edu.year && <p className="text-sm text-muted-foreground leading-relaxed">{edu.year}</p>}
                     </div>
                   ))}
                 </div>
@@ -276,18 +269,18 @@ const Portfolio = () => {
 
           {/* Projects Section */}
           {portfolioData.projects.some(project => project.title) && (
-            <Card className="card-elevated">
-              <CardHeader>
-                <CardTitle>Projects</CardTitle>
+            <Card className="relative card-elevated rounded-xl">
+              <CardHeader className="p-4 md:p-6">
+                <CardTitle className="text-lg md:text-xl text-foreground">Projects</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid gap-6">
+              <CardContent className="p-4 md:p-6 pt-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                   {portfolioData.projects
                     .filter(project => project.title)
                     .map((project, index) => (
-                    <div key={index} className="border rounded-lg p-4">
+                    <div key={index} className="relative border rounded-lg p-4 bg-card">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-lg">{project.title}</h3>
+                        <h3 className="text-base md:text-lg font-semibold text-foreground">{project.title}</h3>
                         {project.link && (
                           <a
                             href={project.link}
@@ -300,7 +293,7 @@ const Portfolio = () => {
                         )}
                       </div>
                       {project.description && (
-                        <p className="text-muted-foreground">{project.description}</p>
+                        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{project.description}</p>
                       )}
                     </div>
                   ))}
@@ -311,21 +304,21 @@ const Portfolio = () => {
 
           {/* Achievements Section */}
           {portfolioData.achievements.some(achievement => achievement.trim()) && (
-            <Card className="card-elevated">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <Card className="relative card-elevated rounded-xl">
+              <CardHeader className="p-4 md:p-6">
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl text-foreground">
                   <Award className="h-5 w-5" />
                   Achievements & Certifications
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
+              <CardContent className="p-4 md:p-6 pt-0">
+                <ul className="space-y-4">
                   {portfolioData.achievements
                     .filter(achievement => achievement.trim())
                     .map((achievement, index) => (
                     <li key={index} className="flex items-start gap-2">
                       <Award className="h-4 w-4 mt-1 text-primary flex-shrink-0" />
-                      <span>{achievement}</span>
+                      <span className="text-sm md:text-base text-foreground leading-relaxed">{achievement}</span>
                     </li>
                   ))}
                 </ul>
