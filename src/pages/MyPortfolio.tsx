@@ -676,7 +676,7 @@ const MyPortfolio = () => {
               )}
               {profile.linkedin_url && (
                 <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10" asChild>
-                  <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer">
+                  <a href={safeUrl(profile.linkedin_url)} target="_blank" rel="noopener noreferrer">
                     <Linkedin className="h-5 w-5 mr-2" />
                     LinkedIn
                   </a>
