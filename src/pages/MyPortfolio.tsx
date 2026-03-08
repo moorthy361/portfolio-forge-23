@@ -7,7 +7,7 @@ import {
   Mail, Phone, MapPin, Linkedin, Github, Globe,
   Download, Edit, GraduationCap, Briefcase, Award, Code,
   ExternalLink, Home, Terminal, Palette, BarChart3, Shield,
-  Cloud, Bot, Megaphone, Smartphone
+  Cloud, Bot, Megaphone, Smartphone, Menu, X
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
