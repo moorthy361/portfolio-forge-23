@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { Separator } from "@/components/ui/separator";
 import { Mail, Phone, MapPin, Heart } from "lucide-react";
 
