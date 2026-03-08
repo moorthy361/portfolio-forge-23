@@ -734,11 +734,11 @@ const MyPortfolio = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-gray-950/80 border-b border-white/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-8">
-              <h1 className={`text-xl font-bold bg-gradient-to-r ${engine.accentGradientClass} bg-clip-text text-transparent`}>
+            <div className="flex items-center gap-4 lg:gap-8 min-w-0">
+              <h1 className={`text-base sm:text-xl font-bold bg-gradient-to-r ${engine.accentGradientClass} bg-clip-text text-transparent truncate`}>
                 {profile.full_name}
               </h1>
-              <div className="hidden md:flex space-x-6">
+              <div className="hidden lg:flex space-x-6">
                 <a href="#home" className="text-sm font-medium text-white/60 hover:text-white transition-all">Home</a>
                 {navSections.map(section => (
                   <a key={section} href={`#${section}`} className="text-sm font-medium text-white/60 hover:text-white transition-all">
@@ -747,7 +747,7 @@ const MyPortfolio = () => {
                 ))}
               </div>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {id && (
                 <Button 
                   onClick={() => {
@@ -757,7 +757,7 @@ const MyPortfolio = () => {
                   }} 
                   variant="outline" 
                   size="sm"
-                  className="border-white/20 text-white hover:bg-white/10"
+                  className="border-white/20 text-white hover:bg-white/10 hidden sm:flex"
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Share
@@ -765,23 +765,71 @@ const MyPortfolio = () => {
               )}
               {user && profile && user.id === profile.user_id && (
                 <>
-                  <Button onClick={handleEdit} variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
+                  <Button onClick={handleEdit} variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10 hidden sm:flex">
+                    <Edit className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Edit</span>
                   </Button>
-                  <Button onClick={handleDownload} variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
+                  <Button onClick={handleDownload} variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10 hidden sm:flex">
+                    <Download className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Download</span>
                   </Button>
                 </>
               )}
-              <Button onClick={() => navigate("/")} size="sm" className={`bg-gradient-to-r ${engine.accentGradientClass} text-white border-0`}>
+              <Button onClick={() => navigate("/")} size="sm" className={`bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hidden sm:flex`}>
                 <Home className="h-4 w-4 mr-2" />
                 Home
+              </Button>
+              {/* Mobile hamburger */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="lg:hidden text-white hover:bg-white/10"
+                onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              >
+                {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>
           </div>
         </div>
+
+        {/* Mobile dropdown nav */}
+        {mobileNavOpen && (
+          <div className="lg:hidden bg-gray-950/95 backdrop-blur-xl border-t border-white/5 px-4 py-4 space-y-2">
+            <a href="#home" className="block py-2 text-sm text-white/70 hover:text-white" onClick={() => setMobileNavOpen(false)}>Home</a>
+            {navSections.map(section => (
+              <a key={section} href={`#${section}`} className="block py-2 text-sm text-white/70 hover:text-white" onClick={() => setMobileNavOpen(false)}>
+                {navLabels[section]}
+              </a>
+            ))}
+            <div className="pt-2 border-t border-white/10 flex flex-wrap gap-2">
+              {id && (
+                <Button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/portfolio-view/${id}`);
+                    toast({ title: 'Link Copied!' });
+                    setMobileNavOpen(false);
+                  }}
+                  variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" /> Share
+                </Button>
+              )}
+              {user && profile && user.id === profile.user_id && (
+                <>
+                  <Button onClick={() => { handleEdit(); setMobileNavOpen(false); }} variant="ghost" size="sm" className="text-white/70">
+                    <Edit className="h-4 w-4 mr-1" /> Edit
+                  </Button>
+                  <Button onClick={() => { handleDownload(); setMobileNavOpen(false); }} variant="ghost" size="sm" className="text-white/70">
+                    <Download className="h-4 w-4 mr-1" /> Download
+                  </Button>
+                </>
+              )}
+              <Button onClick={() => { navigate("/"); setMobileNavOpen(false); }} size="sm" className={`bg-gradient-to-r ${engine.accentGradientClass} text-white border-0`}>
+                <Home className="h-4 w-4 mr-1" /> Home
+              </Button>
+            </div>
+          </div>
+        )}
       </nav>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
