@@ -80,7 +80,7 @@ const SamplePortfolio = ({ handleGetStarted }: SamplePortfolioProps) => {
         <div className="max-w-6xl mx-auto">
           <div className="card-elevated p-8 md:p-12 animate-slide-up">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-12">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 mb-8 md:mb-12">
               <div className="relative">
                 <img 
                   src={sampleProfile} 
