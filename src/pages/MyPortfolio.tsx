@@ -830,8 +830,8 @@ const MyPortfolio = () => {
           </section>
         </AnimatedSection>
 
-        {/* Render sections in role-specific order */}
-        {layoutConfig.sectionOrder.map(section => sectionRenderers[section]?.())}
+        {/* Render sections in variant/role-specific order */}
+        {effectiveSectionOrder.map(section => sectionRenderers[section]?.())}
       </div>
     </FuturisticWrapper>
   );
