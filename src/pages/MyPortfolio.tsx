@@ -863,14 +863,14 @@ const MyPortfolio = () => {
                 </p>
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#projects">
-                  <Button size="lg" className={`text-lg px-10 py-6 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 ${engine.accentGlowClass} hover:opacity-90 transition-all`}>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
+                <a href="#projects" className="w-full sm:w-auto">
+                  <Button size="lg" className={`w-full sm:w-auto text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 ${engine.accentGlowClass} hover:opacity-90 transition-all`}>
                     View My Work
                   </Button>
                 </a>
-                <a href="#contact">
-                  <Button size="lg" variant="outline" className="text-lg px-10 py-6 border-white/20 text-white hover:bg-white/10 transition-all">
+                <a href="#contact" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 border-white/20 text-white hover:bg-white/10 transition-all">
                     Get in Touch
                   </Button>
                 </a>
