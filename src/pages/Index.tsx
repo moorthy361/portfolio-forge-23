@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
-import SamplePortfolio from "@/components/SamplePortfolio";
+
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -22,7 +22,7 @@ const Index = () => {
       <Header />
       <Hero handleGetStarted={handleGetStarted} />
       <Features />
-      <SamplePortfolio handleGetStarted={handleGetStarted} />
+      
       <Footer />
     </div>
   );

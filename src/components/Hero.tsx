@@ -76,9 +76,9 @@ const Hero = ({ handleGetStarted }: HeroProps) => {
             </Button>
             
             <Button size="lg" variant="outline" className="btn-outline-hero text-base sm:text-lg px-6 sm:px-8 py-4 w-full sm:w-auto" asChild>
-              <a href="#examples">
+              <a href="#features">
                 <Play className="w-5 h-5 mr-2" />
-                View Examples
+                View Features
               </a>
             </Button>
           </div>
