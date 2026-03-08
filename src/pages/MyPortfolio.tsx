@@ -404,7 +404,7 @@ const MyPortfolio = () => {
                           <div className="p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors">
                             <Mail className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
                           </div>
-                          <a href={`mailto:${profile.email}`} className="text-white/70 hover:text-white transition-colors">
+                          <a href={safeEmail(profile.email)} className="text-white/70 hover:text-white transition-colors">
                             {profile.email}
                           </a>
                         </div>
