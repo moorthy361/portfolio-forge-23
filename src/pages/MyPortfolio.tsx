@@ -470,7 +470,7 @@ const MyPortfolio = () => {
       <AnimatedSection animationType={engine.heroAnimationType} delay={0.15} key="projects">
         <section id="projects" className={`py-12 md:py-20 scroll-mt-16 px-4 ${engine.sectionBgClass}`}>
           <div className="text-center mb-16">
-            <h2 className={`text-4xl md:text-5xl ${engine.headingClass} mb-4 text-white`}>{layoutConfig.projectsLabel}</h2>
+            <h2 className={`text-3xl md:text-4xl lg:text-5xl ${engine.headingClass} mb-4 text-white`}>{layoutConfig.projectsLabel}</h2>
             <div className={`w-24 h-1.5 bg-gradient-to-r ${engine.accentGradientClass} mx-auto rounded-full mb-6`}></div>
             <p className={`text-white/50 max-w-2xl mx-auto text-lg ${engine.bodyClass}`}>
               {layoutConfig.projectsSubtext}
