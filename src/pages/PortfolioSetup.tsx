@@ -447,12 +447,12 @@ const PortfolioSetup = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <div className="text-center flex-1">
-              <h1 className="text-4xl font-bold mb-4">{isEditMode ? "Edit Your Portfolio" : "Create Your Portfolio"}</h1>
-              <p className="text-muted-foreground">{isEditMode ? "Update your details and save changes" : "Fill in your details to generate a stunning portfolio"}</p>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <div className="text-center sm:text-left flex-1">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4">{isEditMode ? "Edit Your Portfolio" : "Create Your Portfolio"}</h1>
+              <p className="text-muted-foreground text-sm sm:text-base">{isEditMode ? "Update your details and save changes" : "Fill in your details to generate a stunning portfolio"}</p>
             </div>
-            <Button variant="outline" onClick={() => navigate("/")} className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => navigate("/")} className="flex items-center gap-2 w-full sm:w-auto">
               <Home className="h-4 w-4" /> Back to Home
             </Button>
           </div>
