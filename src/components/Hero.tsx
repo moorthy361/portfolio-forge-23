@@ -63,10 +63,10 @@ const Hero = ({ handleGetStarted }: HeroProps) => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4">
             <Button 
               size="lg" 
-              className="btn-hero text-lg px-8 py-4" 
+              className="btn-hero text-base sm:text-lg px-6 sm:px-8 py-4 w-full sm:w-auto" 
               onClick={handleGetStarted}
               disabled={loading}
             >
@@ -75,7 +75,7 @@ const Hero = ({ handleGetStarted }: HeroProps) => {
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             
-            <Button size="lg" variant="outline" className="btn-outline-hero text-lg px-8 py-4 text-accent-light border-white hover:bg-white hover:text-primary" asChild>
+            <Button size="lg" variant="outline" className="btn-outline-hero text-base sm:text-lg px-6 sm:px-8 py-4 w-full sm:w-auto" asChild>
               <a href="#examples">
                 <Play className="w-5 h-5 mr-2" />
                 View Examples
