@@ -478,7 +478,7 @@ const MyPortfolio = () => {
                       {layoutConfig.projectIcon}
                     </div>
                     {project.project_url && (
-                      <a href={project.project_url} target="_blank" rel="noopener noreferrer"
+                      <a href={safeUrl(project.project_url)} target="_blank" rel="noopener noreferrer"
                         className="p-2 hover:bg-white/10 rounded-lg transition-all">
                         <ExternalLink className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
                       </a>
