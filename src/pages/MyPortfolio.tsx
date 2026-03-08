@@ -592,9 +592,9 @@ const MyPortfolio = () => {
     if (education.length === 0) return null;
     return (
       <AnimatedSection animationType={engine.heroAnimationType} delay={0.25} key="education">
-        <section id="education" className="py-20 scroll-mt-16">
-          <div className="text-center mb-16">
-            <h2 className={`text-4xl md:text-5xl ${engine.headingClass} mb-4 text-white`}>
+         <section id="education" className="py-12 md:py-20 scroll-mt-16 px-4">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className={`text-3xl md:text-4xl lg:text-5xl ${engine.headingClass} mb-4 text-white`}>
               {isFresher ? "Education & Academics" : "Education"}
             </h2>
             <div className={`w-24 h-1.5 bg-gradient-to-r ${engine.accentGradientClass} mx-auto rounded-full`}></div>
