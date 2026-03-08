@@ -668,7 +668,7 @@ const MyPortfolio = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {profile.email && (
                 <Button size="lg" className={`bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 ${engine.accentGlowClass}`} asChild>
-                  <a href={`mailto:${profile.email}`}>
+                  <a href={safeEmail(profile.email)}>
                     <Mail className="h-5 w-5 mr-2" />
                     Email Me
                   </a>
