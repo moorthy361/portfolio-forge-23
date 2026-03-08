@@ -524,7 +524,7 @@ const MyPortfolio = () => {
 
     return (
       <AnimatedSection animationType={engine.heroAnimationType} delay={0.2} key="skills">
-        <section id="skills" className="py-20 scroll-mt-16">
+        <section id="skills" className="py-12 md:py-20 scroll-mt-16 px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <h2 className={`text-4xl md:text-5xl ${engine.headingClass} mb-4 text-white`}>{layoutConfig.skillsLabel}</h2>
