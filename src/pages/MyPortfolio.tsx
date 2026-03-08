@@ -552,7 +552,7 @@ const MyPortfolio = () => {
 
               {hasSoft && (
                 <GlowCard className={`${engine.cardClass} rounded-xl`}>
-                  <div className="p-8 md:p-12">
+                   <div className="p-4 sm:p-8 md:p-12">
                     <h3 className="text-xl font-semibold mb-6 flex items-center gap-2 text-white">
                       <Award className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
                       Soft Skills
