@@ -63,10 +63,10 @@ const Hero = ({ handleGetStarted }: HeroProps) => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4">
             <Button 
               size="lg" 
-              className="btn-hero text-lg px-8 py-4" 
+              className="btn-hero text-base sm:text-lg px-6 sm:px-8 py-4 w-full sm:w-auto" 
               onClick={handleGetStarted}
               disabled={loading}
             >
@@ -75,7 +75,7 @@ const Hero = ({ handleGetStarted }: HeroProps) => {
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             
-            <Button size="lg" variant="outline" className="btn-outline-hero text-lg px-8 py-4 text-accent-light border-white hover:bg-white hover:text-primary" asChild>
+            <Button size="lg" variant="outline" className="btn-outline-hero text-base sm:text-lg px-6 sm:px-8 py-4 w-full sm:w-auto" asChild>
               <a href="#examples">
                 <Play className="w-5 h-5 mr-2" />
                 View Examples
@@ -84,7 +84,7 @@ const Hero = ({ handleGetStarted }: HeroProps) => {
           </div>
 
           {/* Features Preview */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="mt-12 md:mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-4xl mx-auto px-4">
             <div className="p-6 text-center rounded-xl border border-white/20" style={{background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)'}}>
               <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Sparkles className="w-6 h-6 text-primary-light" />

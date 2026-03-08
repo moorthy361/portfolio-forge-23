@@ -5,6 +5,8 @@ import {
   colorAccentStyles,
   backgroundStyleCSS,
   typographyWeightCSS,
+  colorThemeCSS,
+  fontPairingCSS,
 } from "@/lib/designVariantGenerator";
 
 export interface DesignEngine {
@@ -24,6 +26,15 @@ export interface DesignEngine {
   showParticles: boolean;
   showGrid: boolean;
   layoutType: string;
+  // New theme-driven
+  colorThemeBg: string;
+  colorThemeCardBg: string;
+  colorThemeTextPrimary: string;
+  colorThemeTextSecondary: string;
+  colorThemeAccent: string;
+  fontPairingHeading: string;
+  fontPairingBody: string;
+  sectionOrder: string[];
 }
 
 export const useDesignEngine = (
@@ -41,12 +52,22 @@ export const useDesignEngine = (
     const typoWeight = variant?.typographyWeight || "regular";
     const typoConfig = typographyWeightCSS[typoWeight];
 
+    // New theme properties
+    const colorTheme = variant?.colorTheme || "dark-bold";
+    const themeConfig = colorThemeCSS[colorTheme] || colorThemeCSS["dark-bold"];
+    const fontPair = variant?.fontPairing || "display-light";
+    const fontConfig = fontPairingCSS[fontPair] || fontPairingCSS["display-light"];
+
+    const sectionOrder = variant?.sectionOrder || [
+      "about", "projects", "skills", "education", "achievements", "contact",
+    ];
+
     return {
       roleConfig,
       variant,
       backgroundClass: `${roleConfig.heroStyle} ${backgroundStyleCSS[bgStyle]}`,
-      headingClass: typoConfig.heading,
-      bodyClass: typoConfig.body,
+      headingClass: `${typoConfig.heading} ${fontConfig.heading}`,
+      bodyClass: `${typoConfig.body} ${fontConfig.body}`,
       accentPrimaryClass: accentConfig.primary,
       accentGlowClass: accentConfig.glow,
       accentGradientClass: accentConfig.gradient,
@@ -57,6 +78,15 @@ export const useDesignEngine = (
       showParticles: roleConfig.particleEffect,
       showGrid: roleConfig.gridOverlay,
       layoutType: variant?.layout || "top-header",
+      // New
+      colorThemeBg: themeConfig.bg,
+      colorThemeCardBg: themeConfig.cardBg,
+      colorThemeTextPrimary: themeConfig.textPrimary,
+      colorThemeTextSecondary: themeConfig.textSecondary,
+      colorThemeAccent: themeConfig.accent,
+      fontPairingHeading: fontConfig.heading,
+      fontPairingBody: fontConfig.body,
+      sectionOrder,
     };
   }, [jobRole, designVariant]);
 };

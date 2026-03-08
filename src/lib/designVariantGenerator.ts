@@ -6,6 +6,10 @@ export interface DesignVariant {
   animationStyle: "fade" | "slide" | "scale" | "blur-reveal";
   backgroundStyle: "gradient" | "mesh" | "grid" | "glass" | "aurora" | "minimal";
   typographyWeight: "light" | "regular" | "bold";
+  // NEW: extended theme properties
+  colorTheme: "dark-bold" | "soft-pastels" | "earthy-tones" | "clean-minimal" | "vibrant-colorful";
+  fontPairing: "serif-sans" | "mono-serif" | "display-light";
+  sectionOrder: string[];
 }
 
 const layoutVariants: DesignVariant["layout"][] = ["sidebar", "top-header", "split", "card-stack"];
@@ -13,8 +17,21 @@ const colorAccents: DesignVariant["colorAccent"][] = ["neon", "pastel", "dark-pr
 const animationStyles: DesignVariant["animationStyle"][] = ["fade", "slide", "scale", "blur-reveal"];
 const backgroundStyles: DesignVariant["backgroundStyle"][] = ["gradient", "mesh", "grid", "glass", "aurora", "minimal"];
 const typographyWeights: DesignVariant["typographyWeight"][] = ["light", "regular", "bold"];
+const colorThemes: DesignVariant["colorTheme"][] = ["dark-bold", "soft-pastels", "earthy-tones", "clean-minimal", "vibrant-colorful"];
+const fontPairings: DesignVariant["fontPairing"][] = ["serif-sans", "mono-serif", "display-light"];
+
+const shuffleArray = <T>(arr: T[]): T[] => {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
 
 const randomFrom = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+
+const reorderableSections = ["skills", "projects", "education", "about"];
 
 export const generateDesignVariant = (): DesignVariant => ({
   layout: randomFrom(layoutVariants),
@@ -22,6 +39,9 @@ export const generateDesignVariant = (): DesignVariant => ({
   animationStyle: randomFrom(animationStyles),
   backgroundStyle: randomFrom(backgroundStyles),
   typographyWeight: randomFrom(typographyWeights),
+  colorTheme: randomFrom(colorThemes),
+  fontPairing: randomFrom(fontPairings),
+  sectionOrder: [...shuffleArray(reorderableSections), "achievements", "contact"],
 });
 
 // Color accent CSS mappings
@@ -71,4 +91,59 @@ export const typographyWeightCSS: Record<DesignVariant["typographyWeight"], { he
   light: { heading: "font-light tracking-wide", body: "font-light" },
   regular: { heading: "font-bold", body: "font-normal" },
   bold: { heading: "font-extrabold tracking-tight", body: "font-medium" },
+};
+
+// Color theme CSS mappings (new)
+export const colorThemeCSS: Record<DesignVariant["colorTheme"], { bg: string; cardBg: string; textPrimary: string; textSecondary: string; accent: string }> = {
+  "dark-bold": {
+    bg: "bg-gray-950",
+    cardBg: "bg-gray-900/80 border-white/10",
+    textPrimary: "text-white",
+    textSecondary: "text-white/60",
+    accent: "text-cyan-400",
+  },
+  "soft-pastels": {
+    bg: "bg-gradient-to-br from-rose-950/80 via-purple-950/70 to-indigo-950/80",
+    cardBg: "bg-white/5 backdrop-blur-md border-pink-300/10",
+    textPrimary: "text-pink-100",
+    textSecondary: "text-pink-200/60",
+    accent: "text-rose-300",
+  },
+  "earthy-tones": {
+    bg: "bg-gradient-to-br from-stone-950 via-amber-950/40 to-stone-900",
+    cardBg: "bg-stone-900/70 border-amber-400/10",
+    textPrimary: "text-amber-50",
+    textSecondary: "text-amber-200/60",
+    accent: "text-amber-400",
+  },
+  "clean-minimal": {
+    bg: "bg-slate-950",
+    cardBg: "bg-slate-900/60 border-slate-700/20",
+    textPrimary: "text-slate-100",
+    textSecondary: "text-slate-400",
+    accent: "text-blue-400",
+  },
+  "vibrant-colorful": {
+    bg: "bg-gradient-to-br from-violet-950 via-fuchsia-950/60 to-blue-950",
+    cardBg: "bg-white/8 backdrop-blur-md border-fuchsia-400/15",
+    textPrimary: "text-white",
+    textSecondary: "text-fuchsia-200/60",
+    accent: "text-fuchsia-400",
+  },
+};
+
+// Font pairing CSS mappings (new)
+export const fontPairingCSS: Record<DesignVariant["fontPairing"], { heading: string; body: string }> = {
+  "serif-sans": {
+    heading: "font-serif",
+    body: "font-sans",
+  },
+  "mono-serif": {
+    heading: "font-mono",
+    body: "font-serif",
+  },
+  "display-light": {
+    heading: "font-sans font-black tracking-tighter",
+    body: "font-sans font-light",
+  },
 };
