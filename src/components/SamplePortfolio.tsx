@@ -120,7 +120,7 @@ const SamplePortfolio = ({ handleGetStarted }: SamplePortfolioProps) => {
                 </div>
 
                 {/* Social Links */}
-                <div className="flex justify-center md:justify-start gap-4">
+                <div className="flex flex-wrap justify-center md:justify-start gap-3">
                   <Button variant="outline" size="sm">
                     <Linkedin className="w-4 h-4 mr-2" />
                     LinkedIn
@@ -129,7 +129,7 @@ const SamplePortfolio = ({ handleGetStarted }: SamplePortfolioProps) => {
                     <Github className="w-4 h-4 mr-2" />
                     GitHub
                   </Button>
-                  <Button className="btn-hero">
+                  <Button className="btn-hero" size="sm">
                     <Download className="w-4 h-4 mr-2" />
                     Download PDF
                   </Button>
