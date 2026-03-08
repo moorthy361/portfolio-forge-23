@@ -16,16 +16,6 @@ const Footer = () => {
               Create stunning, professional portfolios in minutes. No coding required - 
               just fill in your details and get a beautiful, responsive website.
             </p>
-            <div className="flex items-center gap-4">
-              <Button variant="secondary" size="sm">
-                Start Creating
-              </Button>
-              <Button variant="outline" size="sm" className="border-primary-foreground/20 text-accent-light hover:bg-primary-foreground hover:text-primary" asChild>
-                <a href="#examples">
-                  View Examples
-                </a>
-              </Button>
-            </div>
           </div>
 
           {/* Quick Links */}
