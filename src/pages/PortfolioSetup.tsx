@@ -458,8 +458,9 @@ const PortfolioSetup = () => {
           </div>
 
           {/* Step Indicator */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
+          <div className="mb-6 sm:mb-8">
+            {/* Desktop step labels */}
+            <div className="hidden sm:flex items-center justify-between mb-4">
               {sections.map((section, index) => (
                 <div key={index} className="flex flex-col items-center flex-1">
                   <div
@@ -480,6 +481,11 @@ const PortfolioSetup = () => {
                   </span>
                 </div>
               ))}
+            </div>
+            {/* Mobile: simple step counter */}
+            <div className="sm:hidden text-center mb-3">
+              <span className="text-sm font-medium text-primary">Step {currentSection + 1} of {sections.length}</span>
+              <p className="text-xs text-muted-foreground mt-1">{sections[currentSection]}</p>
             </div>
             <div className="w-full bg-muted rounded-full h-2">
               <div
