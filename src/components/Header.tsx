@@ -101,9 +101,11 @@ const Header = () => {
                     Login
                   </Link>
                 </Button>
-                <Button className="btn-hero">
-                  <User className="w-4 h-4 mr-2" />
-                  Create Portfolio
+                <Button className="btn-hero" asChild>
+                  <a href="/portfolio-setup">
+                    <User className="w-4 h-4 mr-2" />
+                    Create Portfolio
+                  </a>
                 </Button>
               </>
             )}
