@@ -835,30 +835,30 @@ const MyPortfolio = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <AnimatedSection animationType={engine.heroAnimationType}>
-          <section id="home" className="min-h-screen flex items-center justify-center pt-24 pb-20">
-            <div className="text-center max-w-5xl mx-auto">
-              <div className="mb-12">
+           <section id="home" className="min-h-screen flex items-center justify-center pt-20 pb-12 md:pt-24 md:pb-20 px-4">
+            <div className="text-center max-w-5xl mx-auto w-full">
+              <div className="mb-8 md:mb-12">
                 {profile.profile_image_url && (
-                  <div className="mb-8 flex justify-center">
+                  <div className="mb-6 md:mb-8 flex justify-center">
                     <div className={`rounded-full overflow-hidden ${engine.accentGlowClass}`}>
                       <img
                         src={profile.profile_image_url}
                         alt={profile.full_name}
-                        className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover ring-4 ring-white/10"
+                        className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full object-cover ring-4 ring-white/10"
                       />
                     </div>
                   </div>
                 )}
-                <h1 className={`text-5xl md:text-7xl lg:text-8xl ${engine.headingClass} mb-6 leading-tight text-white`}>
+                <h1 className={`text-3xl sm:text-5xl md:text-7xl lg:text-8xl ${engine.headingClass} mb-4 md:mb-6 leading-tight text-white`}>
                   Hi, I'm{" "}
                   <span className={`bg-gradient-to-r ${engine.accentGradientClass} bg-clip-text text-transparent`}>
                     {profile.full_name}
                   </span>
                 </h1>
-                <p className={`text-2xl md:text-4xl ${engine.headingClass} ${engine.accentPrimaryClass} mb-4`}>
+                <p className={`text-xl sm:text-2xl md:text-4xl ${engine.headingClass} ${engine.accentPrimaryClass} mb-3 md:mb-4`}>
                   {profile.profession || roleLabel}
                 </p>
-                <p className={`text-lg md:text-xl text-white/50 max-w-2xl mx-auto ${engine.bodyClass}`}>
+                <p className={`text-base md:text-xl text-white/50 max-w-2xl mx-auto ${engine.bodyClass}`}>
                   {layoutConfig.heroSubtext}
                 </p>
               </div>
