@@ -370,8 +370,8 @@ const MyPortfolio = () => {
             </div>
             
             <GlowCard className={engine.cardClass + " overflow-hidden rounded-xl"} glowColor={`bg-gradient-to-r ${engine.accentGradientClass}`}>
-              <div className="p-8 md:p-12">
-                <div className="grid md:grid-cols-2 gap-12 items-start">
+              <div className="p-4 sm:p-8 md:p-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
                   <div className="space-y-6">
                     {isFresher && (
                       <Badge className={`mb-2 ${engine.badgeClass}`}>
