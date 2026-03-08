@@ -22,7 +22,7 @@ const Index = () => {
       <Header />
       <Hero handleGetStarted={handleGetStarted} />
       <Features />
-      <SamplePortfolio handleGetStarted={handleGetStarted} />
+      
       <Footer />
     </div>
   );
