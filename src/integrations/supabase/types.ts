@@ -193,7 +193,99 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      education_public: {
+        Row: {
+          created_at: string | null
+          degree: string | null
+          id: string | null
+          institution: string | null
+          user_id: string | null
+          year: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          degree?: string | null
+          id?: string | null
+          institution?: string | null
+          user_id?: string | null
+          year?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          degree?: string | null
+          id?: string | null
+          institution?: string | null
+          user_id?: string | null
+          year?: string | null
+        }
+        Relationships: []
+      }
+      profiles_public: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          design_variant: Json | null
+          full_name: string | null
+          id: string | null
+          is_fresher: boolean | null
+          job_role: string | null
+          linkedin_url: string | null
+          location: string | null
+          profession: string | null
+          profile_image_url: string | null
+          resume_url: string | null
+          soft_skills: string[] | null
+          technical_skills: string[] | null
+          template_type: string | null
+          theme: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          design_variant?: Json | null
+          full_name?: string | null
+          id?: string | null
+          is_fresher?: boolean | null
+          job_role?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          profession?: string | null
+          profile_image_url?: string | null
+          resume_url?: string | null
+          soft_skills?: string[] | null
+          technical_skills?: string[] | null
+          template_type?: string | null
+          theme?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          design_variant?: Json | null
+          full_name?: string | null
+          id?: string | null
+          is_fresher?: boolean | null
+          job_role?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          profession?: string | null
+          profile_image_url?: string | null
+          resume_url?: string | null
+          soft_skills?: string[] | null
+          technical_skills?: string[] | null
+          template_type?: string | null
+          theme?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
