@@ -362,7 +362,7 @@ const MyPortfolio = () => {
     if (!profile.bio) return null;
     return (
       <AnimatedSection animationType={engine.heroAnimationType} delay={0.1} key="about">
-        <section id="about" className="py-20 scroll-mt-16">
+        <section id="about" className="py-12 md:py-20 scroll-mt-16 px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className={`text-4xl md:text-5xl ${engine.headingClass} mb-4 text-white`}>About Me</h2>
