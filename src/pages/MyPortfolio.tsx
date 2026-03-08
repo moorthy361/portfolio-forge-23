@@ -433,7 +433,7 @@ const MyPortfolio = () => {
                           </a>
                         )}
                         {(profile as any).github_url && (
-                          <a href={(profile as any).github_url} target="_blank" rel="noopener noreferrer"
+                          <a href={safeUrl((profile as any).github_url)} target="_blank" rel="noopener noreferrer"
                             className="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300">
                             <Github className={`h-6 w-6 ${engine.accentPrimaryClass}`} />
                           </a>
