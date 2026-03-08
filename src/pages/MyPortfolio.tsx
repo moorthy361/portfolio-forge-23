@@ -19,6 +19,13 @@ import type { DesignVariant } from "@/lib/designVariantGenerator";
 import FuturisticWrapper, { AnimatedSection, GlowCard } from "@/components/FuturisticWrapper";
 import { debugLog } from "@/lib/testConfig";
 
+/** Prevent javascript: scheme injection – only allow http(s) and mailto URLs */
+const safeUrl = (url: string): string =>
+  /^https?:\/\//i.test(url) ? url : '#';
+
+const safeEmail = (email: string): string =>
+  /^[^:\/]+@[^:\/]+$/.test(email) ? `mailto:${email}` : '#';
+
 interface Profile {
   user_id: string;
   full_name: string;
@@ -397,7 +404,7 @@ const MyPortfolio = () => {
                           <div className="p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors">
                             <Mail className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
                           </div>
-                          <a href={`mailto:${profile.email}`} className="text-white/70 hover:text-white transition-colors">
+                          <a href={safeEmail(profile.email)} className="text-white/70 hover:text-white transition-colors">
                             {profile.email}
                           </a>
                         </div>
@@ -420,19 +427,19 @@ const MyPortfolio = () => {
                     {(profile.linkedin_url || (profile as any).github_url || (profile as any).website_url) && (
                       <div className="flex gap-4">
                         {profile.linkedin_url && (
-                          <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer"
+                          <a href={safeUrl(profile.linkedin_url)} target="_blank" rel="noopener noreferrer"
                             className={`p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 ${engine.accentGlowClass.replace('shadow', 'hover:shadow')}`}>
                             <Linkedin className={`h-6 w-6 ${engine.accentPrimaryClass}`} />
                           </a>
                         )}
                         {(profile as any).github_url && (
-                          <a href={(profile as any).github_url} target="_blank" rel="noopener noreferrer"
+                          <a href={safeUrl((profile as any).github_url)} target="_blank" rel="noopener noreferrer"
                             className="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300">
                             <Github className={`h-6 w-6 ${engine.accentPrimaryClass}`} />
                           </a>
                         )}
                         {(profile as any).website_url && (
-                          <a href={(profile as any).website_url} target="_blank" rel="noopener noreferrer"
+                          <a href={safeUrl((profile as any).website_url)} target="_blank" rel="noopener noreferrer"
                             className="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300">
                             <Globe className={`h-6 w-6 ${engine.accentPrimaryClass}`} />
                           </a>
@@ -471,7 +478,7 @@ const MyPortfolio = () => {
                       {layoutConfig.projectIcon}
                     </div>
                     {project.project_url && (
-                      <a href={project.project_url} target="_blank" rel="noopener noreferrer"
+                      <a href={safeUrl(project.project_url)} target="_blank" rel="noopener noreferrer"
                         className="p-2 hover:bg-white/10 rounded-lg transition-all">
                         <ExternalLink className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
                       </a>
@@ -661,7 +668,7 @@ const MyPortfolio = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {profile.email && (
                 <Button size="lg" className={`bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 ${engine.accentGlowClass}`} asChild>
-                  <a href={`mailto:${profile.email}`}>
+                  <a href={safeEmail(profile.email)}>
                     <Mail className="h-5 w-5 mr-2" />
                     Email Me
                   </a>
@@ -669,7 +676,7 @@ const MyPortfolio = () => {
               )}
               {profile.linkedin_url && (
                 <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10" asChild>
-                  <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer">
+                  <a href={safeUrl(profile.linkedin_url)} target="_blank" rel="noopener noreferrer">
                     <Linkedin className="h-5 w-5 mr-2" />
                     LinkedIn
                   </a>
