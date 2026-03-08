@@ -214,6 +214,7 @@ const MyPortfolio = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState("classic");
   const [designVariant, setDesignVariant] = useState<DesignVariant | null>(null);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
