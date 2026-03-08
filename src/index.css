@@ -78,19 +78,12 @@
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -142,25 +135,50 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
+
+  /* Global responsive typography using clamp */
+  h1 { font-size: clamp(1.75rem, 4vw, 3.5rem); }
+  h2 { font-size: clamp(1.5rem, 3vw, 2.75rem); }
+  h3 { font-size: clamp(1.25rem, 2.5vw, 2rem); }
+  p, li, span, a { font-size: clamp(0.875rem, 1.5vw, 1.125rem); }
+
+  /* Ensure no horizontal overflow */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
 }
 
 @layer components {
-  /* Hero Button Variants */
+  /* Hero Button Variants - FIXED: always visible text */
   .btn-hero {
-    @apply bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold px-8 py-4 rounded-lg;
+    @apply font-semibold px-8 py-4 rounded-lg;
     @apply shadow-lg hover:shadow-xl transition-all duration-300;
     @apply hover:scale-105;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+    color: hsl(0 0% 100%);
     box-shadow: 0 10px 25px hsl(var(--primary) / 0.15);
+    min-height: 44px;
   }
   
   .btn-hero:hover {
     box-shadow: 0 0 20px hsl(var(--accent) / 0.3), 0 10px 25px hsl(var(--primary) / 0.15);
+    color: hsl(0 0% 100%);
   }
 
   .btn-outline-hero {
-    @apply border-2 border-primary text-primary bg-transparent font-semibold px-8 py-4 rounded-lg;
-    @apply hover:bg-primary hover:text-primary-foreground transition-all duration-300;
+    @apply border-2 font-semibold px-8 py-4 rounded-lg;
+    @apply transition-all duration-300;
     @apply hover:scale-105;
+    border-color: hsl(0 0% 100% / 0.6);
+    color: hsl(0 0% 100%);
+    background: transparent;
+    min-height: 44px;
+  }
+
+  .btn-outline-hero:hover {
+    background: hsl(0 0% 100%);
+    color: hsl(var(--primary));
   }
 
   /* Card Styles */
@@ -203,6 +221,11 @@
 
   .animate-scale-in {
     animation: scaleIn 0.5s ease-out;
+  }
+
+  /* Global minimum touch target */
+  button, [role="button"], a.btn, input, select, textarea {
+    min-height: 44px;
   }
 }
 
