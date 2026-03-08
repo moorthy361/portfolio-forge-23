@@ -534,7 +534,7 @@ const MyPortfolio = () => {
             <div className="space-y-8">
               {hasTechnical && (
                 <GlowCard className={`${engine.cardClass} rounded-xl`} glowColor={`bg-gradient-to-r ${engine.accentGradientClass}`}>
-                  <div className="p-8 md:p-12">
+                   <div className="p-4 sm:p-8 md:p-12">
                     <h3 className={`text-xl font-semibold mb-6 flex items-center gap-2 text-white`}>
                       <Code className={`h-5 w-5 ${engine.accentPrimaryClass}`} />
                       Technical Skills
