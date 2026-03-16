@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play, Sparkles, User } from "lucide-react";
+import { ArrowRight, Sparkles, User, Zap, Smartphone, FileDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-portfolio.jpg";
@@ -12,61 +12,60 @@ const Hero = ({ handleGetStarted }: HeroProps) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  const handleCreatePortfolio = () => {
-    if (user) {
-      // User is logged in, go directly to portfolio setup
-      navigate('/portfolio-setup');
-    } else {
-      // User not logged in, redirect to auth with intended destination
-      sessionStorage.setItem('redirectAfterAuth', '/portfolio-setup');
-      navigate('/auth');
-    }
-  };
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url(${heroImage})`,
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url(${heroImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       />
       
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 section-hero opacity-80 z-10" />
+      <div className="absolute inset-0 section-hero opacity-85 z-10" />
+      
+      {/* Subtle grid pattern */}
+      <div 
+        className="absolute inset-0 z-10 opacity-[0.04]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px',
+        }}
+      />
       
       {/* Content */}
-      <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
         <div className="max-w-4xl mx-auto animate-fade-in">
           {/* Badge */}
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm mb-8">
-            <Sparkles className="w-4 h-4 mr-2 text-accent-light" />
-            <span className="text-white font-medium">Create Professional Portfolios in Minutes</span>
+          <div className="inline-flex items-center px-5 py-2.5 rounded-full border border-white/15 backdrop-blur-md mb-10"
+            style={{ background: 'linear-gradient(135deg, hsl(0 0% 100% / 0.08), hsl(0 0% 100% / 0.03))' }}>
+            <Sparkles className="w-4 h-4 mr-2.5 text-accent-light" />
+            <span className="text-sm font-medium text-white/90 tracking-wide">AI-Powered Portfolio Builder</span>
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
             Build Your Dream
-            <span className="block text-gradient bg-gradient-to-r from-accent-light to-white bg-clip-text text-transparent">
+            <span className="block mt-2 bg-gradient-to-r from-accent-light via-white to-accent-light bg-clip-text text-transparent">
               Portfolio
             </span>
           </h1>
 
           {/* Subheading */}
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed font-light">
             Create stunning, professional portfolios that showcase your skills and achievements. 
-            No coding required - just fill in your details and let our system generate a beautiful, 
-            responsive website for you.
+            No coding required — just fill in your details and get a beautiful, 
+            responsive website instantly.
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4">
             <Button 
               size="lg" 
-              className="btn-hero text-base sm:text-lg px-6 sm:px-8 py-4 w-full sm:w-auto" 
+              className="btn-hero text-base sm:text-lg px-8 py-5 w-full sm:w-auto" 
               onClick={handleGetStarted}
               disabled={loading}
             >
@@ -75,39 +74,48 @@ const Hero = ({ handleGetStarted }: HeroProps) => {
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             
-            <Button size="lg" variant="outline" className="btn-outline-hero text-base sm:text-lg px-6 sm:px-8 py-4 w-full sm:w-auto" asChild>
+            <Button size="lg" variant="outline" className="btn-outline-hero text-base sm:text-lg px-8 py-5 w-full sm:w-auto" asChild>
               <a href="#features">
-                <Play className="w-5 h-5 mr-2" />
-                View Features
+                See How It Works
               </a>
             </Button>
           </div>
 
-          {/* Features Preview */}
-          <div className="mt-12 md:mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-4xl mx-auto px-4">
-            <div className="p-6 text-center rounded-xl border border-white/20" style={{background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)'}}>
-              <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-6 h-6 text-primary-light" />
-              </div>
-              <h3 className="font-semibold mb-2" style={{color: '#1a237e'}}>Auto-Generated</h3>
-              <p className="text-sm" style={{color: '#424242'}}>Fill in your details and get a beautiful portfolio instantly</p>
+          {/* Trust indicators */}
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 text-white/50 text-sm">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-accent-light" />
+              <span>Ready in 5 minutes</span>
             </div>
-            
-            <div className="p-6 text-center rounded-xl border border-white/20" style={{background: 'linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%)'}}>
-              <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <span className="text-secondary-light font-bold">📱</span>
-              </div>
-              <h3 className="font-semibold mb-2" style={{color: '#1a237e'}}>Mobile-First</h3>
-              <p className="text-sm" style={{color: '#424242'}}>Responsive design that looks perfect on all devices</p>
+            <div className="hidden sm:block w-1 h-1 rounded-full bg-white/20" />
+            <div className="flex items-center gap-2">
+              <Smartphone className="w-4 h-4 text-accent-light" />
+              <span>Mobile responsive</span>
             </div>
-            
-            <div className="p-6 text-center rounded-xl border border-white/20" style={{background: 'linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%)'}}>
-              <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <span className="text-accent-light font-bold">⚡</span>
-              </div>
-              <h3 className="font-semibold mb-2" style={{color: '#1a237e'}}>PDF Export</h3>
-              <p className="text-sm" style={{color: '#424242'}}>Download your portfolio as a professional PDF</p>
+            <div className="hidden sm:block w-1 h-1 rounded-full bg-white/20" />
+            <div className="flex items-center gap-2">
+              <FileDown className="w-4 h-4 text-accent-light" />
+              <span>PDF export included</span>
             </div>
+          </div>
+
+          {/* Feature Cards */}
+          <div className="mt-16 md:mt-20 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-3xl mx-auto px-4">
+            {[
+              { icon: <Sparkles className="w-6 h-6" />, title: "Auto-Generated", desc: "Beautiful portfolio instantly from your details" },
+              { icon: <Smartphone className="w-6 h-6" />, title: "Mobile-First", desc: "Perfect on every device, every time" },
+              { icon: <FileDown className="w-6 h-6" />, title: "PDF Export", desc: "Download and share offline anytime" },
+            ].map((item, i) => (
+              <div key={i} className="p-5 rounded-2xl border border-white/10 backdrop-blur-md text-center group hover:-translate-y-1 transition-all duration-300"
+                style={{ background: 'linear-gradient(135deg, hsl(0 0% 100% / 0.06), hsl(0 0% 100% / 0.02))' }}>
+                <div className="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center text-accent-light"
+                  style={{ background: 'hsl(var(--accent) / 0.12)' }}>
+                  {item.icon}
+                </div>
+                <h3 className="font-semibold text-white mb-1 text-sm">{item.title}</h3>
+                <p className="text-xs text-white/55 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

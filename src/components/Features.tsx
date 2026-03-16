@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Palette, 
   Smartphone, 
@@ -14,97 +13,114 @@ import {
 const Features = () => {
   const features = [
     {
-      icon: <Palette className="w-8 h-8 text-primary" />,
+      icon: <Palette className="w-6 h-6" />,
       title: "Auto-Styled Design",
-      description: "Beautiful, professional layouts generated automatically based on your content and industry."
+      description: "Beautiful, professional layouts generated automatically based on your content and industry.",
+      color: "text-primary",
+      bg: "bg-primary/8",
     },
     {
-      icon: <Smartphone className="w-8 h-8 text-accent" />,
+      icon: <Smartphone className="w-6 h-6" />,
       title: "Mobile-First Responsive",
-      description: "Your portfolio looks perfect on all devices - phones, tablets, and desktops."
+      description: "Your portfolio looks perfect on all devices — phones, tablets, and desktops.",
+      color: "text-accent",
+      bg: "bg-accent/8",
     },
     {
-      icon: <Zap className="w-8 h-8 text-success" />,
+      icon: <Zap className="w-6 h-6" />,
       title: "Lightning Fast",
-      description: "Create a complete portfolio in under 5 minutes. No design or coding experience needed."
+      description: "Create a complete portfolio in under 5 minutes. No design or coding experience needed.",
+      color: "text-success",
+      bg: "bg-success/8",
     },
     {
-      icon: <FileText className="w-8 h-8 text-secondary" />,
+      icon: <FileText className="w-6 h-6" />,
       title: "PDF Export",
-      description: "Download your portfolio as a professional PDF for offline sharing and applications."
+      description: "Download your portfolio as a professional PDF for offline sharing and applications.",
+      color: "text-secondary",
+      bg: "bg-secondary/8",
     },
     {
-      icon: <Shield className="w-8 h-8 text-primary" />,
+      icon: <Shield className="w-6 h-6" />,
       title: "Secure & Private",
-      description: "Your data is encrypted and secure. You control who sees your portfolio and when."
+      description: "Your data is encrypted and secure. You control who sees your portfolio and when.",
+      color: "text-primary",
+      bg: "bg-primary/8",
     },
     {
-      icon: <BarChart className="w-8 h-8 text-accent" />,
+      icon: <BarChart className="w-6 h-6" />,
       title: "Analytics Insights",
-      description: "Track views, engagement, and see how recruiters interact with your portfolio."
+      description: "Track views, engagement, and see how recruiters interact with your portfolio.",
+      color: "text-accent",
+      bg: "bg-accent/8",
     },
     {
-      icon: <Users className="w-8 h-8 text-success" />,
-      title: "Multiple Templates",
-      description: "Choose from various professional templates tailored to different industries and roles."
+      icon: <Users className="w-6 h-6" />,
+      title: "Unique Every Time",
+      description: "Every portfolio gets a randomized design variant — layouts, colors, and typography differ each time.",
+      color: "text-success",
+      bg: "bg-success/8",
     },
     {
-      icon: <Globe className="w-8 h-8 text-secondary" />,
-      title: "Custom Domain",
-      description: "Use your own domain name to make your portfolio truly yours and boost your brand."
+      icon: <Globe className="w-6 h-6" />,
+      title: "Shareable Links",
+      description: "Get a unique public URL and QR code to share your portfolio with anyone, anywhere.",
+      color: "text-secondary",
+      bg: "bg-secondary/8",
     },
     {
-      icon: <Download className="w-8 h-8 text-primary" />,
+      icon: <Download className="w-6 h-6" />,
       title: "Easy Updates",
-      description: "Update your portfolio anytime with our simple form. Changes reflect instantly."
+      description: "Update your portfolio anytime with our simple form. Changes reflect instantly.",
+      color: "text-primary",
+      bg: "bg-primary/8",
     }
   ];
 
   return (
-    <section id="features" className="py-20 bg-background">
+    <section id="features" className="py-20 md:py-28 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+        {/* Section Header */}
+        <div className="text-center mb-16 md:mb-20 max-w-3xl mx-auto">
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 mb-6">
+            <span className="text-xs font-semibold text-primary tracking-wide uppercase">Features</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground mb-5 tracking-tight leading-tight">
             Everything You Need to
             <span className="block text-gradient">Stand Out</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Our platform provides all the tools and features you need to create a 
-            professional portfolio that impresses employers and showcases your unique talents.
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+            All the tools and features you need to create a professional portfolio 
+            that impresses employers and showcases your unique talents.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Feature Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 max-w-6xl mx-auto">
           {features.map((feature, index) => (
-            <Card key={index} className="card-elevated animate-scale-in hover:scale-105 transition-transform duration-300">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                  {feature.icon}
-                </div>
-                <CardTitle className="text-xl text-foreground">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-              </CardContent>
-            </Card>
+            <div key={index} className="feature-card group">
+              <div className={`w-12 h-12 ${feature.bg} rounded-xl flex items-center justify-center mb-4 ${feature.color} group-hover:scale-110 transition-transform duration-300`}>
+                {feature.icon}
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+            </div>
           ))}
         </div>
 
         {/* Stats Section */}
-        <div className="mt-20 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-2xl p-8 md:p-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="animate-fade-in">
-              <div className="text-3xl md:text-4xl font-bold text-secondary mb-2">95%</div>
-              <div className="text-muted-foreground">User Satisfaction</div>
-            </div>
-            <div className="animate-fade-in">
-              <div className="text-3xl md:text-4xl font-bold text-accent mb-2">24/7</div>
-              <div className="text-muted-foreground">Support Available</div>
-            </div>
-            <div className="animate-fade-in">
-              <div className="text-3xl md:text-4xl font-bold text-success mb-2">5min</div>
-              <div className="text-muted-foreground">Average Setup Time</div>
-            </div>
+        <div className="mt-20 md:mt-24 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+            {[
+              { value: "95%", label: "User Satisfaction", color: "text-primary" },
+              { value: "24/7", label: "Always Available", color: "text-accent" },
+              { value: "<5min", label: "Average Setup Time", color: "text-success" },
+            ].map((stat, i) => (
+              <div key={i} className="stat-card">
+                <div className={`text-3xl md:text-4xl font-extrabold ${stat.color} mb-2 tracking-tight`}>{stat.value}</div>
+                <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
