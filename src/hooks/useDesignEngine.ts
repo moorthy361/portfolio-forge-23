@@ -7,6 +7,7 @@ import {
   typographyWeightCSS,
   colorThemeCSS,
   fontPairingCSS,
+  cardStyleCSS,
 } from "@/lib/designVariantGenerator";
 
 export interface DesignEngine {
@@ -26,7 +27,7 @@ export interface DesignEngine {
   showParticles: boolean;
   showGrid: boolean;
   layoutType: string;
-  // New theme-driven
+  // Theme-driven
   colorThemeBg: string;
   colorThemeCardBg: string;
   colorThemeTextPrimary: string;
@@ -35,6 +36,8 @@ export interface DesignEngine {
   fontPairingHeading: string;
   fontPairingBody: string;
   sectionOrder: string[];
+  // Card style
+  variantCardClass: string;
 }
 
 export const useDesignEngine = (
@@ -45,18 +48,18 @@ export const useDesignEngine = (
     const roleConfig = getDesignConfig(jobRole);
     const variant = designVariant;
 
-    // Merge role config with variant overrides
     const colorAccent = variant?.colorAccent || "neon";
-    const accentConfig = colorAccentStyles[colorAccent];
+    const accentConfig = colorAccentStyles[colorAccent] || colorAccentStyles["neon"];
     const bgStyle = variant?.backgroundStyle || "gradient";
     const typoWeight = variant?.typographyWeight || "regular";
     const typoConfig = typographyWeightCSS[typoWeight];
 
-    // New theme properties
     const colorTheme = variant?.colorTheme || "dark-bold";
     const themeConfig = colorThemeCSS[colorTheme] || colorThemeCSS["dark-bold"];
     const fontPair = variant?.fontPairing || "display-light";
     const fontConfig = fontPairingCSS[fontPair] || fontPairingCSS["display-light"];
+    const cardVariant = variant?.cardStyle || "glass";
+    const variantCard = cardStyleCSS[cardVariant] || cardStyleCSS["glass"];
 
     const sectionOrder = variant?.sectionOrder || [
       "about", "projects", "skills", "education", "achievements", "contact",
@@ -65,20 +68,19 @@ export const useDesignEngine = (
     return {
       roleConfig,
       variant,
-      backgroundClass: `${roleConfig.heroStyle} ${backgroundStyleCSS[bgStyle]}`,
+      backgroundClass: `${roleConfig.heroStyle} ${backgroundStyleCSS[bgStyle] || backgroundStyleCSS["gradient"]}`,
       headingClass: `${typoConfig.heading} ${fontConfig.heading}`,
       bodyClass: `${typoConfig.body} ${fontConfig.body}`,
       accentPrimaryClass: accentConfig.primary,
       accentGlowClass: accentConfig.glow,
       accentGradientClass: accentConfig.gradient,
-      cardClass: roleConfig.cardStyle,
+      cardClass: variantCard,
       badgeClass: roleConfig.badgeStyle,
       sectionBgClass: roleConfig.sectionBg,
       heroAnimationType: variant?.animationStyle || roleConfig.heroAnimation,
       showParticles: roleConfig.particleEffect,
       showGrid: roleConfig.gridOverlay,
       layoutType: variant?.layout || "top-header",
-      // New
       colorThemeBg: themeConfig.bg,
       colorThemeCardBg: themeConfig.cardBg,
       colorThemeTextPrimary: themeConfig.textPrimary,
@@ -87,6 +89,7 @@ export const useDesignEngine = (
       fontPairingHeading: fontConfig.heading,
       fontPairingBody: fontConfig.body,
       sectionOrder,
+      variantCardClass: variantCard,
     };
   }, [jobRole, designVariant]);
 };
