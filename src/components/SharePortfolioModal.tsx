@@ -9,8 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Check, Copy, ExternalLink, Share2, QrCode } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+import { Check, Copy, ExternalLink, Share2 } from "lucide-react";
 
 interface SharePortfolioModalProps {
   isOpen: boolean;
@@ -27,7 +26,6 @@ const SharePortfolioModal = ({
 }: SharePortfolioModalProps) => {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
-  const [showQr, setShowQr] = useState(false);
   
   const portfolioUrl = `${window.location.origin}/portfolio-view/${portfolioId}`;
 
@@ -71,7 +69,7 @@ const SharePortfolioModal = ({
             <Input
               value={portfolioUrl}
               readOnly
-              className="flex-1 text-sm"
+              className="flex-1"
               onClick={(e) => e.currentTarget.select()}
             />
             <Button
@@ -82,7 +80,7 @@ const SharePortfolioModal = ({
               className="shrink-0"
             >
               {copied ? (
-                <Check className="h-4 w-4 text-success" />
+                <Check className="h-4 w-4 text-green-500" />
               ) : (
                 <Copy className="h-4 w-4" />
               )}
@@ -90,7 +88,7 @@ const SharePortfolioModal = ({
           </div>
           
           <div className="flex gap-2">
-            <Button onClick={handleCopy} variant="default" className="flex-1 text-primary-foreground">
+            <Button onClick={handleCopy} variant="default" className="flex-1">
               <Copy className="h-4 w-4 mr-2" />
               Copy Link
             </Button>
@@ -98,27 +96,7 @@ const SharePortfolioModal = ({
               <ExternalLink className="h-4 w-4 mr-2" />
               Open
             </Button>
-            <Button onClick={() => setShowQr(!showQr)} variant="outline" size="icon" className="shrink-0">
-              <QrCode className="h-4 w-4" />
-            </Button>
           </div>
-
-          {/* QR Code */}
-          {showQr && (
-            <div className="flex flex-col items-center gap-3 pt-2 pb-1 animate-fade-in">
-              <div className="p-4 bg-white rounded-xl border border-border shadow-sm">
-                <QRCodeSVG 
-                  value={portfolioUrl} 
-                  size={180} 
-                  level="M"
-                  includeMargin={false}
-                />
-              </div>
-              <p className="text-xs text-muted-foreground text-center">
-                Scan this QR code to view the portfolio on mobile
-              </p>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>
