@@ -9,6 +9,7 @@ import {
   ExternalLink, Home, Terminal, Palette, BarChart3, Shield,
   Cloud, Bot, Megaphone, Smartphone, Menu, X
 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -352,6 +353,248 @@ const MyPortfolio = () => {
     );
   }
 
+  // ============ LAYOUT-SPECIFIC HERO RENDERERS ============
+
+  const renderHeroTopHeader = () => (
+    <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-10 md:pt-24 md:pb-20 px-4">
+      <div className="text-center max-w-5xl mx-auto w-full">
+        <div className="mb-8 md:mb-12">
+          {profile.profile_image_url && (
+            <div className="mb-6 md:mb-8 flex justify-center">
+              <div className={`rounded-full overflow-hidden ${engine.accentGlowClass}`}>
+                <img
+                  src={profile.profile_image_url}
+                  alt={profile.full_name}
+                  loading="lazy"
+                  className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full object-cover ring-4 ring-white/10"
+                />
+              </div>
+            </div>
+          )}
+          <h1 className={`text-3xl sm:text-5xl md:text-7xl lg:text-8xl ${engine.headingClass} mb-4 md:mb-6 leading-tight text-white`}>
+            Hi, I'm{" "}
+            <span className={`bg-gradient-to-r ${engine.accentGradientClass} bg-clip-text text-transparent`}>
+              {profile.full_name}
+            </span>
+          </h1>
+          <p className={`text-xl sm:text-2xl md:text-4xl ${engine.headingClass} ${engine.accentPrimaryClass} mb-4`}>
+            {profile.profession || roleLabel}
+          </p>
+          <p className={`text-sm md:text-base lg:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed ${engine.bodyClass}`}>
+            {layoutConfig.heroSubtext}
+          </p>
+        </div>
+        {renderHeroCTA()}
+      </div>
+    </section>
+  );
+
+  const renderHeroSidebar = () => (
+    <section id="home" className="relative min-h-screen flex items-center pt-20 pb-10 md:pt-24 md:pb-20 px-4">
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-center">
+        {/* Left sidebar with image and quick info */}
+        <div className="flex flex-col items-center md:items-start space-y-6">
+          {profile.profile_image_url && (
+            <div className={`rounded-2xl overflow-hidden ${engine.accentGlowClass}`}>
+              <img
+                src={profile.profile_image_url}
+                alt={profile.full_name}
+                loading="lazy"
+                className="w-48 h-48 md:w-56 md:h-56 rounded-2xl object-cover ring-4 ring-white/10"
+              />
+            </div>
+          )}
+          <div className="space-y-3 text-center md:text-left">
+            {profile.location && (
+              <div className="flex items-center gap-2">
+                <MapPin className={`h-4 w-4 ${engine.accentPrimaryClass}`} />
+                <span className="text-sm text-white/60">{profile.location}</span>
+              </div>
+            )}
+            {profile.email && (
+              <div className="flex items-center gap-2">
+                <Mail className={`h-4 w-4 ${engine.accentPrimaryClass}`} />
+                <a href={safeEmail(profile.email)} className="text-sm text-white/60 hover:text-white transition-colors">{profile.email}</a>
+              </div>
+            )}
+          </div>
+        </div>
+        {/* Main content */}
+        <div className="md:col-span-2 text-center md:text-left">
+          <h1 className={`text-3xl sm:text-5xl md:text-6xl lg:text-7xl ${engine.headingClass} mb-4 md:mb-6 leading-tight text-white`}>
+            {profile.full_name}
+          </h1>
+          <p className={`text-xl sm:text-2xl md:text-3xl ${engine.headingClass} ${engine.accentPrimaryClass} mb-4`}>
+            {profile.profession || roleLabel}
+          </p>
+          <p className={`text-sm md:text-base lg:text-xl text-white/50 max-w-2xl leading-relaxed mb-8 ${engine.bodyClass}`}>
+            {layoutConfig.heroSubtext}
+          </p>
+          {renderHeroCTA("justify-center md:justify-start")}
+        </div>
+      </div>
+    </section>
+  );
+
+  const renderHeroSplit = () => (
+    <section id="home" className="relative min-h-screen flex items-center pt-20 pb-10 md:pt-24 md:pb-20 px-4">
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
+        <div className="order-2 md:order-1 text-center md:text-left">
+          <p className={`text-sm uppercase tracking-widest ${engine.accentPrimaryClass} mb-4 ${engine.bodyClass}`}>
+            {layoutConfig.heroSubtext}
+          </p>
+          <h1 className={`text-3xl sm:text-5xl md:text-6xl lg:text-7xl ${engine.headingClass} mb-6 leading-tight text-white`}>
+            {profile.full_name}
+          </h1>
+          <p className={`text-xl sm:text-2xl md:text-3xl ${engine.headingClass} ${engine.accentPrimaryClass} mb-8`}>
+            {profile.profession || roleLabel}
+          </p>
+          {renderHeroCTA("justify-center md:justify-start")}
+        </div>
+        <div className="order-1 md:order-2 flex justify-center">
+          {profile.profile_image_url ? (
+            <div className={`rounded-3xl overflow-hidden ${engine.accentGlowClass} rotate-2 hover:rotate-0 transition-transform duration-500`}>
+              <img
+                src={profile.profile_image_url}
+                alt={profile.full_name}
+                loading="lazy"
+                className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-3xl object-cover"
+              />
+            </div>
+          ) : (
+            <div className={`w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-3xl ${engine.cardClass} flex items-center justify-center`}>
+              <span className={`text-8xl ${engine.accentPrimaryClass}`}>{profile.full_name.charAt(0)}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+
+  const renderHeroCardStack = () => (
+    <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-10 md:pt-24 md:pb-20 px-4">
+      <div className="max-w-3xl mx-auto w-full">
+        <GlowCard className={`${engine.cardClass} rounded-2xl`} glowColor={`bg-gradient-to-r ${engine.accentGradientClass}`}>
+          <div className="p-6 md:p-10 lg:p-14 text-center">
+            {profile.profile_image_url && (
+              <div className="mb-8 flex justify-center">
+                <div className={`rounded-full overflow-hidden ${engine.accentGlowClass}`}>
+                  <img
+                    src={profile.profile_image_url}
+                    alt={profile.full_name}
+                    loading="lazy"
+                    className="w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover ring-4 ring-white/10"
+                  />
+                </div>
+              </div>
+            )}
+            <h1 className={`text-3xl sm:text-5xl md:text-6xl ${engine.headingClass} mb-4 leading-tight text-white`}>
+              {profile.full_name}
+            </h1>
+            <p className={`text-xl sm:text-2xl ${engine.headingClass} ${engine.accentPrimaryClass} mb-4`}>
+              {profile.profession || roleLabel}
+            </p>
+            <div className={`w-16 h-1 bg-gradient-to-r ${engine.accentGradientClass} mx-auto rounded-full mb-6`}></div>
+            <p className={`text-sm md:text-base lg:text-lg text-white/50 max-w-xl mx-auto leading-relaxed mb-8 ${engine.bodyClass}`}>
+              {layoutConfig.heroSubtext}
+            </p>
+            {renderHeroCTA()}
+          </div>
+        </GlowCard>
+      </div>
+    </section>
+  );
+
+  const renderHeroEditorial = () => (
+    <section id="home" className="relative min-h-screen flex items-end pt-20 pb-16 md:pt-24 md:pb-24 px-4">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="mb-8">
+          <p className={`text-xs sm:text-sm uppercase tracking-[0.3em] ${engine.accentPrimaryClass} mb-6 ${engine.bodyClass}`}>
+            Portfolio — {new Date().getFullYear()}
+          </p>
+          <h1 className={`text-4xl sm:text-6xl md:text-8xl lg:text-9xl ${engine.headingClass} leading-[0.9] text-white mb-6`}>
+            {profile.full_name.split(" ").map((word, i) => (
+              <span key={i} className="block">{word}</span>
+            ))}
+          </h1>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8">
+            <p className={`text-lg sm:text-xl md:text-2xl ${engine.accentPrimaryClass} ${engine.headingClass}`}>
+              {profile.profession || roleLabel}
+            </p>
+            <div className={`hidden sm:block w-24 h-px bg-gradient-to-r ${engine.accentGradientClass}`}></div>
+            <p className={`text-sm md:text-base text-white/40 max-w-md leading-relaxed ${engine.bodyClass}`}>
+              {layoutConfig.heroSubtext}
+            </p>
+          </div>
+        </div>
+        {renderHeroCTA("justify-start")}
+      </div>
+    </section>
+  );
+
+  const renderHeroAsymmetric = () => (
+    <section id="home" className="relative min-h-screen flex items-center pt-20 pb-10 md:pt-24 md:pb-20 px-4">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div className="md:col-span-7 md:col-start-1">
+            <h1 className={`text-3xl sm:text-5xl md:text-7xl ${engine.headingClass} mb-6 leading-tight text-white`}>
+              <span className={`bg-gradient-to-r ${engine.accentGradientClass} bg-clip-text text-transparent`}>
+                {profile.full_name}
+              </span>
+            </h1>
+            <p className={`text-xl sm:text-2xl md:text-3xl ${engine.headingClass} text-white/70 mb-4`}>
+              {profile.profession || roleLabel}
+            </p>
+            <p className={`text-sm md:text-base lg:text-lg text-white/40 max-w-lg leading-relaxed mb-8 ${engine.bodyClass}`}>
+              {layoutConfig.heroSubtext}
+            </p>
+            {renderHeroCTA("justify-start")}
+          </div>
+          <div className="md:col-span-4 md:col-start-9 flex justify-center md:justify-end">
+            {profile.profile_image_url ? (
+              <div className={`rounded-2xl overflow-hidden ${engine.accentGlowClass} -rotate-3 hover:rotate-0 transition-transform duration-500`}>
+                <img
+                  src={profile.profile_image_url}
+                  alt={profile.full_name}
+                  loading="lazy"
+                  className="w-52 h-52 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl object-cover"
+                />
+              </div>
+            ) : (
+              <div className={`w-52 h-52 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl ${engine.cardClass} flex items-center justify-center`}>
+                <span className={`text-7xl ${engine.accentPrimaryClass} ${engine.headingClass}`}>{profile.full_name.charAt(0)}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  const renderHeroCTA = (justifyClass = "justify-center") => (
+    <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 ${justifyClass} px-4`}>
+      <a href="#projects" className="w-full sm:w-auto">
+        <Button size="lg" className={`w-full sm:w-auto h-11 text-sm sm:text-base md:text-lg px-5 py-2.5 sm:px-10 sm:py-6 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 ${engine.accentGlowClass} hover:opacity-90 transition-all flex items-center justify-center gap-2`}>
+          View My Work
+        </Button>
+      </a>
+      <a href="#contact" className="w-full sm:w-auto">
+        <Button size="lg" variant="outline" className="w-full sm:w-auto h-11 text-sm sm:text-base md:text-lg px-5 py-2.5 sm:px-10 sm:py-6 border-white/20 text-white hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2">
+          Get in Touch
+        </Button>
+      </a>
+    </div>
+  );
+
+  const heroRenderers: Record<string, () => React.ReactNode> = {
+    "top-header": renderHeroTopHeader,
+    "sidebar": renderHeroSidebar,
+    "split": renderHeroSplit,
+    "card-stack": renderHeroCardStack,
+    "editorial": renderHeroEditorial,
+    "asymmetric": renderHeroAsymmetric,
+  };
+
   // Section renderers with futuristic design
   const renderAbout = () => {
     if (!profile.bio) return null;
@@ -421,6 +664,7 @@ const MyPortfolio = () => {
                         <img
                           src={profile.profile_image_url}
                           alt={profile.full_name}
+                          loading="lazy"
                           className="w-64 h-64 rounded-xl object-cover"
                         />
                         <div className={`absolute inset-0 bg-gradient-to-t ${engine.accentGradientClass} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
@@ -722,163 +966,148 @@ const MyPortfolio = () => {
     contact: "Contact",
   };
 
+  const renderHero = heroRenderers[engine.layoutType] || renderHeroTopHeader;
+
+  // Dynamic SEO meta
+  const portfolioUrl = id ? `${window.location.origin}/portfolio-view/${id}` : `${window.location.origin}/my-portfolio`;
+  const metaTitle = `${profile.full_name} — ${profile.profession || roleLabel || "Portfolio"}`;
+  const metaDescription = profile.bio
+    ? profile.bio.substring(0, 155) + (profile.bio.length > 155 ? "…" : "")
+    : `View ${profile.full_name}'s professional portfolio.`;
+
   return (
-    <FuturisticWrapper engine={engine}>
-      {/* Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-gray-950/80 border-b border-white/5">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-4 lg:gap-8 min-w-0">
-              <h1 className={`text-base sm:text-xl font-bold bg-gradient-to-r ${engine.accentGradientClass} bg-clip-text text-transparent truncate`}>
-                {profile.full_name}
-              </h1>
-              <div className="hidden lg:flex space-x-6">
-                <a href="#home" className="text-sm font-medium text-white/60 hover:text-white transition-all">Home</a>
-                {navSections.map(section => (
-                  <a key={section} href={`#${section}`} className="text-sm font-medium text-white/60 hover:text-white transition-all">
-                    {navLabels[section]}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              {id && (
-                <Button 
-                  onClick={() => {
-                    const portfolioUrl = `${window.location.origin}/portfolio-view/${id}`;
-                    navigator.clipboard.writeText(portfolioUrl);
-                    toast({ title: 'Link Copied!', description: 'Portfolio link copied to clipboard' });
-                  }} 
-                  variant="outline" 
-                  size="sm"
-                  className="h-11 px-4 py-2 border-white/20 text-white hover:bg-white/10 hover:text-white hidden sm:flex items-center gap-2"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  Share
-                </Button>
-              )}
-              {user && profile && user.id === profile.user_id && (
-                <>
-                  <Button onClick={handleEdit} variant="ghost" size="sm" className="h-11 px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 hidden sm:flex items-center gap-2">
-                    <Edit className="h-4 w-4" />
-                    <span className="hidden sm:inline">Edit</span>
-                  </Button>
-                  <Button onClick={handleDownload} variant="ghost" size="sm" className="h-11 px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 hidden sm:flex items-center gap-2">
-                    <Download className="h-4 w-4" />
-                    <span className="hidden sm:inline">Download</span>
-                  </Button>
-                </>
-              )}
-              <Button onClick={() => navigate("/")} size="sm" className={`h-11 px-4 py-2 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 hidden sm:flex items-center gap-2`}>
-                <Home className="h-4 w-4" />
-                Home
-              </Button>
-              {/* Mobile hamburger */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="lg:hidden h-11 w-11 text-white hover:bg-white/10 hover:text-white"
-                onClick={() => setMobileNavOpen(!mobileNavOpen)}
-              >
-                {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-            </div>
-          </div>
-        </div>
+    <>
+      <Helmet>
+        <title>{metaTitle}</title>
+        <meta name="description" content={metaDescription} />
+        <meta property="og:title" content={metaTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:type" content="profile" />
+        <meta property="og:url" content={portfolioUrl} />
+        {profile.profile_image_url && <meta property="og:image" content={profile.profile_image_url} />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDescription} />
+        {profile.profile_image_url && <meta name="twitter:image" content={profile.profile_image_url} />}
+        <link rel="canonical" href={portfolioUrl} />
+      </Helmet>
 
-        {/* Mobile dropdown nav */}
-        {mobileNavOpen && (
-          <div className="lg:hidden bg-gray-950/95 backdrop-blur-xl border-t border-white/5 px-4 py-4 space-y-2">
-            <a href="#home" className="block py-2 text-sm text-white/70 hover:text-white" onClick={() => setMobileNavOpen(false)}>Home</a>
-            {navSections.map(section => (
-              <a key={section} href={`#${section}`} className="block py-2 text-sm text-white/70 hover:text-white" onClick={() => setMobileNavOpen(false)}>
-                {navLabels[section]}
-              </a>
-            ))}
-            <div className="pt-2 border-t border-white/10 flex flex-wrap gap-3">
-              {id && (
-                <Button 
-                  onClick={() => {
-                    navigator.clipboard.writeText(`${window.location.origin}/portfolio-view/${id}`);
-                    toast({ title: 'Link Copied!' });
-                    setMobileNavOpen(false);
-                  }}
-                  variant="outline" size="sm" className="h-11 px-4 py-2 border-white/20 text-white hover:bg-white/10 hover:text-white flex items-center gap-2"
-                >
-                  <ExternalLink className="h-4 w-4" /> Share
-                </Button>
-              )}
-              {user && profile && user.id === profile.user_id && (
-                <>
-                  <Button onClick={() => { handleEdit(); setMobileNavOpen(false); }} variant="ghost" size="sm" className="h-11 px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-2">
-                    <Edit className="h-4 w-4" /> Edit
-                  </Button>
-                  <Button onClick={() => { handleDownload(); setMobileNavOpen(false); }} variant="ghost" size="sm" className="h-11 px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-2">
-                    <Download className="h-4 w-4" /> Download
-                  </Button>
-                </>
-              )}
-              <Button onClick={() => { navigate("/"); setMobileNavOpen(false); }} size="sm" className={`h-11 px-4 py-2 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 flex items-center gap-2`}>
-                <Home className="h-4 w-4" /> Home
-              </Button>
-            </div>
-          </div>
-        )}
-      </nav>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
-        {/* Hero Section */}
-        <AnimatedSection animationType={engine.heroAnimationType}>
-          <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-10 md:pt-24 md:pb-20 px-4">
-            <div className="text-center max-w-5xl mx-auto w-full">
-              <div className="mb-8 md:mb-12">
-                {profile.profile_image_url && (
-                  <div className="mb-6 md:mb-8 flex justify-center">
-                    <div className={`rounded-full overflow-hidden ${engine.accentGlowClass}`}>
-                      <img
-                        src={profile.profile_image_url}
-                        alt={profile.full_name}
-                        className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full object-cover ring-4 ring-white/10"
-                      />
-                    </div>
-                  </div>
-                )}
-                <h1 className={`text-3xl sm:text-5xl md:text-7xl lg:text-8xl ${engine.headingClass} mb-4 md:mb-6 leading-tight text-white`}>
-                  Hi, I'm{" "}
-                  <span className={`bg-gradient-to-r ${engine.accentGradientClass} bg-clip-text text-transparent`}>
-                    {profile.full_name}
-                  </span>
+      <FuturisticWrapper engine={engine}>
+        {/* Navigation Bar */}
+        <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-gray-950/80 border-b border-white/5">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center gap-4 lg:gap-8 min-w-0">
+                <h1 className={`text-base sm:text-xl font-bold bg-gradient-to-r ${engine.accentGradientClass} bg-clip-text text-transparent truncate`}>
+                  {profile.full_name}
                 </h1>
-                <p className={`text-xl sm:text-2xl md:text-4xl ${engine.headingClass} ${engine.accentPrimaryClass} mb-4`}>
-                  {profile.profession || roleLabel}
-                </p>
-                <p className={`text-sm md:text-base lg:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed ${engine.bodyClass}`}>
-                  {layoutConfig.heroSubtext}
-                </p>
+                <div className="hidden lg:flex space-x-6">
+                  <a href="#home" className="text-sm font-medium text-white/60 hover:text-white transition-all">Home</a>
+                  {navSections.map(section => (
+                    <a key={section} href={`#${section}`} className="text-sm font-medium text-white/60 hover:text-white transition-all">
+                      {navLabels[section]}
+                    </a>
+                  ))}
+                </div>
               </div>
-              
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-                <a href="#projects" className="w-full sm:w-auto">
-                  <Button size="lg" className={`w-full sm:w-auto h-11 text-sm sm:text-base md:text-lg px-5 py-2.5 sm:px-10 sm:py-6 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 ${engine.accentGlowClass} hover:opacity-90 transition-all flex items-center justify-center gap-2`}>
-                    View My Work
+              <div className="flex items-center gap-2 sm:gap-3">
+                {id && (
+                  <Button 
+                    onClick={() => {
+                      const shareUrl = `${window.location.origin}/portfolio-view/${id}`;
+                      navigator.clipboard.writeText(shareUrl);
+                      toast({ title: 'Link Copied!', description: 'Portfolio link copied to clipboard' });
+                    }} 
+                    variant="outline" 
+                    size="sm"
+                    className="h-11 px-4 py-2 border-white/20 text-white hover:bg-white/10 hover:text-white hidden sm:flex items-center gap-2"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Share
                   </Button>
-                </a>
-                <a href="#contact" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto h-11 text-sm sm:text-base md:text-lg px-5 py-2.5 sm:px-10 sm:py-6 border-white/20 text-white hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2">
-                    Get in Touch
-                  </Button>
-                </a>
+                )}
+                {user && profile && user.id === profile.user_id && (
+                  <>
+                    <Button onClick={handleEdit} variant="ghost" size="sm" className="h-11 px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 hidden sm:flex items-center gap-2">
+                      <Edit className="h-4 w-4" />
+                      <span className="hidden sm:inline">Edit</span>
+                    </Button>
+                    <Button onClick={handleDownload} variant="ghost" size="sm" className="h-11 px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 hidden sm:flex items-center gap-2">
+                      <Download className="h-4 w-4" />
+                      <span className="hidden sm:inline">Download</span>
+                    </Button>
+                  </>
+                )}
+                <Button onClick={() => navigate("/")} size="sm" className={`h-11 px-4 py-2 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 hidden sm:flex items-center gap-2`}>
+                  <Home className="h-4 w-4" />
+                  Home
+                </Button>
+                {/* Mobile hamburger */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="lg:hidden h-11 w-11 text-white hover:bg-white/10 hover:text-white"
+                  onClick={() => setMobileNavOpen(!mobileNavOpen)}
+                >
+                  {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                </Button>
               </div>
             </div>
-          </section>
-        </AnimatedSection>
+          </div>
 
-        {/* Render sections in variant/role-specific order */}
-        <div className="space-y-0">
-          {effectiveSectionOrder.map(section => sectionRenderers[section]?.())}
+          {/* Mobile dropdown nav */}
+          {mobileNavOpen && (
+            <div className="lg:hidden bg-gray-950/95 backdrop-blur-xl border-t border-white/5 px-4 py-4 space-y-2">
+              <a href="#home" className="block py-2 text-sm text-white/70 hover:text-white" onClick={() => setMobileNavOpen(false)}>Home</a>
+              {navSections.map(section => (
+                <a key={section} href={`#${section}`} className="block py-2 text-sm text-white/70 hover:text-white" onClick={() => setMobileNavOpen(false)}>
+                  {navLabels[section]}
+                </a>
+              ))}
+              <div className="pt-2 border-t border-white/10 flex flex-wrap gap-3">
+                {id && (
+                  <Button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/portfolio-view/${id}`);
+                      toast({ title: 'Link Copied!' });
+                      setMobileNavOpen(false);
+                    }}
+                    variant="outline" size="sm" className="h-11 px-4 py-2 border-white/20 text-white hover:bg-white/10 hover:text-white flex items-center gap-2"
+                  >
+                    <ExternalLink className="h-4 w-4" /> Share
+                  </Button>
+                )}
+                {user && profile && user.id === profile.user_id && (
+                  <>
+                    <Button onClick={() => { handleEdit(); setMobileNavOpen(false); }} variant="ghost" size="sm" className="h-11 px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-2">
+                      <Edit className="h-4 w-4" /> Edit
+                    </Button>
+                    <Button onClick={() => { handleDownload(); setMobileNavOpen(false); }} variant="ghost" size="sm" className="h-11 px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-2">
+                      <Download className="h-4 w-4" /> Download
+                    </Button>
+                  </>
+                )}
+                <Button onClick={() => { navigate("/"); setMobileNavOpen(false); }} size="sm" className={`h-11 px-4 py-2 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 flex items-center gap-2`}>
+                  <Home className="h-4 w-4" /> Home
+                </Button>
+              </div>
+            </div>
+          )}
+        </nav>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
+          {/* Hero Section - layout-specific */}
+          <AnimatedSection animationType={engine.heroAnimationType}>
+            {renderHero()}
+          </AnimatedSection>
+
+          {/* Render sections in variant/role-specific order */}
+          <div className="space-y-0">
+            {effectiveSectionOrder.map(section => sectionRenderers[section]?.())}
+          </div>
         </div>
-      </div>
-    </FuturisticWrapper>
+      </FuturisticWrapper>
+    </>
   );
 };
 

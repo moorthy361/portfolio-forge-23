@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Check, Copy, ExternalLink, Share2 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 interface SharePortfolioModalProps {
   isOpen: boolean;
@@ -65,6 +66,19 @@ const SharePortfolioModal = ({
         </DialogHeader>
         
         <div className="space-y-4">
+          {/* QR Code */}
+          <div className="flex justify-center p-4 bg-white rounded-lg">
+            <QRCodeSVG
+              value={portfolioUrl}
+              size={180}
+              level="M"
+              includeMargin
+              bgColor="#ffffff"
+              fgColor="#000000"
+            />
+          </div>
+          <p className="text-xs text-center text-muted-foreground">Scan this QR code to view the portfolio</p>
+
           <div className="flex items-center gap-2">
             <Input
               value={portfolioUrl}

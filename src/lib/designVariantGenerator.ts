@@ -1,24 +1,28 @@
 // Design Variant Generator - creates unique random visual configurations per portfolio
+// Supports 100+ unique combinations through randomized property mixing
 
 export interface DesignVariant {
-  layout: "sidebar" | "top-header" | "split" | "card-stack";
-  colorAccent: "neon" | "pastel" | "dark-pro" | "gradient-tech" | "aurora" | "ember";
+  layout: "sidebar" | "top-header" | "split" | "card-stack" | "editorial" | "asymmetric";
+  colorAccent: "neon" | "pastel" | "dark-pro" | "gradient-tech" | "aurora" | "ember" | "ocean" | "sunset" | "mint" | "lavender";
   animationStyle: "fade" | "slide" | "scale" | "blur-reveal";
-  backgroundStyle: "gradient" | "mesh" | "grid" | "glass" | "aurora" | "minimal";
+  backgroundStyle: "gradient" | "mesh" | "grid" | "glass" | "aurora" | "minimal" | "dots" | "radial" | "noise";
   typographyWeight: "light" | "regular" | "bold";
-  // NEW: extended theme properties
-  colorTheme: "dark-bold" | "soft-pastels" | "earthy-tones" | "clean-minimal" | "vibrant-colorful";
-  fontPairing: "serif-sans" | "mono-serif" | "display-light";
+  colorTheme: "dark-bold" | "soft-pastels" | "earthy-tones" | "clean-minimal" | "vibrant-colorful" | "midnight-blue" | "forest-dark" | "warm-charcoal";
+  fontPairing: "serif-sans" | "mono-serif" | "display-light" | "geometric-elegant" | "humanist-mono";
+  cardStyle: "glass" | "solid" | "bordered" | "shadow" | "gradient-border";
   sectionOrder: string[];
 }
 
-const layoutVariants: DesignVariant["layout"][] = ["sidebar", "top-header", "split", "card-stack"];
-const colorAccents: DesignVariant["colorAccent"][] = ["neon", "pastel", "dark-pro", "gradient-tech", "aurora", "ember"];
+const layoutVariants: DesignVariant["layout"][] = ["sidebar", "top-header", "split", "card-stack", "editorial", "asymmetric"];
+const colorAccents: DesignVariant["colorAccent"][] = ["neon", "pastel", "dark-pro", "gradient-tech", "aurora", "ember", "ocean", "sunset", "mint", "lavender"];
 const animationStyles: DesignVariant["animationStyle"][] = ["fade", "slide", "scale", "blur-reveal"];
-const backgroundStyles: DesignVariant["backgroundStyle"][] = ["gradient", "mesh", "grid", "glass", "aurora", "minimal"];
+const backgroundStyles: DesignVariant["backgroundStyle"][] = ["gradient", "mesh", "grid", "glass", "aurora", "minimal", "dots", "radial", "noise"];
 const typographyWeights: DesignVariant["typographyWeight"][] = ["light", "regular", "bold"];
-const colorThemes: DesignVariant["colorTheme"][] = ["dark-bold", "soft-pastels", "earthy-tones", "clean-minimal", "vibrant-colorful"];
-const fontPairings: DesignVariant["fontPairing"][] = ["serif-sans", "mono-serif", "display-light"];
+const colorThemes: DesignVariant["colorTheme"][] = ["dark-bold", "soft-pastels", "earthy-tones", "clean-minimal", "vibrant-colorful", "midnight-blue", "forest-dark", "warm-charcoal"];
+const fontPairings: DesignVariant["fontPairing"][] = ["serif-sans", "mono-serif", "display-light", "geometric-elegant", "humanist-mono"];
+const cardStyles: DesignVariant["cardStyle"][] = ["glass", "solid", "bordered", "shadow", "gradient-border"];
+
+// Total combinations: 6 × 10 × 4 × 9 × 3 × 8 × 5 × 5 = 129,600
 
 const shuffleArray = <T>(arr: T[]): T[] => {
   const copy = [...arr];
@@ -41,6 +45,7 @@ export const generateDesignVariant = (): DesignVariant => ({
   typographyWeight: randomFrom(typographyWeights),
   colorTheme: randomFrom(colorThemes),
   fontPairing: randomFrom(fontPairings),
+  cardStyle: randomFrom(cardStyles),
   sectionOrder: [...shuffleArray(reorderableSections), "achievements", "contact"],
 });
 
@@ -76,6 +81,26 @@ export const colorAccentStyles: Record<DesignVariant["colorAccent"], { primary: 
     glow: "shadow-[0_0_35px_rgba(251,191,36,0.3)]",
     gradient: "from-amber-400 via-orange-500 to-red-600",
   },
+  ocean: {
+    primary: "text-sky-400",
+    glow: "shadow-[0_0_35px_rgba(56,189,248,0.35)]",
+    gradient: "from-sky-400 via-blue-500 to-indigo-600",
+  },
+  sunset: {
+    primary: "text-orange-400",
+    glow: "shadow-[0_0_35px_rgba(251,146,60,0.35)]",
+    gradient: "from-yellow-400 via-orange-500 to-rose-600",
+  },
+  mint: {
+    primary: "text-emerald-300",
+    glow: "shadow-[0_0_30px_rgba(110,231,183,0.3)]",
+    gradient: "from-emerald-300 via-green-400 to-teal-500",
+  },
+  lavender: {
+    primary: "text-purple-300",
+    glow: "shadow-[0_0_30px_rgba(196,181,253,0.3)]",
+    gradient: "from-purple-300 via-violet-400 to-indigo-500",
+  },
 };
 
 export const backgroundStyleCSS: Record<DesignVariant["backgroundStyle"], string> = {
@@ -85,6 +110,9 @@ export const backgroundStyleCSS: Record<DesignVariant["backgroundStyle"], string
   glass: "bg-gradient-to-br from-slate-900/95 via-gray-900/90 to-slate-950/95 backdrop-blur-3xl",
   aurora: "bg-gray-950 bg-[radial-gradient(ellipse_at_top,rgba(120,119,198,0.12),transparent_50%),radial-gradient(ellipse_at_bottom_right,rgba(59,130,246,0.08),transparent_50%)]",
   minimal: "bg-gray-950",
+  dots: "bg-gray-950 bg-[radial-gradient(circle,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:24px_24px]",
+  radial: "bg-gray-950 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.08)_0%,transparent_70%)]",
+  noise: "bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950",
 };
 
 export const typographyWeightCSS: Record<DesignVariant["typographyWeight"], { heading: string; body: string }> = {
@@ -93,7 +121,7 @@ export const typographyWeightCSS: Record<DesignVariant["typographyWeight"], { he
   bold: { heading: "font-extrabold tracking-tight", body: "font-medium" },
 };
 
-// Color theme CSS mappings (new)
+// Color theme CSS mappings
 export const colorThemeCSS: Record<DesignVariant["colorTheme"], { bg: string; cardBg: string; textPrimary: string; textSecondary: string; accent: string }> = {
   "dark-bold": {
     bg: "bg-gray-950",
@@ -130,9 +158,30 @@ export const colorThemeCSS: Record<DesignVariant["colorTheme"], { bg: string; ca
     textSecondary: "text-fuchsia-200/60",
     accent: "text-fuchsia-400",
   },
+  "midnight-blue": {
+    bg: "bg-gradient-to-br from-blue-950 via-indigo-950/80 to-slate-950",
+    cardBg: "bg-blue-900/30 backdrop-blur-md border-blue-400/10",
+    textPrimary: "text-blue-50",
+    textSecondary: "text-blue-200/50",
+    accent: "text-blue-300",
+  },
+  "forest-dark": {
+    bg: "bg-gradient-to-br from-green-950 via-emerald-950/60 to-gray-950",
+    cardBg: "bg-emerald-900/20 backdrop-blur-md border-emerald-400/10",
+    textPrimary: "text-emerald-50",
+    textSecondary: "text-emerald-200/50",
+    accent: "text-emerald-400",
+  },
+  "warm-charcoal": {
+    bg: "bg-gradient-to-br from-neutral-950 via-stone-900/50 to-neutral-950",
+    cardBg: "bg-neutral-900/60 border-neutral-700/20",
+    textPrimary: "text-neutral-100",
+    textSecondary: "text-neutral-400",
+    accent: "text-orange-400",
+  },
 };
 
-// Font pairing CSS mappings (new)
+// Font pairing CSS mappings
 export const fontPairingCSS: Record<DesignVariant["fontPairing"], { heading: string; body: string }> = {
   "serif-sans": {
     heading: "font-serif",
@@ -146,4 +195,21 @@ export const fontPairingCSS: Record<DesignVariant["fontPairing"], { heading: str
     heading: "font-sans font-black tracking-tighter",
     body: "font-sans font-light",
   },
+  "geometric-elegant": {
+    heading: "font-sans tracking-widest uppercase",
+    body: "font-sans font-normal tracking-wide",
+  },
+  "humanist-mono": {
+    heading: "font-sans font-bold tracking-tight",
+    body: "font-mono font-normal",
+  },
+};
+
+// Card style CSS mappings
+export const cardStyleCSS: Record<DesignVariant["cardStyle"], string> = {
+  glass: "bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg",
+  solid: "bg-gray-900/90 border border-white/5",
+  bordered: "bg-transparent border-2 border-white/15",
+  shadow: "bg-gray-900/70 shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-white/5",
+  "gradient-border": "bg-gray-900/60 border border-white/10 ring-1 ring-white/5",
 };
