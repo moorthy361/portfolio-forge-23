@@ -818,10 +818,15 @@ const PortfolioSetup = () => {
         isOpen={showShareModal}
         onClose={() => {
           setShowShareModal(false);
-          navigate(`/portfolio-view/${createdPortfolioId}`);
+          if (username.trim()) {
+            navigate(`/p/${username.trim()}`);
+          } else {
+            navigate(`/portfolio-view/${createdPortfolioId}`);
+          }
         }}
         portfolioId={createdPortfolioId}
         portfolioName={createdPortfolioName}
+        portfolioUsername={username.trim() || undefined}
       />
     </div>
   );
