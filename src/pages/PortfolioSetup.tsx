@@ -18,6 +18,8 @@ import { roleThemeMap, suggestThemeFromSkills, RoleThemeRecommendation } from "@
 import { generateDesignVariant, type DesignVariant } from "@/lib/designVariantGenerator";
 import { X, Plus, Home, Check } from "lucide-react";
 import { TEST_MODE, MOCK_RESUME_DATA, debugLog, validatePortfolioData } from "@/lib/testConfig";
+import ProfilePhotoUpload from "@/components/ProfilePhotoUpload";
+import UsernameInput from "@/components/UsernameInput";
 
 interface ProfileData {
   full_name: string;
@@ -107,6 +109,7 @@ const PortfolioSetup = () => {
   const [createdPortfolioName, setCreatedPortfolioName] = useState<string>("");
   const [editUserId, setEditUserId] = useState<string>("");
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [username, setUsername] = useState("");
 
   // Load existing data in edit mode
   useEffect(() => {
@@ -143,6 +146,7 @@ const PortfolioSetup = () => {
       setSelectedRole(profileData.job_role || "");
       setIsFresher(profileData.is_fresher || false);
       setResumeUrl(profileData.resume_url || "");
+      setUsername((profileData as any).username || "");
       if (profileData.profile_image_url) {
         setProfileImagePreview(profileData.profile_image_url);
       }
