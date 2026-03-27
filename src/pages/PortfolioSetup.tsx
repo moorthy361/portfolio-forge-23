@@ -370,6 +370,10 @@ const PortfolioSetup = () => {
         soft_skills: softSkills,
       };
 
+      if (username.trim()) {
+        profilePayload.username = username.trim();
+      }
+
       if (designVariant) {
         profilePayload.design_variant = designVariant;
         debugLog("Random Layout Applied:", designVariant.layout);
