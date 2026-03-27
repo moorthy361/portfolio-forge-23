@@ -202,7 +202,7 @@ const defaultLayoutConfig = roleLayoutConfig["fullstack-developer"];
 const MyPortfolio = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { id, username: usernameParam } = useParams<{ id: string; username: string }>();
   const { toast } = useToast();
   
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -218,7 +218,7 @@ const MyPortfolio = () => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
-    if (id) {
+    if (id || usernameParam) {
       loadPortfolioData();
       return;
     }
@@ -229,14 +229,22 @@ const MyPortfolio = () => {
     if (user) {
       loadPortfolioData();
     }
-  }, [user, loading, navigate, id]);
+  }, [user, loading, navigate, id, usernameParam]);
 
   const loadPortfolioData = async () => {
     try {
-      const isOwnerView = !id && !!user;
+      const isOwnerView = !id && !usernameParam && !!user;
       let profileData;
 
-      if (id) {
+      if (usernameParam) {
+        // Load by username (public view)
+        const { data } = await (supabase as any)
+          .from("profiles_public")
+          .select("*")
+          .eq("username", usernameParam)
+          .maybeSingle();
+        profileData = data;
+      } else if (id) {
         const { data } = await (supabase as any)
           .from("profiles_public")
           .select("*")
@@ -969,7 +977,12 @@ const MyPortfolio = () => {
   const renderHero = heroRenderers[engine.layoutType] || renderHeroTopHeader;
 
   // Dynamic SEO meta
-  const portfolioUrl = id ? `${window.location.origin}/portfolio-view/${id}` : `${window.location.origin}/my-portfolio`;
+  const profileUsername = (profile as any)?.username;
+  const portfolioUrl = profileUsername
+    ? `${window.location.origin}/p/${profileUsername}`
+    : id
+      ? `${window.location.origin}/portfolio-view/${id}`
+      : `${window.location.origin}/my-portfolio`;
   const metaTitle = `${profile.full_name} — ${profile.profession || roleLabel || "Portfolio"}`;
   const metaDescription = profile.bio
     ? profile.bio.substring(0, 155) + (profile.bio.length > 155 ? "…" : "")
@@ -1011,10 +1024,12 @@ const MyPortfolio = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
-                {id && (
+                {(id || usernameParam) && (
                   <Button 
                     onClick={() => {
-                      const shareUrl = `${window.location.origin}/portfolio-view/${id}`;
+                      const shareUrl = profileUsername
+                        ? `${window.location.origin}/p/${profileUsername}`
+                        : `${window.location.origin}/portfolio-view/${id}`;
                       navigator.clipboard.writeText(shareUrl);
                       toast({ title: 'Link Copied!', description: 'Portfolio link copied to clipboard' });
                     }} 
@@ -1065,10 +1080,13 @@ const MyPortfolio = () => {
                 </a>
               ))}
               <div className="pt-2 border-t border-white/10 flex flex-wrap gap-3">
-                {id && (
+                {(id || usernameParam) && (
                   <Button 
                     onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/portfolio-view/${id}`);
+                      const shareUrl = profileUsername
+                        ? `${window.location.origin}/p/${profileUsername}`
+                        : `${window.location.origin}/portfolio-view/${id}`;
+                      navigator.clipboard.writeText(shareUrl);
                       toast({ title: 'Link Copied!' });
                       setMobileNavOpen(false);
                     }}

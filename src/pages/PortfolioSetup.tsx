@@ -18,6 +18,8 @@ import { roleThemeMap, suggestThemeFromSkills, RoleThemeRecommendation } from "@
 import { generateDesignVariant, type DesignVariant } from "@/lib/designVariantGenerator";
 import { X, Plus, Home, Check } from "lucide-react";
 import { TEST_MODE, MOCK_RESUME_DATA, debugLog, validatePortfolioData } from "@/lib/testConfig";
+import ProfilePhotoUpload from "@/components/ProfilePhotoUpload";
+import UsernameInput from "@/components/UsernameInput";
 
 interface ProfileData {
   full_name: string;
@@ -107,6 +109,7 @@ const PortfolioSetup = () => {
   const [createdPortfolioName, setCreatedPortfolioName] = useState<string>("");
   const [editUserId, setEditUserId] = useState<string>("");
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [username, setUsername] = useState("");
 
   // Load existing data in edit mode
   useEffect(() => {
@@ -143,6 +146,7 @@ const PortfolioSetup = () => {
       setSelectedRole(profileData.job_role || "");
       setIsFresher(profileData.is_fresher || false);
       setResumeUrl(profileData.resume_url || "");
+      setUsername((profileData as any).username || "");
       if (profileData.profile_image_url) {
         setProfileImagePreview(profileData.profile_image_url);
       }
@@ -366,6 +370,10 @@ const PortfolioSetup = () => {
         soft_skills: softSkills,
       };
 
+      if (username.trim()) {
+        profilePayload.username = username.trim();
+      }
+
       if (designVariant) {
         profilePayload.design_variant = designVariant;
         debugLog("Random Layout Applied:", designVariant.layout);
@@ -522,13 +530,27 @@ const PortfolioSetup = () => {
               {currentSection === 2 && (
                 <div className="space-y-4 animate-fade-in">
                   <div>
-                    <Label htmlFor="profileImage">Profile Photo</Label>
-                    <div className="flex items-center gap-4 mt-2">
-                      {profileImagePreview && (
-                        <img src={profileImagePreview} alt="Profile preview" className="w-20 h-20 rounded-full object-cover" />
-                      )}
-                      <Input id="profileImage" type="file" accept="image/*" onChange={handleProfileImageChange} className="flex-1" />
+                    <Label>Profile Photo</Label>
+                    <div className="mt-2">
+                      <ProfilePhotoUpload
+                        currentPreview={profileImagePreview}
+                        onFileChange={(file) => {
+                          if (file) {
+                            setProfileImage(file);
+                            const reader = new FileReader();
+                            reader.onloadend = () => setProfileImagePreview(reader.result as string);
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        onRemove={() => {
+                          setProfileImage(null);
+                          setProfileImagePreview("");
+                        }}
+                      />
                     </div>
+                  </div>
+                  <div>
+                    <UsernameInput value={username} onChange={setUsername} currentUserId={user?.id} />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -796,10 +818,15 @@ const PortfolioSetup = () => {
         isOpen={showShareModal}
         onClose={() => {
           setShowShareModal(false);
-          navigate(`/portfolio-view/${createdPortfolioId}`);
+          if (username.trim()) {
+            navigate(`/p/${username.trim()}`);
+          } else {
+            navigate(`/portfolio-view/${createdPortfolioId}`);
+          }
         }}
         portfolioId={createdPortfolioId}
         portfolioName={createdPortfolioName}
+        portfolioUsername={username.trim() || undefined}
       />
     </div>
   );

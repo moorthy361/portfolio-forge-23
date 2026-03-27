@@ -17,18 +17,22 @@ interface SharePortfolioModalProps {
   onClose: () => void;
   portfolioId: string;
   portfolioName: string;
+  portfolioUsername?: string;
 }
 
 const SharePortfolioModal = ({ 
   isOpen, 
   onClose, 
   portfolioId, 
-  portfolioName 
+  portfolioName,
+  portfolioUsername,
 }: SharePortfolioModalProps) => {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   
-  const portfolioUrl = `${window.location.origin}/portfolio-view/${portfolioId}`;
+  const portfolioUrl = portfolioUsername
+    ? `${window.location.origin}/p/${portfolioUsername}`
+    : `${window.location.origin}/portfolio-view/${portfolioId}`;
 
   const handleCopy = async () => {
     try {
