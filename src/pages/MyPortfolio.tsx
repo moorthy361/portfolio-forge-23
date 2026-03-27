@@ -1024,10 +1024,12 @@ const MyPortfolio = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
-                {id && (
+                {(id || usernameParam) && (
                   <Button 
                     onClick={() => {
-                      const shareUrl = `${window.location.origin}/portfolio-view/${id}`;
+                      const shareUrl = profileUsername
+                        ? `${window.location.origin}/p/${profileUsername}`
+                        : `${window.location.origin}/portfolio-view/${id}`;
                       navigator.clipboard.writeText(shareUrl);
                       toast({ title: 'Link Copied!', description: 'Portfolio link copied to clipboard' });
                     }} 
@@ -1078,10 +1080,13 @@ const MyPortfolio = () => {
                 </a>
               ))}
               <div className="pt-2 border-t border-white/10 flex flex-wrap gap-3">
-                {id && (
+                {(id || usernameParam) && (
                   <Button 
                     onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/portfolio-view/${id}`);
+                      const shareUrl = profileUsername
+                        ? `${window.location.origin}/p/${profileUsername}`
+                        : `${window.location.origin}/portfolio-view/${id}`;
+                      navigator.clipboard.writeText(shareUrl);
                       toast({ title: 'Link Copied!' });
                       setMobileNavOpen(false);
                     }}
