@@ -131,14 +131,9 @@ export const GlowCard: React.FC<{
 }> = ({ children, className = "", glowColor }) => {
   return (
     <motion.div
-      className={`relative group ${className}`}
+      className={`relative group ${className} transition-shadow duration-300 hover:shadow-xl hover:shadow-black/20`}
       whileHover={{ y: -4, transition: { duration: 0.3 } }}
     >
-      {glowColor && (
-        <div
-          className={`absolute -inset-0.5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-lg ${glowColor}`}
-        />
-      )}
       <div className="relative">{children}</div>
     </motion.div>
   );
