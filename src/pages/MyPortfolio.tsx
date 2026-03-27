@@ -977,7 +977,12 @@ const MyPortfolio = () => {
   const renderHero = heroRenderers[engine.layoutType] || renderHeroTopHeader;
 
   // Dynamic SEO meta
-  const portfolioUrl = id ? `${window.location.origin}/portfolio-view/${id}` : `${window.location.origin}/my-portfolio`;
+  const profileUsername = (profile as any)?.username;
+  const portfolioUrl = profileUsername
+    ? `${window.location.origin}/p/${profileUsername}`
+    : id
+      ? `${window.location.origin}/portfolio-view/${id}`
+      : `${window.location.origin}/my-portfolio`;
   const metaTitle = `${profile.full_name} — ${profile.profession || roleLabel || "Portfolio"}`;
   const metaDescription = profile.bio
     ? profile.bio.substring(0, 155) + (profile.bio.length > 155 ? "…" : "")
