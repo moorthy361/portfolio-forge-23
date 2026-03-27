@@ -574,7 +574,7 @@ const MyPortfolio = () => {
   const renderHeroCTA = (justifyClass = "justify-center") => (
     <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 ${justifyClass} px-4`}>
       <a href="#projects" className="w-full sm:w-auto">
-        <Button size="lg" className={`w-full sm:w-auto h-11 text-sm sm:text-base md:text-lg px-5 py-2.5 sm:px-10 sm:py-6 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 ${engine.accentGlowClass} hover:opacity-90 transition-all flex items-center justify-center gap-2`}>
+        <Button size="lg" className={`w-full sm:w-auto h-11 text-sm sm:text-base md:text-lg px-5 py-2.5 sm:px-10 sm:py-6 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 hover:shadow-lg transition-all flex items-center justify-center gap-2`}>
           View My Work
         </Button>
       </a>
@@ -914,7 +914,7 @@ const MyPortfolio = () => {
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               {profile.email && (
-                <Button size="lg" className={`h-11 px-5 py-2.5 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 ${engine.accentGlowClass}`} asChild>
+                <Button size="lg" className={`h-11 px-5 py-2.5 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 hover:shadow-lg transition-all`} asChild>
                   <a href={safeEmail(profile.email)} className="flex items-center gap-2">
                     <Mail className="h-5 w-5" />
                     Email Me
