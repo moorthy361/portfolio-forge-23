@@ -202,7 +202,7 @@ const defaultLayoutConfig = roleLayoutConfig["fullstack-developer"];
 const MyPortfolio = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { id, username: usernameParam } = useParams<{ id: string; username: string }>();
   const { toast } = useToast();
   
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -218,7 +218,7 @@ const MyPortfolio = () => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
-    if (id) {
+    if (id || usernameParam) {
       loadPortfolioData();
       return;
     }
@@ -229,14 +229,22 @@ const MyPortfolio = () => {
     if (user) {
       loadPortfolioData();
     }
-  }, [user, loading, navigate, id]);
+  }, [user, loading, navigate, id, usernameParam]);
 
   const loadPortfolioData = async () => {
     try {
-      const isOwnerView = !id && !!user;
+      const isOwnerView = !id && !usernameParam && !!user;
       let profileData;
 
-      if (id) {
+      if (usernameParam) {
+        // Load by username (public view)
+        const { data } = await (supabase as any)
+          .from("profiles_public")
+          .select("*")
+          .eq("username", usernameParam)
+          .maybeSingle();
+        profileData = data;
+      } else if (id) {
         const { data } = await (supabase as any)
           .from("profiles_public")
           .select("*")
