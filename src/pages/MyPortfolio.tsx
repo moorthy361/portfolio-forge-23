@@ -361,7 +361,7 @@ const MyPortfolio = () => {
         <div className="mb-8 md:mb-12">
           {profile.profile_image_url && (
             <div className="mb-6 md:mb-8 flex justify-center">
-              <div className={`rounded-full overflow-hidden ${engine.accentGlowClass}`}>
+              <div className={`rounded-full overflow-hidden ring-2 ring-white/10`}>
                 <img
                   src={profile.profile_image_url}
                   alt={profile.full_name}
@@ -395,7 +395,7 @@ const MyPortfolio = () => {
         {/* Left sidebar with image and quick info */}
         <div className="flex flex-col items-center md:items-start space-y-6">
           {profile.profile_image_url && (
-            <div className={`rounded-2xl overflow-hidden ${engine.accentGlowClass}`}>
+            <div className={`rounded-2xl overflow-hidden ring-2 ring-white/10`}>
               <img
                 src={profile.profile_image_url}
                 alt={profile.full_name}
@@ -453,7 +453,7 @@ const MyPortfolio = () => {
         </div>
         <div className="order-1 md:order-2 flex justify-center">
           {profile.profile_image_url ? (
-            <div className={`rounded-3xl overflow-hidden ${engine.accentGlowClass} rotate-2 hover:rotate-0 transition-transform duration-500`}>
+            <div className={`rounded-3xl overflow-hidden ring-2 ring-white/10 rotate-2 hover:rotate-0 transition-transform duration-500`}>
               <img
                 src={profile.profile_image_url}
                 alt={profile.full_name}
@@ -478,7 +478,7 @@ const MyPortfolio = () => {
           <div className="p-6 md:p-10 lg:p-14 text-center">
             {profile.profile_image_url && (
               <div className="mb-8 flex justify-center">
-                <div className={`rounded-full overflow-hidden ${engine.accentGlowClass}`}>
+                <div className={`rounded-full overflow-hidden ring-2 ring-white/10`}>
                   <img
                     src={profile.profile_image_url}
                     alt={profile.full_name}
@@ -552,7 +552,7 @@ const MyPortfolio = () => {
           </div>
           <div className="md:col-span-4 md:col-start-9 flex justify-center md:justify-end">
             {profile.profile_image_url ? (
-              <div className={`rounded-2xl overflow-hidden ${engine.accentGlowClass} -rotate-3 hover:rotate-0 transition-transform duration-500`}>
+              <div className={`rounded-2xl overflow-hidden ring-2 ring-white/10 -rotate-3 hover:rotate-0 transition-transform duration-500`}>
                 <img
                   src={profile.profile_image_url}
                   alt={profile.full_name}
@@ -574,7 +574,7 @@ const MyPortfolio = () => {
   const renderHeroCTA = (justifyClass = "justify-center") => (
     <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 ${justifyClass} px-4`}>
       <a href="#projects" className="w-full sm:w-auto">
-        <Button size="lg" className={`w-full sm:w-auto h-11 text-sm sm:text-base md:text-lg px-5 py-2.5 sm:px-10 sm:py-6 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 ${engine.accentGlowClass} hover:opacity-90 transition-all flex items-center justify-center gap-2`}>
+        <Button size="lg" className={`w-full sm:w-auto h-11 text-sm sm:text-base md:text-lg px-5 py-2.5 sm:px-10 sm:py-6 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 hover:shadow-lg transition-all flex items-center justify-center gap-2`}>
           View My Work
         </Button>
       </a>
@@ -660,7 +660,7 @@ const MyPortfolio = () => {
                   
                   <div className="flex flex-col items-center space-y-8">
                     {profile.profile_image_url && (
-                      <div className={`relative group rounded-xl overflow-hidden ${engine.accentGlowClass}`}>
+                      <div className={`relative group rounded-xl overflow-hidden ring-2 ring-white/10`}>
                         <img
                           src={profile.profile_image_url}
                           alt={profile.full_name}
@@ -675,7 +675,7 @@ const MyPortfolio = () => {
                       <div className="flex gap-4">
                         {profile.linkedin_url && (
                           <a href={safeUrl(profile.linkedin_url)} target="_blank" rel="noopener noreferrer"
-                            className={`p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 ${engine.accentGlowClass.replace('shadow', 'hover:shadow')}`}>
+                            className={`p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 `}>
                             <Linkedin className={`h-6 w-6 ${engine.accentPrimaryClass}`} />
                           </a>
                         )}
@@ -914,7 +914,7 @@ const MyPortfolio = () => {
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               {profile.email && (
-                <Button size="lg" className={`h-11 px-5 py-2.5 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 ${engine.accentGlowClass}`} asChild>
+                <Button size="lg" className={`h-11 px-5 py-2.5 bg-gradient-to-r ${engine.accentGradientClass} text-white border-0 hover:opacity-90 hover:shadow-lg transition-all`} asChild>
                   <a href={safeEmail(profile.email)} className="flex items-center gap-2">
                     <Mail className="h-5 w-5" />
                     Email Me
