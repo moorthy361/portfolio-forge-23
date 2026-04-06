@@ -47,9 +47,6 @@ const Dashboard = () => {
 
   const sidebarItems = [
     { label: "Portfolio", icon: LayoutDashboard, href: "/my-portfolio" },
-    { label: "Profile Views", icon: BarChart3, href: "#" },
-    { label: "Domains", icon: Globe, href: "#" },
-    { label: "Tailor Resume", icon: FileText, href: "#" },
   ];
 
   const deviceViews = [

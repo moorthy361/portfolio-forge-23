@@ -27,7 +27,7 @@ export const themeStyles = {
     accent: "bg-slate-700",
     card: "bg-white/80 backdrop-blur-sm",
     badge: "bg-slate-100 text-slate-800",
-    button: "bg-slate-700 hover:bg-slate-800",
+    button: "bg-slate-700 hover:bg-slate-800 text-white",
   },
   dark: {
     bg: "bg-gradient-to-br from-gray-900 to-slate-800",
