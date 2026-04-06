@@ -7,7 +7,7 @@ export const themeStyles = {
     accent: "bg-blue-600",
     card: "bg-white/80 backdrop-blur-sm",
     badge: "bg-blue-100 text-blue-800",
-    button: "bg-blue-600 hover:bg-blue-700",
+    button: "bg-blue-600 hover:bg-blue-700 text-white",
   },
   modern: {
     bg: "bg-gradient-to-br from-purple-50 to-pink-100",
