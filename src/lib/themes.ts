@@ -37,7 +37,7 @@ export const themeStyles = {
     accent: "bg-cyan-500",
     card: "bg-gray-800/80 backdrop-blur-sm border-gray-700",
     badge: "bg-cyan-900 text-cyan-100",
-    button: "bg-cyan-500 hover:bg-cyan-600",
+    button: "bg-cyan-500 hover:bg-cyan-600 text-white",
   },
   vibrant: {
     bg: "bg-gradient-to-br from-orange-50 to-red-100",
