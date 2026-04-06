@@ -7,7 +7,7 @@ export const themeStyles = {
     accent: "bg-blue-600",
     card: "bg-white/80 backdrop-blur-sm",
     badge: "bg-blue-100 text-blue-800",
-    button: "bg-blue-600 hover:bg-blue-700",
+    button: "bg-blue-600 hover:bg-blue-700 text-white",
   },
   modern: {
     bg: "bg-gradient-to-br from-purple-50 to-pink-100",
@@ -17,7 +17,7 @@ export const themeStyles = {
     accent: "bg-purple-600",
     card: "bg-white/80 backdrop-blur-sm",
     badge: "bg-purple-100 text-purple-800",
-    button: "bg-purple-600 hover:bg-purple-700",
+    button: "bg-purple-600 hover:bg-purple-700 text-white",
   },
   minimal: {
     bg: "bg-gradient-to-br from-gray-50 to-slate-100",
@@ -27,7 +27,7 @@ export const themeStyles = {
     accent: "bg-slate-700",
     card: "bg-white/80 backdrop-blur-sm",
     badge: "bg-slate-100 text-slate-800",
-    button: "bg-slate-700 hover:bg-slate-800",
+    button: "bg-slate-700 hover:bg-slate-800 text-white",
   },
   dark: {
     bg: "bg-gradient-to-br from-gray-900 to-slate-800",
@@ -37,7 +37,7 @@ export const themeStyles = {
     accent: "bg-cyan-500",
     card: "bg-gray-800/80 backdrop-blur-sm border-gray-700",
     badge: "bg-cyan-900 text-cyan-100",
-    button: "bg-cyan-500 hover:bg-cyan-600",
+    button: "bg-cyan-500 hover:bg-cyan-600 text-white",
   },
   vibrant: {
     bg: "bg-gradient-to-br from-orange-50 to-red-100",
@@ -47,7 +47,7 @@ export const themeStyles = {
     accent: "bg-orange-600",
     card: "bg-white/80 backdrop-blur-sm",
     badge: "bg-orange-100 text-orange-800",
-    button: "bg-orange-600 hover:bg-orange-700",
+    button: "bg-orange-600 hover:bg-orange-700 text-white",
   },
 };
 
