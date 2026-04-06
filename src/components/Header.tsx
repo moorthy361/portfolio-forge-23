@@ -163,6 +163,12 @@ const Header = () => {
                         </div>
                       </div>
                       <Button variant="ghost" className="w-full justify-start text-foreground" asChild>
+                        <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                          <LayoutDashboard className="w-4 h-4 mr-2" />
+                          Dashboard
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" className="w-full justify-start text-foreground" asChild>
                         <Link to="/history" onClick={() => setIsMenuOpen(false)}>
                           <History className="w-4 h-4 mr-2" />
                           View History
