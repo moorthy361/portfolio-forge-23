@@ -12,6 +12,7 @@ import CreatePortfolio from "./pages/CreatePortfolio";
 import Portfolio from "./pages/Portfolio";
 import PortfolioSetup from "./pages/PortfolioSetup";
 import MyPortfolio from "./pages/MyPortfolio";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
