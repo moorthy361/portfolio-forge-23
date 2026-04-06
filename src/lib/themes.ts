@@ -17,7 +17,7 @@ export const themeStyles = {
     accent: "bg-purple-600",
     card: "bg-white/80 backdrop-blur-sm",
     badge: "bg-purple-100 text-purple-800",
-    button: "bg-purple-600 hover:bg-purple-700",
+    button: "bg-purple-600 hover:bg-purple-700 text-white",
   },
   minimal: {
     bg: "bg-gradient-to-br from-gray-50 to-slate-100",
