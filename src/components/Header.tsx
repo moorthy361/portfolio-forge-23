@@ -68,7 +68,14 @@ const Header = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {user ? (
+            {user && (
+              <Button variant="outline" size="sm" className="gap-1.5" asChild>
+                <Link to="/dashboard">
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Link>
+              </Button>
+            )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full p-0 w-10 h-10">

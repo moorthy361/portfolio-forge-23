@@ -47,7 +47,7 @@ export const themeStyles = {
     accent: "bg-orange-600",
     card: "bg-white/80 backdrop-blur-sm",
     badge: "bg-orange-100 text-orange-800",
-    button: "bg-orange-600 hover:bg-orange-700",
+    button: "bg-orange-600 hover:bg-orange-700 text-white",
   },
 };
 
