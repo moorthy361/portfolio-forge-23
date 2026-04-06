@@ -12,6 +12,7 @@ import CreatePortfolio from "./pages/CreatePortfolio";
 import Portfolio from "./pages/Portfolio";
 import PortfolioSetup from "./pages/PortfolioSetup";
 import MyPortfolio from "./pages/MyPortfolio";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/history" element={<History />} />
             <Route path="/create-portfolio" element={<CreatePortfolio />} />
             <Route path="/portfolio" element={<Portfolio />} />
