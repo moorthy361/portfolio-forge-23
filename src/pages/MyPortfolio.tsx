@@ -218,6 +218,7 @@ const MyPortfolio = () => {
   const [theme, setTheme] = useState("classic");
   const [designVariant, setDesignVariant] = useState<DesignVariant | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [atsMode, setAtsMode] = useState(false);
 
   useEffect(() => {
     if (id || usernameParam) {
