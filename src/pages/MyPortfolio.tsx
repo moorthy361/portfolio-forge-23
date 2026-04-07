@@ -19,6 +19,8 @@ import { useDesignEngine } from "@/hooks/useDesignEngine";
 import type { DesignVariant } from "@/lib/designVariantGenerator";
 import FuturisticWrapper, { AnimatedSection, GlowCard } from "@/components/FuturisticWrapper";
 import { debugLog } from "@/lib/testConfig";
+import ATSPortfolioView from "@/components/ATSPortfolioView";
+import { Switch } from "@/components/ui/switch";
 
 /** Prevent javascript: scheme injection – only allow http(s) and mailto URLs */
 const safeUrl = (url: string): string =>
@@ -216,6 +218,7 @@ const MyPortfolio = () => {
   const [theme, setTheme] = useState("classic");
   const [designVariant, setDesignVariant] = useState<DesignVariant | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [atsMode, setAtsMode] = useState(false);
 
   useEffect(() => {
     if (id || usernameParam) {
@@ -1024,6 +1027,16 @@ const MyPortfolio = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
+                {/* ATS Mode Toggle */}
+                <div className="hidden sm:flex items-center gap-2 mr-2">
+                  <label htmlFor="ats-toggle" className="text-xs font-medium text-white/60 cursor-pointer select-none">ATS</label>
+                  <Switch
+                    id="ats-toggle"
+                    checked={atsMode}
+                    onCheckedChange={setAtsMode}
+                    className="data-[state=checked]:bg-green-500"
+                  />
+                </div>
                 {(id || usernameParam) && (
                   <Button 
                     onClick={() => {
@@ -1079,6 +1092,16 @@ const MyPortfolio = () => {
                   {navLabels[section]}
                 </a>
               ))}
+              {/* Mobile ATS Toggle */}
+              <div className="flex items-center gap-2 pb-2">
+                <label htmlFor="ats-toggle-mobile" className="text-xs font-medium text-white/60 cursor-pointer select-none">ATS Mode</label>
+                <Switch
+                  id="ats-toggle-mobile"
+                  checked={atsMode}
+                  onCheckedChange={setAtsMode}
+                  className="data-[state=checked]:bg-green-500"
+                />
+              </div>
               <div className="pt-2 border-t border-white/10 flex flex-wrap gap-3">
                 {(id || usernameParam) && (
                   <Button 
@@ -1113,17 +1136,29 @@ const MyPortfolio = () => {
           )}
         </nav>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
-          {/* Hero Section - layout-specific */}
-          <AnimatedSection animationType={engine.heroAnimationType}>
-            {renderHero()}
-          </AnimatedSection>
+        {atsMode ? (
+          <ATSPortfolioView
+            profile={profile as any}
+            skills={skills}
+            technicalSkills={technicalSkills}
+            softSkills={softSkills}
+            projects={projects}
+            education={education}
+            achievements={achievements}
+          />
+        ) : (
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
+            {/* Hero Section - layout-specific */}
+            <AnimatedSection animationType={engine.heroAnimationType}>
+              {renderHero()}
+            </AnimatedSection>
 
-          {/* Render sections in variant/role-specific order */}
-          <div className="space-y-0">
-            {effectiveSectionOrder.map(section => sectionRenderers[section]?.())}
+            {/* Render sections in variant/role-specific order */}
+            <div className="space-y-0">
+              {effectiveSectionOrder.map(section => sectionRenderers[section]?.())}
+            </div>
           </div>
-        </div>
+        )}
       </FuturisticWrapper>
     </>
   );
