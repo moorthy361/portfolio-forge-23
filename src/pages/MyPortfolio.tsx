@@ -1037,6 +1037,7 @@ const MyPortfolio = () => {
                     className="data-[state=checked]:bg-green-500"
                   />
                 </div>
+                {(id || usernameParam) && (
                   <Button 
                     onClick={() => {
                       const shareUrl = profileUsername
