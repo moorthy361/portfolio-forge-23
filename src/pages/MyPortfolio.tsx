@@ -19,6 +19,8 @@ import { useDesignEngine } from "@/hooks/useDesignEngine";
 import type { DesignVariant } from "@/lib/designVariantGenerator";
 import FuturisticWrapper, { AnimatedSection, GlowCard } from "@/components/FuturisticWrapper";
 import { debugLog } from "@/lib/testConfig";
+import ATSPortfolioView from "@/components/ATSPortfolioView";
+import { Switch } from "@/components/ui/switch";
 
 /** Prevent javascript: scheme injection – only allow http(s) and mailto URLs */
 const safeUrl = (url: string): string =>
