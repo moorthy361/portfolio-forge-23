@@ -1027,7 +1027,16 @@ const MyPortfolio = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
-                {(id || usernameParam) && (
+                {/* ATS Mode Toggle */}
+                <div className="hidden sm:flex items-center gap-2 mr-2">
+                  <label htmlFor="ats-toggle" className="text-xs font-medium text-white/60 cursor-pointer select-none">ATS</label>
+                  <Switch
+                    id="ats-toggle"
+                    checked={atsMode}
+                    onCheckedChange={setAtsMode}
+                    className="data-[state=checked]:bg-green-500"
+                  />
+                </div>
                   <Button 
                     onClick={() => {
                       const shareUrl = profileUsername
