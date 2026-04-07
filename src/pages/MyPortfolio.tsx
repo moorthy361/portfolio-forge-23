@@ -1092,6 +1092,16 @@ const MyPortfolio = () => {
                   {navLabels[section]}
                 </a>
               ))}
+              {/* Mobile ATS Toggle */}
+              <div className="flex items-center gap-2 pb-2">
+                <label htmlFor="ats-toggle-mobile" className="text-xs font-medium text-white/60 cursor-pointer select-none">ATS Mode</label>
+                <Switch
+                  id="ats-toggle-mobile"
+                  checked={atsMode}
+                  onCheckedChange={setAtsMode}
+                  className="data-[state=checked]:bg-green-500"
+                />
+              </div>
               <div className="pt-2 border-t border-white/10 flex flex-wrap gap-3">
                 {(id || usernameParam) && (
                   <Button 
@@ -1126,17 +1136,29 @@ const MyPortfolio = () => {
           )}
         </nav>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
-          {/* Hero Section - layout-specific */}
-          <AnimatedSection animationType={engine.heroAnimationType}>
-            {renderHero()}
-          </AnimatedSection>
+        {atsMode ? (
+          <ATSPortfolioView
+            profile={profile as any}
+            skills={skills}
+            technicalSkills={technicalSkills}
+            softSkills={softSkills}
+            projects={projects}
+            education={education}
+            achievements={achievements}
+          />
+        ) : (
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
+            {/* Hero Section - layout-specific */}
+            <AnimatedSection animationType={engine.heroAnimationType}>
+              {renderHero()}
+            </AnimatedSection>
 
-          {/* Render sections in variant/role-specific order */}
-          <div className="space-y-0">
-            {effectiveSectionOrder.map(section => sectionRenderers[section]?.())}
+            {/* Render sections in variant/role-specific order */}
+            <div className="space-y-0">
+              {effectiveSectionOrder.map(section => sectionRenderers[section]?.())}
+            </div>
           </div>
-        </div>
+        )}
       </FuturisticWrapper>
     </>
   );
