@@ -104,6 +104,7 @@ const PortfolioSetup = () => {
   const [resumeUrl, setResumeUrl] = useState("");
   const [recommendedThemes, setRecommendedThemes] = useState<RoleThemeRecommendation[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [photoError, setPhotoError] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [createdPortfolioId, setCreatedPortfolioId] = useState<string>("");
   const [createdPortfolioName, setCreatedPortfolioName] = useState<string>("");
@@ -319,6 +320,13 @@ const PortfolioSetup = () => {
       return;
     }
 
+    // Require profile photo (unless one already exists in edit mode)
+    if (!profileImagePreview) {
+      setPhotoError(true);
+      toast({ title: "Photo Required", description: "Please upload a profile photo.", variant: "destructive" });
+      return;
+    }
+
     // Validation
     const validation = validatePortfolioData({
       full_name: profile.full_name,
@@ -530,13 +538,15 @@ const PortfolioSetup = () => {
               {currentSection === 2 && (
                 <div className="space-y-4 animate-fade-in">
                   <div>
-                    <Label>Profile Photo</Label>
+                    <Label>Profile Photo <span className="text-destructive">*</span></Label>
                     <div className="mt-2">
                       <ProfilePhotoUpload
                         currentPreview={profileImagePreview}
+                        hasError={photoError}
                         onFileChange={(file) => {
                           if (file) {
                             setProfileImage(file);
+                            setPhotoError(false);
                             const reader = new FileReader();
                             reader.onloadend = () => setProfileImagePreview(reader.result as string);
                             reader.readAsDataURL(file);
@@ -547,6 +557,9 @@ const PortfolioSetup = () => {
                           setProfileImagePreview("");
                         }}
                       />
+                      {photoError && (
+                        <p className="text-sm text-destructive mt-1">Profile photo is required</p>
+                      )}
                     </div>
                   </div>
                   <div>
@@ -799,7 +812,15 @@ const PortfolioSetup = () => {
             </Button>
             {currentSection < sections.length - 1 && currentSection !== 1 && (
               <Button
-                onClick={() => setCurrentSection(currentSection + 1)}
+                onClick={() => {
+                  // Validate photo on step 2 (Personal Information)
+                  if (currentSection === 2 && !profileImagePreview) {
+                    setPhotoError(true);
+                    toast({ title: "Photo Required", description: "Please upload a profile photo before proceeding.", variant: "destructive" });
+                    return;
+                  }
+                  setCurrentSection(currentSection + 1);
+                }}
                 disabled={currentSection === 0 && !selectedRole}
               >
                 Next

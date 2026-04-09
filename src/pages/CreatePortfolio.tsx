@@ -190,6 +190,15 @@ const CreatePortfolio = () => {
       return;
     }
 
+    if (!formData.profilePhoto) {
+      toast({
+        title: "Photo Required",
+        description: "Please upload a profile photo",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const username = generateUsername(formData.fullName);
     
     const portfolioData = {
@@ -241,7 +250,7 @@ const CreatePortfolio = () => {
             </div>
             
             <div>
-              <Label className="text-base font-medium">Profile Photo</Label>
+              <Label className="text-base font-medium">Profile Photo <span className="text-destructive">*</span></Label>
               <div className="mt-2 border-2 border-dashed border-border rounded-lg p-6 text-center">
                 <input
                   type="file"
