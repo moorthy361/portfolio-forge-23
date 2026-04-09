@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Eye, Users, Activity, TrendingUp, Monitor, Tablet, Smartphone,
   Upload, Pencil, ExternalLink, Share2, BarChart3, User, Globe,
-  FileText, LogOut, LayoutDashboard
+  FileText, LogOut, LayoutDashboard, Home
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -66,6 +66,13 @@ const Dashboard = () => {
         </div>
 
         <nav className="flex-1 px-4 space-y-1">
+          <Link
+            to="/"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors text-sm"
+          >
+            <Home className="w-4 h-4" />
+            Home
+          </Link>
           <Link
             to="/dashboard"
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary font-medium text-sm"
