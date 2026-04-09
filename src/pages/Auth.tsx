@@ -159,7 +159,7 @@ const Auth = () => {
                     sessionStorage.removeItem("redirectAfterAuth");
                     navigate(redirectTo);
                   } else {
-                    navigate("/dashboard");
+                    navigate("/");
                   }
                 } catch {
                   toast({ title: "Error", description: "Google login failed", variant: "destructive" });
