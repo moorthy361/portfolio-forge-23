@@ -6,9 +6,10 @@ interface ProfilePhotoUploadProps {
   currentPreview: string;
   onFileChange: (file: File | null) => void;
   onRemove: () => void;
+  hasError?: boolean;
 }
 
-const ProfilePhotoUpload = ({ currentPreview, onFileChange, onRemove }: ProfilePhotoUploadProps) => {
+const ProfilePhotoUpload = ({ currentPreview, onFileChange, onRemove, hasError }: ProfilePhotoUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -31,7 +32,7 @@ const ProfilePhotoUpload = ({ currentPreview, onFileChange, onRemove }: ProfileP
       <div className="flex items-center gap-5">
         {/* Preview circle */}
         <div className="relative group shrink-0">
-          <div className="w-24 h-24 rounded-full overflow-hidden bg-muted border-2 border-border flex items-center justify-center">
+          <div className={`w-24 h-24 rounded-full overflow-hidden bg-muted border-2 flex items-center justify-center ${hasError && !currentPreview ? 'border-destructive' : 'border-border'}`}>
             {currentPreview ? (
               <img src={currentPreview} alt="Profile" className="w-full h-full object-cover" />
             ) : (
@@ -52,7 +53,7 @@ const ProfilePhotoUpload = ({ currentPreview, onFileChange, onRemove }: ProfileP
         {/* Upload area */}
         <div
           className={`flex-1 border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${
-            dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+            dragOver ? "border-primary bg-primary/5" : hasError && !currentPreview ? "border-destructive bg-destructive/5" : "border-border hover:border-primary/50"
           }`}
           onClick={() => fileInputRef.current?.click()}
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
