@@ -27,16 +27,6 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#examples" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
-                  Examples
-                </a>
-              </li>
-              <li>
-                <a href="#pricing" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
-                  Pricing
-                </a>
-              </li>
-              <li>
                 <a href="#support" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                   Support
                 </a>
