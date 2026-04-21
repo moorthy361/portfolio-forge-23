@@ -61,9 +61,6 @@ const Header = () => {
             <a href="#features" className="text-foreground hover:text-primary transition-colors">
               Features
             </a>
-            <a href="#examples" className="text-foreground hover:text-primary transition-colors">
-              Examples
-            </a>
           </nav>
 
           {/* Desktop Actions */}
