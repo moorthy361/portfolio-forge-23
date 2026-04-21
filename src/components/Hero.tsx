@@ -48,9 +48,9 @@ const Hero = ({ handleGetStarted }: HeroProps) => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight tracking-tight text-center">
             Build Your Dream
-            <span className="block text-gradient bg-gradient-to-r from-accent-light to-white bg-clip-text text-transparent">
+            <span className="block mt-2 pb-2 bg-gradient-to-r from-accent-light to-white bg-clip-text text-transparent">
               Portfolio
             </span>
           </h1>
