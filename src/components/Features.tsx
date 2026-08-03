@@ -66,7 +66,9 @@ const Features = () => {
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 leading-tight tracking-tight text-center">
             Everything You Need to
-            <span className="block text-gradient pb-2">Stand Out</span>
+            <span className="block text-gradient pb-2">
+              Stand Out
+            </span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Our platform provides all the tools and features you need to create a 
