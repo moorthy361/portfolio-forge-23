@@ -20,6 +20,7 @@ import { X, Plus, Home, Check } from "lucide-react";
 import { TEST_MODE, MOCK_RESUME_DATA, debugLog, validatePortfolioData } from "@/lib/testConfig";
 import ProfilePhotoUpload from "@/components/ProfilePhotoUpload";
 import UsernameInput from "@/components/UsernameInput";
+import ATSScoreCard, { type ATSAnalysis } from "@/components/ATSScoreCard";
 
 interface ProfileData {
   full_name: string;
@@ -111,6 +112,7 @@ const PortfolioSetup = () => {
   const [editUserId, setEditUserId] = useState<string>("");
   const [dataLoaded, setDataLoaded] = useState(false);
   const [username, setUsername] = useState("");
+  const [atsAnalysis, setAtsAnalysis] = useState<ATSAnalysis | null>(null);
 
   // Load existing data in edit mode
   useEffect(() => {
@@ -260,23 +262,44 @@ const PortfolioSetup = () => {
       linkedin_url: data.linkedin_url || "",
     });
     
-    // Auto-classify skills from resume
-    const allSkills = data.skills || [];
-    const tech: string[] = [];
-    const soft: string[] = [];
-    allSkills.forEach(s => {
-      if (classifySkill(s) === "technical") tech.push(s);
-      else soft.push(s);
-    });
-    setTechnicalSkills(tech);
-    setSoftSkills(soft);
+    // Prefer Gemini's own technical/soft classification, fall back to keyword matching
+    const allSkills = [
+      ...(data.skills || []),
+      ...(data.technical_skills || []),
+      ...(data.soft_skills || []),
+    ].filter((v, i, a) => v && a.indexOf(v) === i);
+
+    if (data.technical_skills?.length || data.soft_skills?.length) {
+      setTechnicalSkills(data.technical_skills || []);
+      setSoftSkills(data.soft_skills || []);
+    } else {
+      const tech: string[] = [];
+      const soft: string[] = [];
+      allSkills.forEach(s => {
+        if (classifySkill(s) === "technical") tech.push(s);
+        else soft.push(s);
+      });
+      setTechnicalSkills(tech);
+      setSoftSkills(soft);
+    }
     // Keep backward-compatible skills
     setSkills(allSkills.map(s => ({ name: s })));
     
     setEducation(data.education || []);
     setProjects(data.projects || []);
-    if (data.experience?.length > 0) {
-      setAchievements(data.experience.map(e => ({ title: e.title, description: e.description })));
+    const experienceItems = (data.experience || []).map(e => ({ title: e.title, description: e.description }));
+    const certificationItems = (data.certifications || []).map(c => ({ title: c, description: "" }));
+    if (experienceItems.length > 0 || certificationItems.length > 0) {
+      setAchievements([...experienceItems, ...certificationItems]);
+    }
+
+    if (typeof data.ats_score === "number") {
+      setAtsAnalysis({
+        ats_score: data.ats_score,
+        matched_keywords: data.matched_keywords || [],
+        missing_keywords: data.missing_keywords || [],
+        improvement_suggestions: data.improvement_suggestions || [],
+      });
     }
     // Smart theme suggestion from skills
     if (allSkills.length > 0) {
@@ -286,7 +309,12 @@ const PortfolioSetup = () => {
     }
     // Move to personal info step for review
     setCurrentSection(2);
-    toast({ title: "Resume Data Loaded", description: "Review and edit your details below." });
+    toast({
+      title: "AI Portfolio Generated",
+      description: typeof data.ats_score === "number"
+        ? `ATS score: ${data.ats_score}/100. Review and edit your details below.`
+        : "Review and edit your details below.",
+    });
   };
 
   const addSkill = () => { if (newSkill.trim()) { setSkills([...skills, { name: newSkill.trim() }]); setNewSkill(""); } };
@@ -528,6 +556,7 @@ const PortfolioSetup = () => {
                 <div className="animate-fade-in">
                   <ResumeUpload
                     userId={user.id}
+                    jobRole={selectedRole}
                     onParsed={handleResumeParsed}
                     onSkip={() => setCurrentSection(2)}
                   />
@@ -537,6 +566,7 @@ const PortfolioSetup = () => {
               {/* Step 2: Personal Information */}
               {currentSection === 2 && (
                 <div className="space-y-4 animate-fade-in">
+                  {atsAnalysis && <ATSScoreCard analysis={atsAnalysis} />}
                   <div>
                     <Label>Profile Photo <span className="text-destructive">*</span></Label>
                     <div className="mt-2">
