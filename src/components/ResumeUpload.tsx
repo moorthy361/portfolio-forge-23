@@ -121,10 +121,11 @@ export const ResumeUpload = ({ userId, jobRole, onParsed, onSkip }: ResumeUpload
 
       // Call edge function to parse
       const { data, error: parseErr } = await supabase.functions.invoke("parse-resume", {
-        body: { filePath: path, fileName: file.name },
+        body: { filePath: path, fileName: file.name, jobRole },
       });
 
       if (parseErr) throw parseErr;
+      if ((data as any)?.error) throw new Error((data as any).error);
       setProgress(100);
       setStatus("success");
 
@@ -155,7 +156,9 @@ export const ResumeUpload = ({ userId, jobRole, onParsed, onSkip }: ResumeUpload
     <div className="space-y-6">
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-bold">Upload Resume to Auto-Generate Portfolio</h2>
-        <p className="text-muted-foreground">Upload your resume and we'll extract your details automatically</p>
+        <p className="text-muted-foreground">
+          Gemini AI analyzes your resume{jobRole ? ` for your ${jobRole.replace(/-/g, " ")} role` : ""} and builds an ATS-optimized portfolio
+        </p>
       </div>
 
       {/* Drag & Drop Area */}
@@ -216,7 +219,7 @@ export const ResumeUpload = ({ userId, jobRole, onParsed, onSkip }: ResumeUpload
           <Progress value={progress} className="h-2" />
           <p className="text-sm text-center text-muted-foreground">
             {status === "uploading" && "Uploading resume..."}
-            {status === "parsing" && "Parsing with AI... extracting your details"}
+            {status === "parsing" && "Analyzing with Gemini AI... optimizing for ATS"}
             {status === "success" && "✅ Successfully parsed!"}
           </p>
         </div>
