@@ -15,19 +15,29 @@ export interface ParsedResumeData {
   profession: string;
   location: string;
   linkedin_url: string;
+  github_url?: string;
   skills: string[];
+  technical_skills?: string[];
+  soft_skills?: string[];
   education: { degree: string; institution: string; year: string; gpa: string }[];
   experience: { title: string; description: string }[];
   projects: { title: string; description: string; tech_stack: string[]; project_url: string }[];
+  certifications?: string[];
+  ats_score?: number;
+  matched_keywords?: string[];
+  missing_keywords?: string[];
+  improvement_suggestions?: string[];
 }
 
 interface ResumeUploadProps {
   userId: string;
+  jobRole?: string;
   onParsed: (data: ParsedResumeData) => void;
   onSkip: () => void;
 }
 
-export const ResumeUpload = ({ userId, onParsed, onSkip }: ResumeUploadProps) => {
+export const ResumeUpload = ({ userId, jobRole, onParsed, onSkip }: ResumeUploadProps) => {
+
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
