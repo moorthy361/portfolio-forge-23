@@ -15,19 +15,29 @@ export interface ParsedResumeData {
   profession: string;
   location: string;
   linkedin_url: string;
+  github_url?: string;
   skills: string[];
+  technical_skills?: string[];
+  soft_skills?: string[];
   education: { degree: string; institution: string; year: string; gpa: string }[];
   experience: { title: string; description: string }[];
   projects: { title: string; description: string; tech_stack: string[]; project_url: string }[];
+  certifications?: string[];
+  ats_score?: number;
+  matched_keywords?: string[];
+  missing_keywords?: string[];
+  improvement_suggestions?: string[];
 }
 
 interface ResumeUploadProps {
   userId: string;
+  jobRole?: string;
   onParsed: (data: ParsedResumeData) => void;
   onSkip: () => void;
 }
 
-export const ResumeUpload = ({ userId, onParsed, onSkip }: ResumeUploadProps) => {
+export const ResumeUpload = ({ userId, jobRole, onParsed, onSkip }: ResumeUploadProps) => {
+
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -111,10 +121,11 @@ export const ResumeUpload = ({ userId, onParsed, onSkip }: ResumeUploadProps) =>
 
       // Call edge function to parse
       const { data, error: parseErr } = await supabase.functions.invoke("parse-resume", {
-        body: { filePath: path, fileName: file.name },
+        body: { filePath: path, fileName: file.name, jobRole },
       });
 
       if (parseErr) throw parseErr;
+      if ((data as any)?.error) throw new Error((data as any).error);
       setProgress(100);
       setStatus("success");
 
@@ -145,7 +156,9 @@ export const ResumeUpload = ({ userId, onParsed, onSkip }: ResumeUploadProps) =>
     <div className="space-y-6">
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-bold">Upload Resume to Auto-Generate Portfolio</h2>
-        <p className="text-muted-foreground">Upload your resume and we'll extract your details automatically</p>
+        <p className="text-muted-foreground">
+          Gemini AI analyzes your resume{jobRole ? ` for your ${jobRole.replace(/-/g, " ")} role` : ""} and builds an ATS-optimized portfolio
+        </p>
       </div>
 
       {/* Drag & Drop Area */}
@@ -206,7 +219,7 @@ export const ResumeUpload = ({ userId, onParsed, onSkip }: ResumeUploadProps) =>
           <Progress value={progress} className="h-2" />
           <p className="text-sm text-center text-muted-foreground">
             {status === "uploading" && "Uploading resume..."}
-            {status === "parsing" && "Parsing with AI... extracting your details"}
+            {status === "parsing" && "Analyzing with Gemini AI... optimizing for ATS"}
             {status === "success" && "✅ Successfully parsed!"}
           </p>
         </div>
