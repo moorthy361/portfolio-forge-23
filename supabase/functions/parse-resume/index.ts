@@ -52,7 +52,7 @@ serve(async (req) => {
     }
 
     const userId = claimsData.claims.sub;
-    const { filePath, fileName } = await req.json();
+    const { filePath, fileName, jobRole } = await req.json();
 
     // Verify the file path belongs to this user
     if (!filePath.startsWith(userId + '/')) {
@@ -83,8 +83,48 @@ serve(async (req) => {
     if (ext === "docx") {
       mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
     }
-    
-    // Use Lovable AI to parse the resume
+
+    const targetRole = (jobRole || "").toString().trim();
+
+    const systemPrompt = `You are an expert ATS (Applicant Tracking System) resume analyst and portfolio content writer.
+${targetRole ? `The candidate is targeting the role: "${targetRole}". Tailor every field to that role.` : ""}
+
+Analyze the attached resume and produce an ATS-optimized, keyword-rich digital portfolio.
+
+Rules:
+- Rewrite the summary as a 2-3 sentence ATS-friendly professional summary in third person, no pronouns, packed with role-relevant keywords.
+- Start every experience, project and achievement description with a strong action verb (Developed, Engineered, Led, Optimized, Delivered...). Prefer measurable impact.
+- Split skills into technical_skills (tools, languages, frameworks, platforms) and soft_skills.
+- Use standard ATS section wording. Never invent facts that are not supported by the resume; leave fields empty instead.
+- ats_score is an integer 0-100 estimating how well this resume would pass an ATS screen for the target role.
+- matched_keywords: role keywords actually present in the resume. missing_keywords: important role keywords absent from the resume.
+- improvement_suggestions: 3-5 short, specific, actionable tips.
+
+Return ONLY valid JSON with this exact structure:
+{
+  "full_name": "string",
+  "email": "string",
+  "phone": "string",
+  "bio": "ATS-friendly professional summary",
+  "profession": "job title aligned to the target role",
+  "location": "city, country",
+  "linkedin_url": "string or empty",
+  "github_url": "string or empty",
+  "skills": ["skill"],
+  "technical_skills": ["skill"],
+  "soft_skills": ["skill"],
+  "education": [{"degree": "string", "institution": "string", "year": "string", "gpa": "string"}],
+  "experience": [{"title": "string", "description": "action-verb bullet summary"}],
+  "projects": [{"title": "string", "description": "action-verb bullet summary", "tech_stack": ["tech"], "project_url": ""}],
+  "certifications": ["string"],
+  "ats_score": 0,
+  "matched_keywords": ["string"],
+  "missing_keywords": ["string"],
+  "improvement_suggestions": ["string"]
+}
+If a field is not found, use an empty string or empty array. Always return valid JSON.`;
+
+    // Use Lovable AI (Google Gemini) to analyze and optimize the resume
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -92,33 +132,15 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-3.6-flash",
         messages: [
-          {
-            role: "system",
-            content: `You are a resume parser. Extract structured data from the resume content provided. 
-Return ONLY valid JSON with this exact structure:
-{
-  "full_name": "string",
-  "email": "string", 
-  "phone": "string",
-  "bio": "2-3 sentence professional summary",
-  "profession": "job title",
-  "location": "city, country",
-  "linkedin_url": "string or empty",
-  "skills": ["skill1", "skill2"],
-  "education": [{"degree": "string", "institution": "string", "year": "string", "gpa": "string"}],
-  "experience": [{"title": "string", "description": "string"}],
-  "projects": [{"title": "string", "description": "string", "tech_stack": ["tech1"], "project_url": ""}]
-}
-If a field is not found, use empty string or empty array. Always return valid JSON.`
-          },
+          { role: "system", content: systemPrompt },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: `Parse this resume file (${fileName}). Extract all relevant information.`
+                text: `Analyze this resume file (${fileName})${targetRole ? ` for the target role "${targetRole}"` : ""} and return the ATS-optimized portfolio JSON.`
               },
               {
                 type: "image_url",
@@ -129,29 +151,63 @@ If a field is not found, use empty string or empty array. Always return valid JS
             ]
           }
         ],
-        temperature: 0.1,
+        temperature: 0.2,
       }),
     });
 
     if (!aiResponse.ok) {
       const errText = await aiResponse.text();
-      console.error("AI API error:", errText);
-      throw new Error("Failed to parse resume with AI");
+      console.error("AI API error:", aiResponse.status, errText);
+      const status = aiResponse.status === 429 || aiResponse.status === 402 ? aiResponse.status : 500;
+      return new Response(
+        JSON.stringify({
+          error: status === 429
+            ? "AI rate limit reached. Please try again in a moment."
+            : status === 402
+            ? "AI credits exhausted. Please add credits to continue."
+            : "Failed to analyze resume with AI.",
+        }),
+        { status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const aiData = await aiResponse.json();
     const content = aiData.choices?.[0]?.message?.content || "{}";
-    
+
     // Extract JSON from the response (handle markdown code blocks)
     let jsonStr = content;
     const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (jsonMatch) {
       jsonStr = jsonMatch[1].trim();
     }
-    
+
     const parsed = JSON.parse(jsonStr);
 
-    return new Response(JSON.stringify(parsed), {
+    // Normalize so the client always gets predictable shapes
+    const asArray = (v: unknown) => (Array.isArray(v) ? v : []);
+    const normalized = {
+      full_name: parsed.full_name || "",
+      email: parsed.email || "",
+      phone: parsed.phone || "",
+      bio: parsed.bio || "",
+      profession: parsed.profession || targetRole || "",
+      location: parsed.location || "",
+      linkedin_url: parsed.linkedin_url || "",
+      github_url: parsed.github_url || "",
+      skills: asArray(parsed.skills),
+      technical_skills: asArray(parsed.technical_skills),
+      soft_skills: asArray(parsed.soft_skills),
+      education: asArray(parsed.education),
+      experience: asArray(parsed.experience),
+      projects: asArray(parsed.projects),
+      certifications: asArray(parsed.certifications),
+      ats_score: Math.max(0, Math.min(100, Number(parsed.ats_score) || 0)),
+      matched_keywords: asArray(parsed.matched_keywords),
+      missing_keywords: asArray(parsed.missing_keywords),
+      improvement_suggestions: asArray(parsed.improvement_suggestions),
+    };
+
+    return new Response(JSON.stringify(normalized), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
